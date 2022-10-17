@@ -1,0 +1,65 @@
+<div id="ubCoor" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Ubicar por Coordenadas', closable:false, open:false">
+
+                        <dl>
+                            <dt>
+                                <label>Ingrese las coordenadas a ubicar en el mapa</label></dt>
+                        </dl>
+                        <br><br>
+                        <form>
+                            <input type="radio" name="tipo_attach" onclick="toggle(this)" value="ingresarPlanas">Coordenadas Planas<br>
+                            <br>
+                            <input type="radio" name="tipo_attach" onclick="toggle(this)" value="ingresarGeograficas">Coordenadas Geográficas<br>
+                            <br>
+                        </form>
+                        <div id="planas" style="display: none">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label>Coordenada X:&nbsp;&nbsp;&nbsp;</label>
+                                    </td>
+                                    <td>
+                                        <input id="coorX" type="number" class="Latitud" value="1144248" />
+                                    </td>                                    
+                                </tr>                                
+                                <tr>
+                                    <td>
+                                        <label>Coordenada Y:&nbsp;&nbsp;&nbsp;</label>
+                                    </td>
+                                    <td>
+                                        <input id="coorY" type="number" class="Longitud" value="989255" />
+                                    </td>
+                                </tr>
+                            </table>
+                            <br>
+                        </div>
+                        <div id="Geog" style="display: none">
+                            <table>
+                                <tr>
+                                    <th>Latitud</th>
+                                </tr>
+                                <tr>
+                                    <td>°&nbsp;<input min="0" max="50" id="grados" type="number" value="4" />&nbsp;&nbsp;&nbsp;</td>
+
+                                    <td>'&nbsp;<input min="0" max="50" id="minutos" type="number" value="29" />&nbsp;&nbsp;&nbsp;</td>
+
+                                    <td>"&nbsp;<input min="0" max="50" id="Segundos" type="number" value="52" /></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Longitud</th>
+                                </tr>
+                                <tr>
+                                    <td>°&nbsp;<input min="0" max="50" id="grados1" type="number" value="-75" />&nbsp;&nbsp;&nbsp;</td>
+
+                                    <td>'&nbsp;<input min="0" max="50" id="minutos1" type="number" value="46" />&nbsp;&nbsp;&nbsp;</td>
+
+                                    <td>"&nbsp;<input min="0" max="50" id="Segundos1" type="number" value="40" /></td>
+                                </tr>
+                            </table>
+                            <br>
+                        </div>
+                        <div id="botonBorrar" style="display: none">
+                            <button type="button" class="toolUbicarCoor" id="ubicar">Ubicar</button>
+                            <button type="button" id="Borrar">Borrar</button>
+                        </div>
+                    </div>

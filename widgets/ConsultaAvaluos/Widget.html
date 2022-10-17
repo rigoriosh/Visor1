@@ -1,0 +1,58 @@
+<div id="divConsultaAvaluos" style="height: 100%;">
+
+    <div style="display: flex; flex-direction: column;">
+        <label class="labels" for="selectConsulta">Seleccione la consulta</label>
+        <!-- <select name="selectConsulta " onchange="starConsulta(this)" data-dojo-type="dijit/form/Select">
+            <option value="0">Seleccione...</option>
+            <option value="avaluosMultiple">Consulta de avalúos multiple</option>
+            <option value="avaluosUnica">Consulta de avalúos única</option>
+        </select> -->
+        <select id="selectConsulta" name="selectConsulta "data-dojo-type="dijit/form/Select">
+            <option value="0">Seleccione...</option>
+            <option value="avaluosMultiple">Consulta de avalúos multiple</option>
+            <option value="avaluosUnica">Consulta de avalúos única</option>
+        </select>
+        <!-- <input type="button" value="Consulta masiva" onclick="starConsulta(this)">
+        <input type="button" value="Consulta única" onclick="starConsulta(this)"> -->
+    </div>
+
+    <div id="divConsultaMasiva" style="display: none; flex-direction: column;">
+        <p class="titulo">Consulta masiva</p>
+        <label class="labels" for="Departamento">Departamento</label>
+        <!-- <select name="Departamento " id="sDepart" onchange="cambioSelectDepart(this)" ></select> -->
+        <select name="Departamento " id="sDepart"></select>
+        <div id="divMunicipio" style="display: none;">
+            <label class="labels" for="Municipio">Municipio</label>
+            <select name="Municipio " id="sMunicipio" data-dojo-type="dijit/form/Select"></select>
+        </div>
+        <div id="divTipInmu" style="display: none;">
+            <label class="labels" for="TipInmu">Tipo de Bien Inmueble</label>
+            <select name="TipInmu " id="sTipInmu" onchange="cambioSTipInmu(this)" data-dojo-type="dijit/form/Select"></select>
+        </div>
+        <input id="btnConsultaMasiva" type="button" value="Ejecutar" style="display: block;" class="btns">
+    </div>
+
+    <div id="divConsultaUnica" style="display: none; flex-direction: column;">
+        <p class="titulo">Consulta única</p>
+        <label class="labels" for="Departamento">Número de folio matrícula</label>
+        <input type="text" name="folioMatricula" id="folioNumMatricula">
+        <label class="labels" for="Departamento">Número predial</label>
+        <input type="text" name="folioMatricula" id="folioNumPredial">
+        <h3 id="warningConsUnica" class="warning">Recuerda ingresar un número de folio matrícula o un número predial</h3>
+        <input id="btnConsultaUnica" type="button" value="Ejecutar" style="display: block;" class="btns" >
+    </div>
+    
+   <!--  <div id="idDivTablaCA">
+        <table style="width: 100%; margin-top:15px">
+            <tr>
+                <td style="width: 100%">
+                    <div id="idDivTabla"></div>
+                </td>
+            </tr>
+        </table>
+    </div> -->
+    
+    <div id="divLoading" class="loading">
+        <h1>Cargando info...</h1>
+    </div>
+</div>
