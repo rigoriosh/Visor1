@@ -9,9 +9,9 @@ var selectedRegisterFromTable = {
     rows:[],
     features:[]
 }
-define(['dojo/_base/declare', 'jimu/BaseWidget', /* "dojo/_base/json",
+define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/_base/json",
     "dojo/_base/array", "dojo/string", "esri/request", "jimu/PanelManager",  */"dojo/query", "dojo/domReady!"],
-    function (declare, BaseWidget, /* PanelManager,  */query) {
+    function (declare, BaseWidget, on, dom,/* PanelManager,  */query) {
 
         var widgetOpen = false;
         //To create a widget, you need to derive from BaseWidget.
@@ -48,15 +48,30 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', /* "dojo/_base/json",
                     t: panel.position.top || 0
                 };
                 panel.setPosition(panel.position);
-                panel.panelManager.normalizePanel(panel);
+                panel.panelManager.normalizePanel(panel);                
 
+                let divResulConsultaUnica = dom.byId("divResulConsultaUnica");
+                let divResulConsultaMultiple = dom.byId("divResulConsultaMultiple");
                 switch (widgetResultados.data.tipoResultado) {
                     case consts.consulAvaluoMasivo:
                         console.log(consts.consulAvaluoMasivo);
                         cargarTablaResultados(widgetResultados);
+
+                        divResulConsultaUnica.style.display = "none";
+                        divResulConsultaMultiple.style.display = "display";
+
+
                         break;
                     case consts.consulAvaluoUnica:
                         console.log(consts.consulAvaluoUnica);
+
+                        divResulConsultaUnica.style.display = "display";
+                        divResulConsultaMultiple.style.display = "none";
+
+                        this.ejecutarConsultaUnica();
+
+
+
                         break;
                     default:
                         break;
@@ -82,6 +97,117 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', /* "dojo/_base/json",
                 }
 
             },
+
+
+            ejecutarConsultaUnica: ()=>{
+                console.log("ejecutarConsultaUnica  ===>");
+                const simulaRespCosUni = [
+                    {
+                        label: 'FOLIO DE MATRICULA',
+                        value: '290-1709'
+                    },
+                    {
+                        label: 'BASE',
+                        value: 'SOCIEDADES ACTIVAS'
+                    },
+                    {
+                        label: 'ESTADO AVALUO',
+                        value: 'APROBADO'
+                    },
+                    {
+                        label: 'TIPO DE BIEN',
+                        value: 'RURAL'
+                    },
+                    {
+                        label: 'CLASE DE BIEN',
+                        value: 'FINCA'
+                    },
+                    {
+                        label: 'DIRECCIÓN AVALUO',
+                        value: 'LA SOFIA HOY CARMINA'
+                    },
+                    {
+                        label: 'PROPIEDAD HORIZONTAL',
+                        value: 'NPH'
+                    },
+                    {
+                        label: 'FIRMA AVALUADORA',
+                        value: 'LONPROCOL'
+                    },
+                    {
+                        label: 'FUNCIONARIO QUE REVISA',
+                        value: 'ANDRES FELIPE FRANCO'
+                    },
+                    {
+                        label: 'ESTADO VISITA',
+                        value: 'VISITADO SI ESTADO'
+                    },
+                    {
+                        label: 'PERITO AVALUADOR',
+                        value: 'WILSON QUITOGA ORGUELA'
+                    },
+                    {
+                        label: 'NUMERO AVALUO',
+                        value: '3233'
+                    },
+                    {
+                        label: 'ESTRATO',
+                        value: '1'
+                    },
+                    {
+                        label: 'EDAD INMUEBLE',
+                        value: '60 AÑOS'
+                    },
+                    {
+                        label: 'VALOR COMERCIAL APROBADO',
+                        value: "4320786000"
+                    },
+                    {
+                        label: 'VALOR M2 TERRENO',
+                        value: '6954,644758'
+                    },
+                    {
+                        label: 'VALOR M2 CONSTRUCCIÓN',
+                        value: '505831,7168'
+                    },
+                    {
+                        label: 'AREA TERRENO',
+                        value: '321330'
+                    },
+                    {
+                        label: 'AREA M2 CONSTRUCCIÓN',
+                        value: '4124'
+                    },
+                    {
+                        label: 'FOTO',
+                        value: 'https://storage.contextoganadero.com/s3fs-public/styles/noticias_one/public/ganaderia/field_image/2017-03/finca_productiva.jpg?itok=hOnEq0TG'
+                    }
+                    
+                ]
+                var divConsultaUnica = document.querySelector("#divResulConsultaUnica");
+                let newHtml = ``;
+                simulaRespCosUni.forEach(e => {
+                    if (e.label !== "FOTO") {
+                        newHtml += `
+                            <div class="fila">
+                                    <label class="label">${e.label}</label>
+                                    <p class="fila2">${e.value}</p>
+                            </div>`
+                    } else {
+                        
+                        newHtml += `
+                        <div class="fila foto">
+                            <img class="imagen" src=${e.value}”>
+                        </div>`
+                    }
+                })
+                divConsultaUnica.innerHTML = `
+                    <div>
+                        <div></div>
+                        ${newHtml}
+                    </div>
+                `
+            }
 
 
         });

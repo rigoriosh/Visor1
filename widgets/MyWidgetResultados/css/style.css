@@ -1,0 +1,24 @@
+.fila{
+    display: flex;
+    font-size: smaller;
+    margin-top: 2px;
+}
+
+.fila2{
+    /* margin-left: 50px; */
+}
+
+.label{
+    font-weight: bold;
+    width: 50%;
+}
+
+.foto{
+    justify-content: center;
+    margin-top: 10px;
+    padding-bottom: 20px;
+}
+
+.imagen{
+    width: 70%;
+}

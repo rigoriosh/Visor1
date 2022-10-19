@@ -151,8 +151,8 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                     data:{
                         response:"test",
                         panel:{
-                            width:500,
-                            height:300,
+                            width:300,
+                            height:500,
                         }
                     },
                     respuestaTest: function(par){
@@ -258,12 +258,12 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             }
         },
 
-        _abrirWresultados: function(){
+        /* _abrirWresultados: function(){
             // this._widgetResultados = this.appConfig.getConfigElementById(widgetMyResultados);
             var widget = this.appConfig.getConfigElementById("widgets_MyWidgetResultados_Widget_41");
             var widgetId = widget.id;
             this.openWidgetById(widgetId);
-        },
+        }, */
 
         _fixDataToSendWidResultados: function(data){
             var widget = appGlobal.appConfig.getConfigElementById(widgetMyResultados);

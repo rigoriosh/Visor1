@@ -41,82 +41,100 @@
     }
 
     #unsupported-browser-message{
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        background: rgba(0,0,0,0.6);
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: rgba(0,0,0,0.6);
 
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-      }
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
 
-      .browser-message {
-        width: 700px;
-        max-width: 100%;
-        max-height: 100%;
-        overflow-y: auto;
-        background: #fff;
-        color: #333;
-        text-align: center;
-        padding: 1rem;
-      }
+    .browser-message {
+      width: 700px;
+      max-width: 100%;
+      max-height: 100%;
+      overflow-y: auto;
+      background: #fff;
+      color: #333;
+      text-align: center;
+      padding: 1rem;
+    }
 
-      .browser-button-container {
-        display: flex;
-        justify-content: flex-end;
-      }
-      .browser-button-container button{
-        cursor: pointer;
-        border: none;
-        background: transparent;
-      }
+    .browser-button-container {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .browser-button-container button{
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
 
-      .browser-button-container img{
-        width: 20px;
-        height: 20px;
-      }
+    .browser-button-container img{
+      width: 20px;
+      height: 20px;
+    }
 
-      .browser-message-title {
-        color: #002625;
-        font-weight: 300;
-        margin: 1.5rem auto;
-        font-size: 2.5rem;
-        line-height: 2rem;
-      }
+    .browser-message-title {
+      color: #002625;
+      font-weight: 300;
+      margin: 1.5rem auto;
+      font-size: 2.5rem;
+      line-height: 2rem;
+    }
 
-      .browser-message-content {
-        color: #3d6665;
-        font-weight: 400;
-        font-size: 1.1rem;
-        line-height: 2rem;
-      }
+    .browser-message-content {
+      color: #3d6665;
+      font-weight: 400;
+      font-size: 1.1rem;
+      line-height: 2rem;
+    }
 
-      #browser-logo-list {
-        display: flex;
-        align-items: center;
-        margin: 2rem 1rem 0 1rem;
-        padding: 0;
-      }
+    #browser-logo-list {
+      display: flex;
+      align-items: center;
+      margin: 2rem 1rem 0 1rem;
+      padding: 0;
+    }
 
-      .browser-logo {
-        display: inline-block;
-        margin: 0 auto;
-      }
+    .browser-logo {
+      display: inline-block;
+      margin: 0 auto;
+    }
 
+    .browser-logo img {
+      width: 3rem;
+      height: auto;
+    }
+
+    [aria-label="Consulta Avaluos"] img, [aria-label="Consulta Catastro"] img, [aria-label="Consulta Notariado y Registro"] img,
+    [aria-label="Consulta SAE"] img, [aria-label="Consulta Simple"] img, [aria-label="Consulta Avanzada"] img
+    , [aria-label="Ubicar por coordenadas"] img, [aria-label="Dibujar"] img, [aria-label="Medir"] img{
+      width: 50px !important;
+      height: 50px !important;
+      margin-top: -5px !important;
+    }
+
+    [aria-label="Añadir datos"] img{
+      width: 40px !important;
+      height: 40px !important;
+      margin-top: 0px !important;
+    }
+
+    .jimu-main-background{
+      /* background-color: #0fc135 !important; */
+    }
+
+    @media (min-width:700px) {
       .browser-logo img {
-        width: 3rem;
-        height: auto;
+        width: 4rem;
       }
-
-      @media (min-width:700px) {
-        .browser-logo img {
-          width: 4rem;
-        }
-      }
+    }
   </style>
   <link rel="stylesheet" type="text/css" href="configs/loading/loading.css" />
   <script>
