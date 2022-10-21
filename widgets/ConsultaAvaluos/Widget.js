@@ -21,7 +21,6 @@ define(["dojo/_base/declare", "jimu/BaseWidget", 'jimu/WidgetManager',
 'jimu/PanelManager', "dojo/query"],
 function (declare, BaseWidget, WidgetManager, PanelManager, query) {
 
-        var widgetMyResultados = "widgets_MyWidgetResultados_Widget_41";
     return declare([BaseWidget], {
         baseClass: "jimu-widget-ConsultaAvaluos",
         widgetConsAval:{
@@ -266,7 +265,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
         }, */
 
         _fixDataToSendWidResultados: function(data){
-            var widget = appGlobal.appConfig.getConfigElementById(widgetMyResultados);
+            var widget = appGlobal.appConfig.getConfigElementById(consts.widgetMyResultados);
             var widgetId = widget.id;
             widget.data = data;
             appGlobal.openWidgetById(widgetId);

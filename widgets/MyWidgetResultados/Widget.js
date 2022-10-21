@@ -52,12 +52,14 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
 
                 let divResulConsultaUnica = dom.byId("divResulConsultaUnica");
                 let divResulConsultaMultiple = dom.byId("divResulConsultaMultiple");
+                let divResulConsultaCatastro = dom.byId("divResulConsultaCatastro");
                 switch (widgetResultados.data.tipoResultado) {
                     case consts.consulAvaluoMasivo:
                         console.log(consts.consulAvaluoMasivo);
                         cargarTablaResultados(widgetResultados);
 
                         divResulConsultaUnica.style.display = "none";
+                        divResulConsultaCatastro.style.display = "none";
                         divResulConsultaMultiple.style.display = "display";
 
 
@@ -65,10 +67,24 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                     case consts.consulAvaluoUnica:
                         console.log(consts.consulAvaluoUnica);
 
-                        divResulConsultaUnica.style.display = "display";
+                        divResulConsultaCatastro.style.display = "none";
                         divResulConsultaMultiple.style.display = "none";
+                        divResulConsultaUnica.style.display = "display";
 
                         this.ejecutarConsultaUnica();
+
+
+
+                        break;
+                    case consts.consulCatastro:
+                        console.log(consts.consulCatastro);
+
+                        divResulConsultaUnica.style.display = "none";
+                        divResulConsultaMultiple.style.display = "none";
+                        divResulConsultaCatastro.style.display = "display";
+
+
+                        // this.ejecutarConsultaUnica();
 
 
 

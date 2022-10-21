@@ -405,6 +405,15 @@
                 "label": "Herramientas de Aplicación",
                 "widgets": [
                     {
+                        "name": "Select",
+                        "label": "Identificar",
+                        "version": "2.5",
+                        "uri": "widgets/Select/Widget",
+                        "index": 7,
+                        "id": "widgets_Select_Widget_47",
+                        "config": "configs/Select/config_Identificar.json"
+                       },
+                    {
                         "name": "Measurement",
                         "label": "Medir",
                         "version": "2.25",
@@ -526,15 +535,7 @@
             {
                 "label": "Consultas",
                 "widgets": [
-                    {
-                    "name": "Select",
-                    "label": "Identificar",
-                    "version": "2.5",
-                    "uri": "widgets/Select/Widget",
-                    "index": 7,
-                    "id": "widgets_Select_Widget_47",
-                    "config": "configs/Select/config_Identificar.json"
-                   },
+                    
                   {
                     "name": "ConsultaSimple",
                     "version": "2.5",
@@ -592,7 +593,9 @@
                   "position": {
                     "relativeTo": "map"
                   }
-                }
+                },
+                "icon":"./jimu.js/images/Consultas.png"
+
             }
         ]
     },

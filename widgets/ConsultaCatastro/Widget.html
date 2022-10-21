@@ -1,5 +1,17 @@
-<div>
-    <div>
-        <h1>Consulta Catastro R1 R2</h1>
+<div id="divConsultaCatastro" style="height: 100%;">
+    <div style="display: flex; flex-direction: column;">
+        <label class="labels" for="numeroPredial">Numero predial</label>
+        <input type="text" name="numeroPredial" id="IdnumeroPredial">
     </div>
+    <div style="display: flex; flex-direction: column;">
+        <label class="labels" for="matriculaInmobiliaria">Matrícula Inmobiliaria</label>
+        <input type="text" name="matriculaInmobiliaria" id="IdmatriculaInmobiliaria"
+        data-dojo-type="dojox/form/Uploader">
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        <label class="labels" for="chip">CHIP</label>
+        <input type="text" name="chip" id="Idchip">
+    </div>
+    <input id="btnConsultaCatastro" type="button" value="Ejecutar" style="display: block;" class="btns">
+    
 </div>

@@ -22,6 +22,7 @@
 
 .labels{
     padding-top: 5px;
+    color: black;
 }
 
 .btns{
@@ -47,3 +48,7 @@
 #idDivTabla {
     height: 10em;
   }
+
+.campoRequerido{
+    color: red;
+}
