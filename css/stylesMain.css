@@ -52,3 +52,7 @@
 .campoRequerido{
     color: red;
 }
+
+select{
+    width: 100%;
+}
