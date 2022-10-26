@@ -226,8 +226,6 @@
                 "id": "widgets_Splash_Widget_30",
                 "name": "Splash"
             },
-            
-            
             {
                 "position": {
                     "right": 20,
@@ -256,6 +254,23 @@
                 "version": "2.25",
                 "id": "widgets_ExtentNavigate_Widget_34",
                 "name": "ExtentNavigate"
+            },
+            {
+                "position": {
+                    "right": 20,
+                    "top": 310,
+                    "relativeTo": "map",
+                    "height": 520,
+                    "width": 400
+                },
+                "placeholderIndex": 1,
+                "id": "widgets_TablaContenido_Widget_35",
+                "version": "2.5",
+                "closeable": true,
+                "uri": "widgets/TablaContenido/Widget",
+                "name": "TablaContenido",
+                "label": "Tabla de Contenido",
+                "openAtStart": true
             }
         ],
         "panel": {
@@ -530,7 +545,8 @@
                         "relativeTo": "map"
                     }
                 },
-                "groupPopupTitle": "Configure"
+                "groupPopupTitle": "Configure",
+                "icon":"./jimu.js/images/UnionGeometria.png"
             },
             {
                 "label": "Consultas",
@@ -745,6 +761,13 @@
                         "top": 20
                     },
                     "version": "2.25"
+                },
+                {
+                    "uri": "widgets/TablaContenido/Widget",
+                    "position": {
+                        "left": 5,
+                        "top": 125
+                    }
                 }
             ]
         },
@@ -779,6 +802,12 @@
         "widgetManifestsMerged": true
     },
     "isWebTier": false,
+    "httpProxy": {
+        "useProxy": true,
+        "alwaysUseProxy": false,
+        "url": "/proxy/proxy.ashx",
+        "rules": []
+    },
     "dataSource": {
         "dataSources": {},
         "settings": {}
