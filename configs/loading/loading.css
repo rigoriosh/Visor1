@@ -1,6 +1,6 @@
 #main-loading{
-  background-color: #508dca;
-  position: relative;
+  background-image: url('images/backGrSAE.png');
+  background-size: 100% 100%;
 }
 
 #main-loading #app-loading{

@@ -806,7 +806,22 @@
         "useProxy": true,
         "alwaysUseProxy": false,
         "url": "/proxy/proxy.ashx",
-        "rules": []
+        "rules": [
+            
+            {
+                "urlPrefix":"http://190.255.42.26:6080/arcgis/rest/services/QUINDIO_III/CartografiaBasica/MapServer/75?f=json",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix":"http://190.255.42.26:6080/arcgis/rest/services/QUINDIO_III/Industria_Y_Comercio/MapServer/0",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix":"http://190.255.42.26:6080/arcgis/rest/services/QUINDIO_III/OrdenamientoTerritorial/MapServer/10",
+                "proxyUrl":"/proxy/proxy.ashx"
+            }
+            
+        ]
     },
     "dataSource": {
         "dataSources": {},

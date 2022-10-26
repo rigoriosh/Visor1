@@ -115,27 +115,39 @@
     [aria-label="Consulta Avaluos"] img, [aria-label="Consulta Catastro"] img, [aria-label="Consulta Notariado y Registro"] img,
     [aria-label="Consulta SAE"] img, [aria-label="Consulta Simple"] img, [aria-label="Consulta Avanzada"] img
     , [aria-label="Ubicar por coordenadas"] img, [aria-label="Dibujar"] img, [aria-label="Medir"] img{
-      width: 37px !important;
-      height: 37px !important;
-      margin: 2px !important;
+      width: 42px !important;
+      height: 42px !important;
+      margin: -1px !important;
     }
 
     
     [aria-label="Añadir datos"] img, [aria-label="Consultas"] img, [aria-label="Lista de Capas"] img,
     [aria-label="Leyenda"] img, [aria-label="Salida Gráfica"] img, [aria-label="Herramientas de Aplicación"] img{
-      width: 36px !important;
-      height: 36px !important;
-      margin: 1px !important;
+      width: 42px !important;
+      height: 42px !important;
+      margin: -1px !important;
     }
 
     [title="Resultados"] img, [title="Mapas base"] img, [title="Tabla de Contenido"] img{
-      width: 37px !important;
-      height: 37px !important;
-      margin: 2px !important;
+      width: 42px !important;
+      height: 42px !important;
+      margin: -1px !important;
     }
 
-    [data-dojo-attach-point="titleNode"] .widget-icon .icon{
+    /* [data-dojo-attach-point="titleNode"] .widget-icon .icon{
       margin-top: -4px !important;
+    } */
+
+    .jimu-widget-header .jimu-title{
+      border-radius: 12%;
+    }
+
+    [data-dojo-attach-point="titleNode"]{
+      background-color: #004884 !important;
+    }
+
+    .claro .jimu-widget-header{
+      background-color: #004884 !important;
     }
 
     .jimu-main-background{
@@ -145,8 +157,13 @@
     .widget-icon .icon{
       width: 20px !important;
       height: 20px !important;
-      margin: -2px !important;
+      /* margin: -2px !important; */
       margin-left: 1px !important;
+      margin-top: -14px !important;
+    }
+
+    .claro .jimu-anchorbar-controller .docker{
+        background-color: rgb(51 51 51 / 9%)!important;
     }
 
     @media (min-width:700px) {
