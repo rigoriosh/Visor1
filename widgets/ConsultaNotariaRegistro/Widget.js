@@ -44,6 +44,12 @@ function (declare, BaseWidget, query) {
             });
 
         },
+        onOpen: function () {
+            var panel = this.getPanel();
+            console.log(panel);
+            ajustarTamanioWidget(panel, panel.position.width, 300)
+
+        },
         _fixDataToSendWidResultados: function(data){
             var widget = appGlobal.appConfig.getConfigElementById(consts.widgetMyResultados);
             var widgetId = widget.id;

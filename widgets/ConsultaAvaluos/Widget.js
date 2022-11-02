@@ -36,7 +36,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             tw = this;
             appGlobal = this;
             // this.mapIdNode.innerHTML = 'map id:' + this.map.id;
-            console.log('startup');6
+            console.log('startup');
             
             /*  */
             /* query("#xxx").on("change", async function (evt) {
@@ -161,12 +161,23 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                 
             });
             
+            query("#folioMatricula").on("click", async function (evt) {
+                console.log(evt);
+                
+            });
+            query("#ingresarGeograficas").on("click", async function (evt) {
+                console.log(evt);
+                
+            });
 
         },
         
 
         onOpen: function() {
             console.log('onOpen');
+            var panel = this.getPanel();
+            console.log(panel);
+            ajustarTamanioWidget(panel, panel.position.width, 400)
         },
 
         bindEvents: function() {
@@ -182,6 +193,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             console.log('onClose');
             divConsultaMasiva.style.display = 'none'
             divConsultaUnica.style.display = 'none';
+            document.getElementById('selectConsulta').value = 0
         },
 
         onchange: function(){

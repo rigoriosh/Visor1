@@ -51,11 +51,17 @@ function (declare, BaseWidget, query) {
             });
 
         },
+        onOpen: function () {
+            var panel = this.getPanel();
+            ajustarTamanioWidget(panel, panel.position.width, 338)
+
+        },
         _fixDataToSendWidResultados: function(data){
             var widget = appGlobal.appConfig.getConfigElementById(consts.widgetMyResultados);
             var widgetId = widget.id;
             widget.data = data;
             appGlobal.openWidgetById(widgetId);
+            ajustarTamanioWidget(panel, width, height)
         },
     })
 });

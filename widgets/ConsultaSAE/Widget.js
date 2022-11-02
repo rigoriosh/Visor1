@@ -22,6 +22,12 @@ function (declare, BaseWidget, query) {
           fmi: false,
           noMatrix:false,
         },
+        onOpen: function () {
+          var panel = this.getPanel();
+          console.log(panel);
+          ajustarTamanioWidget(panel, panel.position.width, 400)
+
+        },
         startup: function() {
 
           console.log(111111);

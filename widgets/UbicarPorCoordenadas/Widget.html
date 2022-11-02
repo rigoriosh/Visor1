@@ -1,65 +1,61 @@
-<div id="ubCoor" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Ubicar por Coordenadas', closable:false, open:false">
+<div id="ubCoor" class="container containerCIAF" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Ubicar por Coordenadas', closable:false, open:false">
+                          
+    <h6>Ingrese las coordenadas a ubicar en el mapa</h6>
+    <br>
+    <form class="form-check ml-3rem" >
+        <input class="form-check-input" type="radio" name="tipo_attach" onclick="toggle(this)" value="ingresarPlanas">Coordenadas Planas<br>
+        <br>
+        <input class="form-check-input"  type="radio" name="tipo_attach" onclick="toggle(this)" value="ingresarGeograficas">Coordenadas Geográficas<br>
+        <br>
+    </form>
+    <div id="planas" style="display: none; width: 100%;">
+        <div class="fila titulo">
+            <label style="width: 40%;">Coordenada X:&nbsp;&nbsp;&nbsp;</label>
+            <input id="coorX" class="form-control" type="number" class="Latitud" value="1333000.0" />
 
-                        <dl>
-                            <dt>
-                                <label>Ingrese las coordenadas a ubicar en el mapa</label></dt>
-                        </dl>
-                        <br><br>
-                        <form>
-                            <input type="radio" name="tipo_attach" onclick="toggle(this)" value="ingresarPlanas">Coordenadas Planas<br>
-                            <br>
-                            <input type="radio" name="tipo_attach" onclick="toggle(this)" value="ingresarGeograficas">Coordenadas Geográficas<br>
-                            <br>
-                        </form>
-                        <div id="planas" style="display: none">
-                            <table>
-                                <tr>
-                                    <td>
-                                        <label>Coordenada X:&nbsp;&nbsp;&nbsp;</label>
-                                    </td>
-                                    <td>
-                                        <input id="coorX" type="number" class="Latitud" value="1144248" />
-                                    </td>                                    
-                                </tr>                                
-                                <tr>
-                                    <td>
-                                        <label>Coordenada Y:&nbsp;&nbsp;&nbsp;</label>
-                                    </td>
-                                    <td>
-                                        <input id="coorY" type="number" class="Longitud" value="989255" />
-                                    </td>
-                                </tr>
-                            </table>
-                            <br>
-                        </div>
-                        <div id="Geog" style="display: none">
-                            <table>
-                                <tr>
-                                    <th>Latitud</th>
-                                </tr>
-                                <tr>
-                                    <td>°&nbsp;<input min="0" max="50" id="grados" type="number" value="4" />&nbsp;&nbsp;&nbsp;</td>
-
-                                    <td>'&nbsp;<input min="0" max="50" id="minutos" type="number" value="29" />&nbsp;&nbsp;&nbsp;</td>
-
-                                    <td>"&nbsp;<input min="0" max="50" id="Segundos" type="number" value="52" /></td>
-                                </tr>
-
-                                <tr>
-                                    <th>Longitud</th>
-                                </tr>
-                                <tr>
-                                    <td>°&nbsp;<input min="0" max="50" id="grados1" type="number" value="-75" />&nbsp;&nbsp;&nbsp;</td>
-
-                                    <td>'&nbsp;<input min="0" max="50" id="minutos1" type="number" value="46" />&nbsp;&nbsp;&nbsp;</td>
-
-                                    <td>"&nbsp;<input min="0" max="50" id="Segundos1" type="number" value="40" /></td>
-                                </tr>
-                            </table>
-                            <br>
-                        </div>
-                        <div id="botonBorrar" style="display: none">
-                            <button type="button" class="toolUbicarCoor" id="ubicar">Ubicar</button>
-                            <button type="button" id="Borrar">Borrar</button>
-                        </div>
-                    </div>
+        </div>
+        <div class="fila titulo">
+            <label style="width: 40%;">Coordenada Y:&nbsp;&nbsp;&nbsp;</label>
+            <input id="coorY" class="form-control" type="number" class="Longitud" value="999413.1" />
+            
+        </div>
+    </div>
+    <div id="Geog" style="display: none" >
+        <p class="titulo" style="padding: 0;">Latitud</p>
+        <div class="input-group ">
+            <div class="mySpan1">
+                <p class="input-group-text" id="basic-grados">°</p>
+            </div>
+            <input type="number" data-toggle="tooltip" id="grados" title="Grados" data-placement="top" value="4" class="form-control br-ml" placeholder="Grados" aria-label="grados" aria-describedby="basic-grados">
+            <div class="mySpan1">
+                <p class="input-group-text" id="basic-minutos">'</p>
+            </div>
+            <input type="number" data-toggle="tooltip" id="minutos" title="Minutos" data-placement="top" value="40" class="form-control br-ml" placeholder="Minutos" aria-label="minutos" aria-describedby="basic-minutos">
+            <div class="mySpan1">
+                <p class="input-group-text" id="basic-segundos">''</p>
+            </div>
+            <input type="number" class="form-control br-ml" data-toggle="tooltip" id="Segundos" title="Segundos" data-placement="top" value="40" placeholder="Segundos" aria-label="segundos" aria-describedby="basic-segundos">
+        </div>
+        
+        <p class="titulo" style="padding: 0; margin-top: 10px !important;">Longitud</p>
+        <div class="input-group " style="margin-top: 10px;">
+            <div class="mySpan1">
+                <p class="input-group-text" id="basic-grados">°</p>
+            </div>
+            <input type="number" class="form-control br-ml" id="grados1" data-toggle="tooltip" title="Grados" value="-74" animation="true" data-placement="top" placeholder="Grados" aria-label="grados" aria-describedby="basic-grados">
+            <div class="mySpan1">
+                <p class="input-group-text" id="basic-minutos">'</p>
+            </div>
+            <input type="number" class="form-control br-ml" id="minutos1" data-toggle="tooltip" title="Minutos" value="02" animation="true" data-placement="top" placeholder="Minutos" aria-label="minutos" aria-describedby="basic-minutos">
+            <div class="mySpan1">
+                <p class="input-group-text" id="basic-segundos">''</p>
+            </div>
+            <input type="number" class="form-control br-ml" id="Segundos1" data-toggle="tooltip" title="Segundos" value="58" animation="true" data-placement="top" placeholder="Segundos" aria-label="segundos" aria-describedby="basic-segundos">
+        </div>
+        
+    </div>
+    <div id="botonBorrar" style="display: none; width: 100%;" class="fila">
+        <button id="ubicar" type="button" class="btn btn-outline-success btn-sm" >Ubicar</button>
+        <button id="Borrar" type="button" class="btn btn-outline-success btn-sm" >Borrar</button>
+    </div>
+</div>

@@ -59,7 +59,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
 
       postCreate: function() {
         this.inherited(arguments);
-        console.log('postCreate');
+        //console.log('postCreate');
 
         map = this.map;
       },
@@ -67,13 +67,13 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
       startup: function() {
        this.inherited(arguments);
        //this.mapIdNode.innerHTML = 'map id:' + this.map.id;
-       console.log('startup');
+       //console.log('startup');
 
           //
 
 
 
-
+/* 
                        var panel = this.getPanel();
                        panel.position.width = 530;
                        panel.position.height = 400;
@@ -84,12 +84,12 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                            t: panel.position.top || 0
                        };
                        panel.setPosition(panel.position);
-                       panel.panelManager.normalizePanel(panel);
+                       panel.panelManager.normalizePanel(panel); */
 
 
 
           //
-       query(".toolUbicarCoor").on("click", function (evt) {
+       query("#ubicar").on("click", function (evt) {
           var spatialRef = new SpatialReference({ wkid: 4326 });
           var spatialRef3115 = new SpatialReference(3115);          
           if (mostrarCoorPlanas) {
@@ -137,36 +137,38 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
       },
 
       onOpen: function(){
-        console.log('onOpen');
+        //console.log('onOpen');
+        var panel = this.getPanel();
+        ajustarTamanioWidget(panel, 530, 400)
       },
 
       onClose: function(){
-        console.log('onClose');
+        //console.log('onClose');
       },
 
       onMinimize: function(){
-        console.log('onMinimize');
+        //console.log('onMinimize');
       },
 
       onMaximize: function(){
-        console.log('onMaximize');
+        //console.log('onMaximize');
       },
 
       onSignIn: function(credential){
         /* jshint unused:false*/
-        console.log('onSignIn');
+        //console.log('onSignIn');
       },
 
       onSignOut: function(){
-        console.log('onSignOut');
+        //console.log('onSignOut');
       },
 
       onPositionChange: function(){
-        console.log('onPositionChange');
+        //console.log('onPositionChange');
       },
 
       resize: function(){
-        console.log('resize');
+        //console.log('resize');
       }
 
      // methods to communication between widgets:
@@ -198,9 +200,9 @@ function colocaTextoPunto(geometries, attr){
   var labelPoint = geometries;
   var font = new Font("20px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER);
   if (attr.Xcoord != undefined) {
-    var textSymbol = new TextSymbol("X: " + attr.Xcoord + ", Y: " + attr.Ycoord, font, new Color([206, 9, 18]));
+    var textSymbol = new TextSymbol("X: " + attr.Xcoord + ", Y: " + attr.Ycoord, font, new Color([0, 72, 132, 1]));
   }else{
-    var textSymbol = new TextSymbol("Latitud: " + attr.Latitud + ", Longitud: " + attr.Longitud, font, new Color([206, 9, 18]));
+    var textSymbol = new TextSymbol("Latitud: " + attr.Latitud + ", Longitud: " + attr.Longitud, font, new Color([0, 72, 132, 1]));
   }    
   var labelPointGraphic = new Graphic(labelPoint, textSymbol);
   map.graphics.add(labelPointGraphic);  
@@ -231,7 +233,7 @@ function ajustarExtend(response) {
 }
 
 function requestFailed(error, io) {
-  console.log(error);    
+  //console.log(error);    
 }
 
 
@@ -244,12 +246,12 @@ function toggle(elemento) {
   if (elemento.value == "ingresarPlanas") {
       document.getElementById("planas").style.display = "block";
       document.getElementById("Geog").style.display = "none";
-      document.getElementById("botonBorrar").style.display = "block";
+      document.getElementById("botonBorrar").style.display = "flex";
       mostrarCoorPlanas = true;
   } else if (elemento.value == "ingresarGeograficas") {
       document.getElementById("planas").style.display = "none";
       document.getElementById("Geog").style.display = "block";
-      document.getElementById("botonBorrar").style.display = "block";
+      document.getElementById("botonBorrar").style.display = "flex";
       mostrarCoorPlanas = false;
   }
 }

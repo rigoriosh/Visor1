@@ -6,7 +6,7 @@
   "version": "2.25",
   "wabVersion": "2.25",
   "author": "CIAF",
-  "description": "This is the consulta de datos al sistema de administración de activos de la SAE widget",
+  "description": "This is the model widget",
   "copyright": "",
   "license": "http://www.apache.org/licenses/LICENSE-2.0",
   "properties": {

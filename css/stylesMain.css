@@ -1,3 +1,13 @@
+:root{
+    --main-bg-color-1: #fb6b0e;
+    --blue1: #004884 ;
+    --warning: red;
+}
+
+p{
+    margin: 0 !important;
+}
+
 .loading {
     display: none;
     justify-content: center;
@@ -7,6 +17,7 @@
     background-color: rgba(247, 241, 241, 0.53);
     width: 100%;
     height: 100%;
+    font-size: initial;
 }
 
 .titulo{
@@ -28,7 +39,7 @@
 .btns{
     align-self: center;
     border-style: double;
-    background-color: #fb6b0e;
+    background-color: var(--main-bg-color-1);
     border-color: white;
     cursor: pointer;
     color: white;
@@ -50,9 +61,79 @@
   }
 
 .campoRequerido{
-    color: red;
+    color: var(--warning);
 }
 
 select{
     width: 100%;
+}
+
+.icon-item-background0{
+    background-color: var(--main-bg-color-1) !important;
+}
+
+#mainIndicadores{
+    height: 400px;
+}
+
+.ml-3rem{
+    margin-left: 3rem !important;
+}
+
+.bg-g{
+    background-color: gray;
+}
+
+.mySpan1{
+    display: flex;
+    align-self: center;
+    background-color: var(--blue1);
+    height: 100%;
+    justify-content: center;
+    width: 5%;
+    font-size: large;
+    color: antiquewhite;
+    margin-left: 10px;
+    border-radius: 15px;
+}
+
+.br-ml{
+    border-radius: 15px;
+    margin-left: 2px;
+}
+
+.btn-outline-success:hover{
+    background-color: var(--blue1) !important;
+    border-color: var(--blue1) !important;
+    color: white !important;
+}
+
+.btn-outline-success {
+    color: var(--blue1) !important;
+    border-color: var(--blue1) !important;
+}
+
+.fila{
+    align-items: center !important;
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+    justify-content: space-around;
+    margin-top: 0px;
+    /* margin-top: 20px; */
+    padding: 10px;
+    text-align: center;
+}
+
+.input-group .form-control:not(:first-child):not(:last-child), .input-group-addon:not(:first-child):not(:last-child), .input-group-btn:not(:first-child):not(:last-child) {
+    border-radius: 10px !important;
+}
+.input-group .form-control:not(:first-child), .input-group-addon:not(:first-child), .input-group-btn:not(:first-child)>.btn, .input-group-btn:not(:first-child)>.btn-group>.btn, .input-group-btn:not(:first-child)>.dropdown-toggle, .input-group-btn:not(:last-child)>.btn-group:not(:first-child)>.btn, .input-group-btn:not(:last-child)>.btn:not(:first-child) {
+    border-radius: 10px !important;
+}
+
+.containerCIAF{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

@@ -134,11 +134,11 @@ function ajustarTamanioWidget(panel, width, height) {
     panel._originalBox = {
         w: panel.position.width,
         h: panel.position.height,
-        l: panel.position.left,
-        t: panel.position.top
+        l: panel.position.left || 0,
+        t: panel.position.top || 0
     };
     panel.setPosition(panel.position);
-    // panel.panelManager.normalizePanel(panel);
+    panel.panelManager.normalizePanel(panel);
 
 }
 
@@ -187,3 +187,47 @@ function cerrarWidgetResultados(wiget) {
         }
       )
 };
+
+function renderGrafico(data, div, width, height) {
+    // var chart = echarts.init(dom, 'purple-passion');
+
+    var myChart = echarts.init(document.getElementById(div),null,{
+        width,
+        height,
+        pointerSize: 500
+      });
+
+    window.onresize = function() {
+        myChart.resize();
+    };
+
+    // Display the chart using the configuration items and data just specified.
+    myChart.setOption(data);
+
+    myChart.on('click', function(params) {
+        // Print name in console
+        console.log(params.name);
+    });
+
+    let currentIndex = -1;
+          
+    setInterval(function() {
+        var dataLen = option.series[0].data.length;
+        myChart.dispatchAction({
+            type: 'downplay',
+            seriesIndex: 0,
+            dataIndex: currentIndex
+        });
+        currentIndex = (currentIndex + 1) % dataLen;
+        myChart.dispatchAction({
+            type: 'highlight',
+            seriesIndex: 0,
+            dataIndex: currentIndex
+        });
+        myChart.dispatchAction({
+            type: 'showTip',
+            seriesIndex: 0,
+            dataIndex: currentIndex
+        });
+    }, 3000);
+}

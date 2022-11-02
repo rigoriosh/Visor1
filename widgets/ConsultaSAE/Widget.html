@@ -1,26 +1,35 @@
 <div id="divConsultaSAE" style="height: 100%;">
 
+    <div class="form-group">
         <label class="labels" for="Departamento">Departamento</label>
-        <select name="Departamento " id="sDepartSAE"></select>
-        <div id="divMunicipioSAE" style="display: none;">
-            <label class="labels" for="Municipio">Municipio</label>
-            <select name="Municipio " id="sMunicipioSAE" data-dojo-type="dijit/form/Select"></select>
+        <select name="Departamento " id="sDepartSAE" class="form-control form-control-sm"></select>
+    </div>
+    <div class="form-group" id="divMunicipioSAE" style="display: none;">
+        <label class="labels" for="Municipio">Municipio</label>
+        <select name="Municipio " id="sMunicipioSAE" class="form-control form-control-sm"></select>
+    </div>
+    <div class="form-group" id="formFinal" style="display: none;">
+        <div style="display: flex; flex-direction: column; margin-top: 10px;" class="input-group">
+            <label class="labels" for="FMI_SAE">Ficha matricula inmobiliaria </label>
+            <input type="text" data-toggle="tooltip" id="IdFMI_SAE" title="Ficha matrícula inmobiliaria" 
+                data-placement="top" class="form-control" placeholder="Ficha matrícula inmobiliaria" 
+                aria-label="IdFMI_SAE" aria-describedby="IdFMI_SAE" style="width: 100%;">
+            <!-- <input type="text" name="FMI_SAE" id="IdFMI_SAE"> -->
+            <p id="FMI_SAE_validate" class="campoRequerido" style="display: none;">Campo requerido</p>
         </div>
-        <div id="formFinal" style="display: none;">
-            <div style="display: flex; flex-direction: column;">
-                <label class="labels" for="FMI_SAE">Ficha matricula inmobiliaria </label>
-                <input type="text" name="FMI_SAE" id="IdFMI_SAE">
-                <p id="FMI_SAE_validate" class="campoRequerido" style="display: none;">Campo requerido</p>
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label class="labels " for="NoMatrix">No_MATRIX</label>
-                <input type="text" name="NoMatrix" id="IdNoMatrix">
-                <p id="NoMatrix_validate" class="campoRequerido" style="display: none;">Campo requerido</p>
-            </div>
-            <div id="divBtnConsultaMasiva" style="display: none; flex-direction: row; justify-content: center;">
-                <input id="btnConsultaMasiva" type="button" value="Ejecutar" style="display: block;" class="btns">
-            </div>
+        <div style="display: flex; flex-direction: column; margin-top: 10px;" class="input-group">
+            <label class="labels " for="NoMatrix">No_MATRIX</label>
+            <input type="text" data-toggle="tooltip" id="IdNoMatrix" title="No Matrix" data-placement="top"
+             class="form-control" placeholder="No Matrix" aria-label="IdNoMatrix" aria-describedby="IdNoMatrix"
+             style="width: 100%;">
+            <!-- <input type="text" name="NoMatrix" id="IdNoMatrix"> -->
+            <p id="NoMatrix_validate" class="campoRequerido" style="display: none;">Campo requerido</p>
         </div>
+        <div id="divBtnConsultaMasiva" style="display: none; flex-direction: row; margin-top: 10px;">
+            <input id="btnConsultaMasiva" type="button" value="Ejecutar" style="display: block;" 
+            class="btn btn-outline-success btn-sm">
+        </div>
+    </div>
 <!-- 
     <div id="divConsultaUnica" style="display: none; flex-direction: column;">
         <p class="titulo">Consulta única</p>
@@ -43,7 +52,7 @@
     </div> -->
     
     <div id="divLoadingSAE" class="loading">
-        <h1>Cargando info...</h1>
+        <p>Cargando info...</p>
     </div>
 
     <!-- <div>This is configurable. => ${config.configText}</div>

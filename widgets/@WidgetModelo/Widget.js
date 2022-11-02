@@ -7,7 +7,7 @@ function (declare, BaseWidget, query) {
 
     
      return declare([BaseWidget], {
-        baseClass: "jimu-widget-WidgetDemo",
+        baseClass: "jimu-widget-WidgetModelo",
         
         startup: function() {
 

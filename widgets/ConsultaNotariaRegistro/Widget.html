@@ -1,13 +1,25 @@
 <div id="divConsultaNotariadoRegistro" style="height: 100%;">
-    <div style="display: flex; flex-direction: column;">
+    <!-- <div style="display: flex; flex-direction: column;">
         <label class="labels" for="FMI">Ficha matricula inmobiliaria FMI</label>
-        <input type="text" name="FMI" id="IdFMI">
+        <input class="form-control" type="text" name="FMI" id="IdFMI">
     </div>
     <div style="display: flex; flex-direction: column;">
         <label class="labels" for="numeroPredial">Numero Predial</label>
-        <input type="text" name="numeroPredial" id="IdnumeroPredial"
+        <input class="form-control" type="text" name="numeroPredial" id="IdnumeroPredial"
         data-dojo-type="dojox/form/Uploader">
+    </div> -->
+    <p class="titulo">Seleccione una opción</p>
+    <form class="form-check ml-3rem" >
+        <input class="form-check-input" type="radio" name="tipo_attach" id="IdFMI">Ficha matricula inmobiliaria FMI<br>
+        <br>
+        <input class="form-check-input"  type="radio" name="tipo_attach" id="IdnumeroPredial">Número predial<br>
+        <br>
+    </form>
+    <label class="labels" for="numero">Número</label>
+    <div class="input-group ">
+        <input type="text" name="numero" id="numero" data-toggle="tooltip" title="Número" data-placement="top" class="form-control ">
     </div>
-    <input id="btnConsultaNotariadoRegistro" type="button" value="Ejecutar" style="display: block;" class="btns">
+
+    <input id="btnConsultaNotariadoRegistro" type="button" value="Ejecutar" class="btn btn-outline-success btn-sm mt-3">
     
 </div>
