@@ -1,4 +1,3 @@
-
 <div id="consultaAvanzada">
 	<!--<div id="info" style="padding:5px; margin:5px; background-color:#eee;">
 	<br>
@@ -6,61 +5,65 @@
 	<br>-->
 	<div id="loading">
 	</div>
-    <div style="font-weight: bold; text-align: left; width:100%"> Servicios: &nbsp;
-      <select id="selectServiciosCA" style="width:100%" onchange="if (this.selectedIndex != undefined) obtenerSelects('servicios')">
-      </select>
+	<div class="form-group">
+		<label class="labels" for="selectConsulta">Servicios:</label>
+		<select id="selectServiciosCA" class="form-control form-control-sm"
+			onchange="if (this.selectedIndex != undefined) obtenerSelects('servicios')">
+		</select>
+
+		<div id="divGrupos">
+			<label class="labels" for="selectConsulta">Grupos:</label>
+			<select id="selectGruposCA" class="form-control form-control-sm"
+				onchange="if (this.selectedIndex != undefined) obtenerSelects('grupos')">
+			</select>
+		</div>
+
+
+		<label class="labels" for="selectConsulta">Capas:</label>
+		<select id="selectCapasCA" class="form-control form-control-sm"
+			onchange="if (this.selectedIndex != undefined) obtenerSelects('capas')">
+		</select>
+
+		<label class="labels" for="selectConsulta">Campos:</label>
+		<select id="selectCamposCA" class="form-control form-control-sm" size="4"
+			onchange="if (this.selectedIndex != undefined) obtenerSelects('campos')">
+		</select>
+
+		<label class="labels" for="selectConsulta">Valores:</label>
+		<select id="selectValoresCA" class="form-control form-control-sm" size="4"
+			onchange="if (this.selectedIndex != undefined) obtenerSelects('valores')">
+		</select>
 	</div>
-	<br>
-    <div id="divGrupos" style="font-weight: bold; text-align: left; width:100%">Grupos: &nbsp;
-      <select id="selectGruposCA" style="width:100%" onchange="if (this.selectedIndex != undefined) obtenerSelects('grupos')">
-      </select>
+	
+	<div style="font-weight: bold; text-align: center; margin-bottom: 5px;">Condición de Búsqueda:
+		<textarea id="textCondicionBusqueda" class="form-control form-control-sm" rows="2" cols="23"></textarea>
+		<button id="btnBorrarCondicionBusqueda" type="button" onclick="borrarTextAreaConsulta()" class="btnSmall">Borrar</button>
+		
 	</div>
-	<br>
-    <div style="font-weight: bold; text-align: left; width:100%">Capas: &nbsp;
-      <select id="selectCapasCA" style="width:100%" onchange="if (this.selectedIndex != undefined) obtenerSelects('capas')">
-      </select>
+	<div style="text-align: center;">
+		
+			<button id="btnLike" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('LIKE')">LIKE</button>
+			<button id="btnAnd" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('AND')">AND</button>
+			<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('OR')">OR</button>
+			<button id="btnNot" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('NOT')">NOT</button>
+			<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('IS')">IS</button>
+			<button id="btnNull" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('NULL')">NULL</button>
+		
 	</div>
-	<br>
-    <div style="font-weight: bold; text-align: left; width:100%">Campos: &nbsp;
-      <select id="selectCamposCA" style="width:100%" size="5" onchange="if (this.selectedIndex != undefined) obtenerSelects('campos')">
-      </select>
-  </div>
-  
-    <div style="font-weight: bold; text-align: left; width:100%"> Valores: &nbsp;
-      <select id="selectValoresCA" style="width:100%" size="5" onchange="if (this.selectedIndex != undefined) obtenerSelects('valores')">
-      </select>
+	<div style="text-align: center;">
+			<button style="width:3em" type="button" value="igual" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('=')">=</button>
+			<button style="width:3em" type="button" value="diferente" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('<>')"><></button>
+			<button style="width:3em" type="button" value="mayor" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('>')">></button>
+			<button style="width:3em" type="button" value="menor" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('<')"> < </button>
+			<button style="width:3em" type="button" value="mayorigual" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('>=')"> >= </button>
+			<button style="width:3em" type="button" value="menorigual" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('<=')"> <= </button>
 	</div>
-	<div style="font-weight: bold; text-align: left;">Condición de Búsqueda:
-      	<textarea id="textCondicionBusqueda" style="width:100%; resize:none;" >
-		</textarea>
-       	<center><button id="btnBorrarCondicionBusqueda" type="button" onclick="borrarTextAreaConsulta()">Borrar</button></center>
+	<div>
+
+	<button id="btnEjecutarConsulta" type="button" class="btn btn-outline-success btn-sm mt-3" onclick="ejecutarConsulta()">Ejecutar</button>
+
+		
 	</div>
-	<div >
-		<center>
-			<button id="btnLike" style="width:3em" type="button" onclick="obtenerBotonesConsulta('LIKE')">LIKE</button>
-			<button id="btnAnd" style="width:3em" type="button" onclick="obtenerBotonesConsulta('AND')">AND</button>
-			<button id="btnOr" style="width:3em" type="button" onclick="obtenerBotonesConsulta('OR')">OR</button>
-			<button id="btnNot" style="width:3em" type="button" onclick="obtenerBotonesConsulta('NOT')">NOT</button>
-			<button id="btnIs" style="width:3em" type="button" onclick="obtenerBotonesConsulta('IS')">IS</button>
-			<button id="btnNull" style="width:3em" type="button" onclick="obtenerBotonesConsulta('NULL')">NULL</button>
-		</center>
-	</div>
-  	<div >
-		<center>
-			<button style="width:3em" type="button" value ="igual" onclick="obtenerBotonesConsulta('=')">=</button>
-			<button style="width:3em" type="button" value ="diferente" onclick="obtenerBotonesConsulta('<>')"><></button>
-			<button style="width:3em" type="button" value ="mayor" onclick="obtenerBotonesConsulta('>')">></button>
-			<button style="width:3em" type="button" value ="menor" onclick="obtenerBotonesConsulta('<')"><</button>
-			<button style="width:3em" type="button" value ="mayorigual" onclick="obtenerBotonesConsulta('>=')">>=</button>
-			<button style="width:3em" type="button" value ="menorigual" onclick="obtenerBotonesConsulta('<=')"><=</button>
-		</center>
-	</div>
-  	<div >
-		<br>
-    	<center>
-			<button id="btnEjecutarConsulta" style="width:15em" type="button" onclick="ejecutarConsulta()">Ejecutar Consulta</button>
-        </center>
-  	</div>
-	<br>
-	<br>
+	
+	
 </div>

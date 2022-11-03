@@ -1,134 +1,190 @@
-
-
-
 <div>
-<div class="loader">
- <span id="status"></span>
-</div>
-   <!--  <div>This is my widget.</div>
+	<div class="loader">
+		<span id="status"></span>
+	</div>
+	<!--  <div>This is my widget.</div>
 	 <div>This is configurable.[${config.configText}]</div>
 	<div data-dojo-attach-point="mapIdNode"></div>-->
 
-	
-	
-    <table>
-           <tr>
-			  <td>
-				  <p><strong> Servicios :</strong></p>
-			  </td>
-			  <td> 
-				  <select id = "selServicios" style="width: 200px;" onchange="if(this.selectedIndex >=0) configureDropDownLists(this)">
-				   <option value="0">Seleccione...</option>
-				   <option value = "http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/CartografiaBasica1_Nuevo/MapServer">CARTOGRAFÍA BÁSICA</option>
-				   <option value = "http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Ambiental_T1_Nuevo1/MapServer">AMBIENTAL</option>
-				   <option value = "http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Educacion_T/MapServer">EDUCACIÓN</option>
-				   <option value = "http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Salud_T/MapServer">SALUD</option>
-				   <option value = "http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/CulturaTurismo_T/MapServer">CULTURA Y TURISMO</option>
-				   <option value = "http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/OrdenamientoTerritorial_T/MapServer">ORDENAMIENTO TERRITORIAL</option>
-				   <option value = "http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/IndustriaComercio/MapServer">INDUSTRIA Y COMERCIO</option>
-				   <option value = "http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/RiesgoConsulta/MapServer">GESTIÓN DEL RIESGO</option>
-				  </select>
-			  </td>
-		  </tr>
-		  <tr>
-			  <td><br /></td>
-		  </tr>
-		   <tr>
-			  <td>
-                  <p><strong> 
-				  <label id="grupoLabel">Grupos : </label> </strong></p>
-			  </td>
-			  <td> 
-			     
-				  <select id = "selGrupos" style="width: 200px;" onchange="configureDropDownListCapas(this, document.getElementById('selCapas'), document.getElementById('selServicios'))">
-				   <option value="">Seleccione...</option>
-				   
-				  </select>
-			  </td>
-		  </tr>
-		  
-		  <tr>
-			  <td><br /></td>
-		  </tr>
-		   <tr>
-			  <td>
-				 <p><strong> Capas : </strong></p>
-			  </td>
-			  <td> 
-				  <select id = "selCapas" style="width: 200px;"  onchange="configureDropDownListCampos(this)">
-				   <option value="">Seleccione...</option>
-				   
-				  </select>
-			  </td>
-		  </tr>
-		  <tr>
-			  <td><br /></td>
-		  </tr>
-		  <tr>
-			  <td>
-				   <p><strong>Campos : </strong></p>
-			  </td>
-			  <td>
-			    <select multiple  id="txtCampos" size="3" style="width: 200px;" onchange="configureDropDownListIngresarCampos(this)"></select>
 
-			  </td>
-			  
-		  </tr>
-	      <tr>
-			  <td><br /></td>
-		  </tr>
-	
-		  <tr>
-			  <td>
-				   <p><strong>Valores : </strong></p>
-			  </td>
-			  <td>
-			  <select multiple   id="selValores" size="3" style="width: 200px;" onchange="configureDropDownListValores(this)"></select>
-			   
-			  </td>
-		  </tr>
-		  
-		   <tr>
-			  <td><br /></td>
-		  </tr>  
-		  <tr>
-			  <td>
-				  <p><strong>Texto busqueda: </strong></p>
-			  </td> 
-			   <td>
-			    <textarea id="textBusqueda" name="textBusqueda" rows="1" cols="23"  style="width: 200px;"></textarea>
-			  </td>
+	<div class="form-group">
+		<label class="labels" for="selServicios">Servicios:</label>
+		<select id="selServicios" class="form-control form-control-sm"
+			onchange="if(this.selectedIndex >=0) configureDropDownLists(this)">
+			<option value="0">Seleccione...</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/CartografiaBasica1_Nuevo/MapServer">
+						CARTOGRAFÍA BÁSICA</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Ambiental_T1_Nuevo1/MapServer">
+						AMBIENTAL</option>
+					<option value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Educacion_T/MapServer">
+						EDUCACIÓN</option>
+					<option value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Salud_T/MapServer">
+						SALUD
+					</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/CulturaTurismo_T/MapServer">
+						CULTURA Y TURISMO</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/OrdenamientoTerritorial_T/MapServer">
+						ORDENAMIENTO TERRITORIAL</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/IndustriaComercio/MapServer">
+						INDUSTRIA Y COMERCIO</option>
+					<option value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/RiesgoConsulta/MapServer">
+						GESTIÓN DEL RIESGO</option>
+		</select>
 
-		  </tr>
-		  <tr>
-			  <td><br /></td>
-		  </tr>
-		  <tr align="right">
-		   
-		   <td align="right">
-		   
-		    <button type="button"  class="btn btn-secondary" id="btnLimpiar" onclick="limpiar()"  >Limpiar</button> 
-		   </td>
-		   <td align="center">
-		     <button type="button" class="btn btn-secondary" id="btnBuscar" onclick="consultaSimple()"  >Buscar</button>
-		   
-		   </td>
-		  </tr>
-		  
-		  <tr>
-			  <td><br /></td>
-		  </tr>
+		<label class="labels" for="selGrupos">Grupos:</label>
+		<select id="selGrupos" class="form-control form-control-sm"
+			onchange="configureDropDownListCapas(this, document.getElementById('selCapas'), document.getElementById('selServicios'))">
+			<option value="">Seleccione...</option>
+		</select>
+
+		<label class="labels" for="selCapas">Capas:</label>
+		<select id="selCapas" class="form-control form-control-sm" onchange="configureDropDownListCampos(this)">
+			<option value="">Seleccione...</option>
+		</select>
+
+		<label class="labels" for="txtCampos">Campos:</label>
+		<select id="txtCampos" class="form-control form-control-sm" size="3" onchange="configureDropDownListIngresarCampos(this)"></select>
+
+		<label class="labels" for="selValores">Valores:</label>
+		<select id="selValores" class="form-control form-control-sm" size="3" onchange="configureDropDownListValores(this)"></select>
+
+		<label class="labels" for="textBusqueda">Texto busqueda:</label>
+		<textarea id="textBusqueda" class="form-control form-control-sm" rows="2" cols="23"></textarea>
+
+		<div class="fila">
+			<button id="btnLimpiar" type="button" class="btn btn-outline-success btn-sm mt-3" onclick="limpiar()">Limpiar</button>
+			<button id="btnBuscar" type="button" class="btn btn-outline-success btn-sm mt-3" onclick="consultaSimple()">Buscar</button>
+		</div>
+
+
+
+	</div>
+
+	<!-- <table>
+		<tr>
+			<td>
+				<p><strong> Servicios :</strong></p>
+			</td>
+			<td>
+				<select id="selServicios" style="width: 200px;"
+					onchange="if(this.selectedIndex >=0) configureDropDownLists(this)">
+					<option value="0">Seleccione...</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/CartografiaBasica1_Nuevo/MapServer">
+						CARTOGRAFÍA BÁSICA</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Ambiental_T1_Nuevo1/MapServer">
+						AMBIENTAL</option>
+					<option value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Educacion_T/MapServer">
+						EDUCACIÓN</option>
+					<option value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/Salud_T/MapServer">SALUD
+					</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/CulturaTurismo_T/MapServer">
+						CULTURA Y TURISMO</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/OrdenamientoTerritorial_T/MapServer">
+						ORDENAMIENTO TERRITORIAL</option>
+					<option
+						value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/IndustriaComercio/MapServer">
+						INDUSTRIA Y COMERCIO</option>
+					<option value="http://181.57.208.251/ArcGIS/rest/services/Quindio_Fase_II/RiesgoConsulta/MapServer">
+						GESTIÓN DEL RIESGO</option>
+				</select>
+			</td>
+		</tr>
 		
-    </table>
-	
-<div id="myModal" class="modal">
+		<tr>
+			<td>
+				<p><strong>
+						<label id="grupoLabel">Grupos : </label> </strong></p>
+			</td>
+			<td>
 
-  <!-- Modal content -->
-  <div class="modal-content">
-   <!-- <span class="close">&times;</span> -->
-    <p id= "textoModal"></p>
-  </div>
+				<select id="selGrupos" style="width: 200px;"
+					onchange="configureDropDownListCapas(this, document.getElementById('selCapas'), document.getElementById('selServicios'))">
+					<option value="">Seleccione...</option>
 
-</div>
-   
+				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<p><strong> Capas : </strong></p>
+			</td>
+			<td>
+				<select id="selCapas" style="width: 200px;" onchange="configureDropDownListCampos(this)">
+					<option value="">Seleccione...</option>
+
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				<p><strong>Campos : </strong></p>
+			</td>
+			<td>
+				<select multiple id="txtCampos" size="3" style="width: 200px;"
+					onchange="configureDropDownListIngresarCampos(this)"></select>
+
+			</td>
+
+		</tr>
+		
+		<tr>
+			<td>
+				<p><strong>Valores : </strong></p>
+			</td>
+			<td>
+				<select multiple id="selValores" size="3" style="width: 200px;"
+					onchange="configureDropDownListValores(this)"></select>
+
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<p><strong>Texto busqueda: </strong></p>
+			</td>
+			<td>
+				<textarea id="textBusqueda" name="textBusqueda" rows="1" cols="23" style="width: 200px;"></textarea>
+			</td>
+
+		</tr>
+		<tr>
+			<td><br /></td>
+		</tr>
+		<tr align="right">
+
+			<td align="right">
+
+				<button type="button" class="btn btn-secondary" id="btnLimpiar" onclick="limpiar()">Limpiar</button>
+			</td>
+			<td align="center">
+				<button type="button" class="btn btn-secondary" id="btnBuscar"
+					onclick="consultaSimple()">Buscar</button>
+
+			</td>
+		</tr>
+
+ -->
+	</table>
+
+	<div id="myModal" class="modal">
+
+		<!-- Modal content -->
+		<div class="modal-content">
+			<!-- <span class="close">&times;</span> -->
+			<p id="textoModal"></p>
+		</div>
+
+	</div>
+
 </div>
