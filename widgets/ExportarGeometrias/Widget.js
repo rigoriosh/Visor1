@@ -7,11 +7,11 @@ function (declare, BaseWidget, query) {
 
     
      return declare([BaseWidget], {
-        baseClass: "jimu-widget-WidgetModelo",
+        baseClass: "jimu-widget-ExportarGeometrias",
         
         startup: function() {
 
-          console.log("WidgetModelo");
+          console.log("widgets_ExportarGeometrias_Widget_46");
           this.inherited(arguments);
           // this.mapIdNoderrh.innerHTML = 'map id is:' + this.map.id;
           

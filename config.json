@@ -125,6 +125,23 @@
                 "id": "widgets_MyWidgetResultados_Widget_41"
             },
             {
+                "position": {
+                    "right": 20,
+                    "top": 220,
+                    "relativeTo": "map",
+                    "height": 520,
+                    "width": 400
+                },
+                "placeholderIndex": 1,
+                "id": "widgets_TablaContenido_Widget_35",
+                "version": "2.5",
+                "closeable": true,
+                "uri": "widgets/TablaContenido/Widget",
+                "name": "TablaContenido",
+                "label": "Tabla de Contenido",
+                "openAtStart": false
+            },
+            {
                 "uri": "widgets/ZoomSlider/Widget",
                 "position": {
                     "left": 25,
@@ -254,23 +271,6 @@
                 "version": "2.25",
                 "id": "widgets_ExtentNavigate_Widget_34",
                 "name": "ExtentNavigate"
-            },
-            {
-                "position": {
-                    "right": 20,
-                    "top": 310,
-                    "relativeTo": "map",
-                    "height": 520,
-                    "width": 400
-                },
-                "placeholderIndex": 1,
-                "id": "widgets_TablaContenido_Widget_35",
-                "version": "2.5",
-                "closeable": true,
-                "uri": "widgets/TablaContenido/Widget",
-                "name": "TablaContenido",
-                "label": "Tabla de Contenido",
-                "openAtStart": true
             }
         ],
         "panel": {
@@ -551,7 +551,7 @@
             {
                 "label": "Consultas",
                 "widgets": [
-                    
+
                   {
                     "name": "ConsultaSimple",
                     "version": "2.5",
@@ -599,6 +599,14 @@
                     "uri": "widgets/ConsultaSAE/Widget",
                     "index": 5,
                     "id": "widgets_ConsultaSAE_Widget_40"
+                  },		  
+                  {
+                    "name": "Indicadores",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/Indicadores/Widget",
+                    "index": 6,
+                    "id": "widgets_Indicadores_Widget_41"
                   }
                 ],
                 "index": 6,
@@ -611,6 +619,62 @@
                   }
                 },
                 "icon":"./jimu.js/images/Consultas.png"
+
+            },
+            {
+                "label": "Herramientas Espaciales",
+                "widgets": [
+                  {
+                    "name": "EditarNodos",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/EditarNodos/Widget",
+                    "index": 6,
+                    "id": "widgets_EditarNodos_Widget_42"
+                  },
+                  {
+                    "name": "GuardarGeometrias",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/GuardarGeometrias/Widget",
+                    "index": 6,
+                    "id": "widgets_GuardarGeometrias_Widget_43"
+                  },
+                  {
+                    "name": "UnirGeometrias",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/UnirGeometrias/Widget",
+                    "index": 6,
+                    "id": "widgets_UnirGeometrias_Widget_44"
+                  },
+                  {
+                    "name": "CrearGeometrias",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/CrearGeometrias/Widget",
+                    "index": 6,
+                    "id": "widgets_CrearGeometrias_Widget_45"
+                  },
+                  {
+                    "name": "ExportarGeometrias",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/ExportarGeometrias/Widget",
+                    "index": 6,
+                    "id": "widgets_ExportarGeometrias_Widget_46"
+                  }
+                ],
+                "index": 7,
+                "id": "_42",
+                "visible": true,
+                "panel": {
+                  "uri": "themes/LaunchpadTheme/panels/LaunchpadPanel/Panel",
+                  "position": {
+                    "relativeTo": "map"
+                  }
+                },
+                "icon":"./jimu.js/images/VisibilidadCapa.png"
 
             }
         ]
@@ -807,7 +871,10 @@
         "alwaysUseProxy": false,
         "url": "/proxy/proxy.ashx",
         "rules": [
-            
+            {
+                "urlPrefix":"http://190.255.42.26:90/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
             {
                 "urlPrefix":"http://190.255.42.26:6080/arcgis/rest/services/QUINDIO_III/CartografiaBasica/MapServer/75?f=json",
                 "proxyUrl":"/proxy/proxy.ashx"
@@ -818,6 +885,26 @@
             },
             {
                 "urlPrefix":"http://190.255.42.26:6080/arcgis/rest/services/QUINDIO_III/OrdenamientoTerritorial/MapServer/10",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix":"https://190.85.164.56:6080/arcgis/rest/services/QUINDIO_III/Riesgo_Edicion/FeatureServer/1",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix":"https://190.85.164.56:6080/arcgis/rest/services/QUINDIO_III/Riesgo_Edicion/FeatureServer/2",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix":"https://190.85.164.56:6080/arcgis/rest/services/QUINDIO_III/Riesgo_Edicion/FeatureServer/0",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix":"https://190.85.164.56:6080/arcgis/rest/services/QUINDIO_III/Riesgo_Edicion/FeatureServer/4",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix":"http://190.85.164.56:6080/arcgis/rest/info",
                 "proxyUrl":"/proxy/proxy.ashx"
             }
             

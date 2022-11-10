@@ -1,5 +1,5 @@
 :root{
-    --main-bg-color-1: #fb6b0e;
+    --main-bg-color-1: #ef4f06f0;
     --blue1: #004884 ;
     --warning: red;
 }
@@ -157,4 +157,33 @@ select{
 
 .fz-15{
     font-size: 15px;
+}
+
+.jimu-widget-onscreen-icon{
+    background-color: var(--main-bg-color-1) !important;
+}
+.jimu-widget-onscreen-icon:hover{
+    background-color: var(--blue1) !important;
+}
+
+.icon-item-background0, .icon-item-background1, .icon-item-background2, .icon-item-background3, .icon-item-background4{
+    background-color: var(--main-bg-color-1) !important;
+}
+
+.icon-item-background0:hover, .icon-item-background1:hover, .icon-item-background2:hover, .icon-item-background3:hover, .icon-item-background4:hover{
+    background-color: var(--blue1) !important;
+}
+
+.icon-item-background5/* , .icon-item-background4, .icon-item-background3 */{
+    background-color: var(--blue1) !important;
+}
+
+.color-header .icon-item-background0{
+    background-color: var(--blue1) !important;
+}
+
+.jimu-anchorbar-controller-group .title-label {
+    overflow: initial !important;
+    right: 70px !important;
+    font-size: 11px;
 }
