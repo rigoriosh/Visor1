@@ -187,3 +187,29 @@ select{
     right: 70px !important;
     font-size: 11px;
 }
+
+.btnRound{
+    height: 17px;
+    width: 10px;
+    border-radius: 20px !important;
+    cursor: pointer;
+}
+
+.divColum {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+
+.modal-backdrop{
+    z-index: 100 !important;
+}
+
+.fade.show {
+    background-color: #000000b5 !important;
+}
+
+#dijit_Menu_0{
+    border-radius: 10px;
+}

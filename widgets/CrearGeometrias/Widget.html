@@ -1,5 +1,68 @@
 <div id="divCrearGeometrias" style="height: 100%;">
-        <h4>CrearGeometrias</h4>
-        <label class="labels" for="Departamento">divCrearGeometrias</label>
-       
+
+
+        <div>
+                
+                <div class="fila">
+                        <div class="divColum">
+                                <button id="point" type="button" class="btn btn-outline-success btn-sm btnRound" ></button>
+
+                                <label class="mb-0" for="point">Punto</label>
+                        </div>
+                        <div class="divColum">
+                                <button id="line" type="button" class="btn btn-outline-success btn-sm btnRound" ></button>
+
+                                <label class="mb-0" for="line">Línea</label>
+                        </div>
+                        <div class="divColum">
+                                <button id="polygon" type="button" class="btn btn-outline-success btn-sm btnRound" ></button>
+
+                                <label class="mb-0" for="polygon">Polígono</label>
+                        </div>
+                        
+                        <!-- <button id="line" >
+                                Línea
+                        </button>
+                        <button id="polygon" >
+                                Polígono
+                        </button> -->
+                </div>
+        
+                <div class="fila">
+                        <button id="undo" type="button" class="btn btn-outline-success btn-sm mt-3" style="width: 24%;">Deshacer</button>
+                        <button id="redo" type="button" class="btn btn-outline-success btn-sm mt-3" style="width: 24%;">Rehacer</button>
+                        <!-- <button id="redo" >
+                                Deshacer
+                        </button>
+                        <button id="redo" >
+                                Rehacer
+                        </button> -->
+                        <br>
+                </div>
+                <p id="textInfo" class="label" style="display: none; text-align: center;">
+                        Click derecho sobre la imagen para editar
+                </p>
+        </div>
+      
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" tabindex="100000" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="renderModal('myModal', false)">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div id="bodyModal" class="modal-body">.....</div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="renderModal('myModal', false)">Close</button>
+              <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
 </div>

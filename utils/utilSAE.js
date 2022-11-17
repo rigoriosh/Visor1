@@ -231,3 +231,16 @@ function renderGrafico(data, div, width, height) {
         });
     }, 3000);
 }
+
+const renderModal = (modal, render, titulo, body) => {
+    let myModal = document.getElementById(modal);
+    if (render) {
+        myModal.style.display = 'block';
+        myModal.className += " show"
+    }else{
+        myModal.style.display = 'none';
+        myModal.className =  "modal fade"
+    }
+    document.getElementById("exampleModalLabel").innerHTML = titulo;
+    document.getElementById("bodyModal").innerHTML = body
+}
