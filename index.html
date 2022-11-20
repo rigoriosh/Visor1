@@ -172,6 +172,10 @@
         background-color: rgb(51 51 51 / 9%)!important;
     }
 
+    .jimu-on-screen-widget-panel, .jimu-panel{
+      background-color: #ffffffeb !important;
+    }
+
     @media (min-width:700px) {
       .browser-logo img {
         width: 4rem;
@@ -252,6 +256,25 @@
         <li class="browser-logo"><a href="https://www.apple.com/safari/"><img alt="Safari" src="./browser-message/safari.png"></a></li>
         <li class="browser-logo"><a href="https://www.microsoft.com/edge"><img alt="Edge" src="./browser-message/edge.png"></a></li>
       </ul>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="100000" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="renderModal('myModal', false)">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="bodyModal" class="modal-body">.....</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="renderModal('myModal', false)">Close</button>
+          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+        </div>
+      </div>
     </div>
   </div>
   

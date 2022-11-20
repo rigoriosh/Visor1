@@ -1,8 +1,12 @@
 <div id="divCrearGeometrias" style="height: 100%;">
 
+        <label class="labels" for="IdDelProyecto ">Id del proyecto </label>
+        <div class="input-group ">
+                <input type="text" name="IdDelProyecto " id="IdDelProyecto " data-toggle="tooltip" title="Id del proyecto" data-placement="top" class="form-control ">
+        </div>
 
-        <div>
-                
+        <div id="TipoDeGeometria">
+                <label class="labels" for="IdDelProyecto ">Tipo de geometría</label>
                 <div class="fila">
                         <div class="divColum">
                                 <button id="point" type="button" class="btn btn-outline-success btn-sm btnRound" ></button>
@@ -29,8 +33,8 @@
                 </div>
         
                 <div class="fila">
-                        <button id="undo" type="button" class="btn btn-outline-success btn-sm mt-3" style="width: 24%;">Deshacer</button>
-                        <button id="redo" type="button" class="btn btn-outline-success btn-sm mt-3" style="width: 24%;">Rehacer</button>
+                        <button id="undo" type="button" class="btn btn-outline-success btn-sm mt-3" >Deshacer</button>
+                        <button id="redo" type="button" class="btn btn-outline-success btn-sm mt-3" >Rehacer</button>
                         <!-- <button id="redo" >
                                 Deshacer
                         </button>
@@ -43,9 +47,16 @@
                         Click derecho sobre la imagen para editar
                 </p>
         </div>
+
+        <!-- <div id="Atributos">
+                <label class="labels" for="IdDelProyecto ">Atributos</label>
+
+        </div> -->
+
+        <button id="btnAceptar" type="button" class="btn btn-outline-success btn-sm mt-3" >Aceptar</button>
       
       <!-- Modal -->
-      <div class="modal fade" id="myModal" tabindex="100000" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <!-- <div class="modal fade" id="myModal" tabindex="100000" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -57,11 +68,11 @@
             <div id="bodyModal" class="modal-body">.....</div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="renderModal('myModal', false)">Close</button>
-              <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+              <button type="button" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
 
 

@@ -227,7 +227,12 @@ define([
         myMap.graphics.on("mouse-out", function (evt) {
           ctxMenuForGraphics.unBindDomNode(evt.graphic.getDojoShape().getNode());
         });
-      }
+      },
+      onOpen: function () {
+        var panel = this.getPanel();
+        ajustarTamanioWidget(panel, panel.position.width, 340)
+
+    },
 
     })
   });
