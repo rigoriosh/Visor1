@@ -172,7 +172,9 @@ define([
             if (selected.geometry.type !== "point") {
               editToolbar.activate(Edit.EDIT_VERTICES, selected);
             } else {
-              renderModal('myModal', true, 'Nota', 'La edición no aplica para este tipo de geometría');
+              // renderModal('myModal', true, 'Nota', 'La edición no aplica para este tipo de geometría');
+              createDialogInformacionGeneral(consts.notas.crearGeometrias[1].titulo, consts.notas.crearGeometrias[1].body)
+
               // alert("Not implemented");
             }
           }
@@ -191,7 +193,9 @@ define([
             if (selected.geometry.type !== "point") {
               editToolbar.activate(Edit.ROTATE | Edit.SCALE, selected);
             } else {
-              renderModal('myModal', true, 'Nota', 'La rotación no aplica para este tipo de geometría');
+              // renderModal('myModal', true, 'Nota', 'La rotación no aplica para este tipo de geometría');
+              createDialogInformacionGeneral(consts.notas.crearGeometrias[0].titulo, consts.notas.crearGeometrias[0].body)
+
             }
           }
         }));
