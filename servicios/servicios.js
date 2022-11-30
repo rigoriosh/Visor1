@@ -4,6 +4,7 @@ const Municipio_generalizado = "https://mapassig.icbf.gov.co:6443/arcgis/rest/se
 // SERVICIO_TABLA_CONTENIDO = "http://190.255.42.26:90/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public";
 // SERVICIO_TABLA_CONTENIDO = "https://sig.icbf.gov.co/Icbf.SIG.Service/AdministradorServicios.svc";
 SERVICIO_TABLA_CONTENIDO = "http://localhost:3000/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public";
+const SERVICIO_SHAPEFILE = "http://172.17.3.142:6080/arcgis/rest/services/ICBF/exportarSHAPE/GPServer/exportarSHAPE";
 
                             
 const urlTiposBienInmueble = "http://localhost:3000/baseAvaluos";

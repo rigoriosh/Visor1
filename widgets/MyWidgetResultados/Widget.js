@@ -33,7 +33,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
             onOpen: function () {
                 window.widgetOpen = true;
                 
-                var widgetResultados = this.appConfig.getConfigElementById('widgets_MyWidgetResultados_Widget_41');
+                var widgetResultados = this.appConfig.getConfigElementById(consts.widgetMyResultados);
                 console.log(widgetResultados);
                 
                 var panel = this.getPanel();
@@ -57,37 +57,30 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                     case consts.consulAvaluoMasivo:
                         console.log(consts.consulAvaluoMasivo);
                         cargarTablaResultados(widgetResultados);
-
                         divResulConsultaUnica.style.display = "none";
                         divResulConsultaCatastro.style.display = "none";
                         divResulConsultaMultiple.style.display = "display";
-
-
                         break;
                     case consts.consulAvaluoUnica:
                         console.log(consts.consulAvaluoUnica);
-
                         divResulConsultaCatastro.style.display = "none";
                         divResulConsultaMultiple.style.display = "none";
                         divResulConsultaUnica.style.display = "display";
-
                         this.ejecutarConsultaUnica();
-
-
-
                         break;
                     case consts.consulCatastro:
                         console.log(consts.consulCatastro);
-
                         divResulConsultaUnica.style.display = "none";
                         divResulConsultaMultiple.style.display = "none";
                         divResulConsultaCatastro.style.display = "display";
-
-
                         // this.ejecutarConsultaUnica();
-
-
-
+                        break;
+                    case consts.consultaSimple.consultaSimple:
+                        console.log(consts.consultaSimple.consultaSimple);
+                        cargarTablaResultados(widgetResultados);
+                        divResulConsultaUnica.style.display = "none";
+                        divResulConsultaCatastro.style.display = "none";
+                        divResulConsultaMultiple.style.display = "display";
                         break;
                     default:
                         break;
@@ -101,11 +94,10 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
 
             onClose: function () {
            
-
                 for (var i = appGlobal.widgetManager.loaded.length; i > 0; i--) {
                     var idWidgets = appGlobal.widgetManager.loaded[i - 1].id;
                 
-                    if (window.widgetOpen && idWidgets == "widgets_MyWidgetResultados_Widget_41") {
+                    if (window.widgetOpen && idWidgets == consts.widgetMyResultados) {
                         window.widgetOpen = false;
                         cerrarWidgetResultados();                                    
                         break;
@@ -113,7 +105,6 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                 }
 
             },
-
 
             ejecutarConsultaUnica: ()=>{
                 console.log("ejecutarConsultaUnica  ===>");
@@ -225,63 +216,50 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                 `
             }
 
-
         });
     })
 
-
-function cerrarWidgetResultados() {
-    require(["jimu/PanelManager"],
-        function (PanelManager) {
-            /////codigo q cierra el widgetResultados
-            this.widgetResultados.cerradoManual = 0;
-            var panelManager = PanelManager.getInstance();
-            var widgetCerrar;            
-            for (var e in PanelManager.getInstance().panels) {
-                if (PanelManager.getInstance().panels[e].id == "widgets_MyWidgetResultados_Widget_41_panel") {
-                    widgetCerrar = PanelManager.getInstance().panels[e].id;
-                }
-
-            }            
-            var ajustar = true;
-            if (widgetCerrar != undefined) {
-                panelManager.closePanel("widgets_MyWidgetResultados_Widget_41_panel");
-                panelManager.destroyPanel("widgets_MyWidgetResultados_Widget_41_panel");             
-                ajustar = false;
-
-
-                /* var currentLayer = appGlobal.map.getLayer("capaResultadoCA");
-                if (currentLayer != null) {
-                    appGlobal.map.removeLayer(currentLayer);
-                } */
-            }
-            widgetOpen = false;
-            objetoMapa.graphics.clear()
-            // console.log("cerrarWidgetResultados");
-        }
-      )
-};
-
 var objetoMapa = null;
 function cargarTablaResultados(widget) {
-    require(["esri/layers/FeatureLayer", "esri/tasks/query", "esri/dijit/FeatureTable", "dojo/dom", "esri/symbols/SimpleLineSymbol",
-	"esri/symbols/SimpleFillSymbol", "esri/Color", "esri/symbols/SimpleMarkerSymbol", "dojo/parser", "dojo/ready", "esri/tasks/GeometryService",
-	"esri/SpatialReference", "esri/tasks/ProjectParameters", "esri/geometry/Extent", "esri/geometry/Point", "esri/geometry/Polyline",
-	"esri/graphicsUtils", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", "esri/renderers/UniqueValueRenderer",
+    require(["esri/layers/FeatureLayer", "esri/dijit/FeatureTable", "esri/tasks/GeometryService",
+	"esri/SpatialReference", "esri/geometry/Extent", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", 
 	"esri/graphic"],
-		function (FeatureLayer, Query, FeatureTable, dom, SimpleLineSymbol, SimpleFillSymbol, Color,
-			SimpleMarkerSymbol, parser, ready, GeometryService, SpatialReference, ProjectParameters, Extent, Point,
-			Polyline, graphicsUtils, SimpleFillSymbol, SimpleLineSymbol, Color, UniqueValueRenderer, Graphic) {
-		    // var urlCapa = widget.urlCapa;
-		    var camposCapa = widget.camposMostrar;
-		    // var expresion = widget.expresionConsultar;
-		    // var tipoGeometria;
-		    // var operacionRealizar = widget.operacionRealizar;
-		    // operacionRealizarGlobal = operacionRealizar;
-		    // var resultados = widget.data;
-		    // ResultadosJson = widget.resultadosJson;
-           
-                var myFeatureLayer = new FeatureLayer(widget.data.data.urlDparts, {
+		function (FeatureLayer, FeatureTable, GeometryService, SpatialReference, Extent, Graphic) {
+		    
+            var myFeatureLayer, fieldInfos;
+            const {featureCollection, tipoResultado} = widget.data
+            if (tipoResultado === consts.consultaSimple.consultaSimple) {
+                myFeatureLayer = new FeatureLayer(featureCollection, {
+                    showLabels: true
+                  });
+                fieldInfos = featureCollection.layerDefinition.fields
+                /* fieldInfos = [
+                    {
+                        name: 'OBJECTID', 
+                        alias: 'id', 
+                        editable: false //disable editing on this field 
+                        },
+                    {
+                        name: 'ETIQUETA', 
+                        alias: 'Departamento', 
+                        editable: false //disable editing on this field 
+                    },
+                    {
+                        name: 'FECHA_LOG', 
+                        alias: 'Cod_Departamento', 
+                        editable: false //disable editing on this field 
+                    },
+                    {
+                        name: 'GLOBALID', 
+                        alias: 'Region'
+                    },
+                    {
+                        name: 'IDENTIFICADOR', 
+                        alias: 'Poblado'
+                    }
+                ] */
+            } else {
+                myFeatureLayer = new FeatureLayer(widget.data.data.urlDparts, {
                     // mode: FeatureLayer.MODE_ONDEMAND,
                     // outFields: "*",
                     outFields: ["DEPARTAMEN","COD_DEPART","REGION","Poblado"],
@@ -290,7 +268,34 @@ function cargarTablaResultados(widget) {
                     id: "capaResultadoCA",
                     showLabels:true
                 });
-                // map.add(featureLayer);
+                fieldInfos = [
+                    {
+                        name: 'OBJECTID_12', 
+                        alias: 'id', 
+                        editable: false //disable editing on this field 
+                        },
+                    {
+                        name: 'DEPARTAMEN', 
+                        alias: 'Departamento', 
+                        editable: false //disable editing on this field 
+                    },
+                    {
+                        name: 'COD_DEPART', 
+                        alias: 'Cod_Departamento', 
+                        editable: false //disable editing on this field 
+                    },
+                    {
+                        name: 'REGION', 
+                        alias: 'Region'
+                    },
+                    {
+                        name: 'Poblado', 
+                        alias: 'Poblado'
+                    }
+                ]
+            }
+
+            // map.add(featureLayer);
     
                 myTable = new FeatureTable({
                     featureLayer: myFeatureLayer,
@@ -298,7 +303,7 @@ function cargarTablaResultados(widget) {
                     syncSelection: true,
                     zoomToSelection: false,
                     gridOptions: {
-                        noDataMessage: "No Data",
+                        noDataMessage: "Sin resultados para esta consulta",
                         allowSelectAll: true,
                         cellNavigation: false,
                         selectionMode: "extended",
@@ -313,31 +318,7 @@ function cargarTablaResultados(widget) {
                     },
                     editable: true,
                     showColumnHeaderTooltips:true,
-                    fieldInfos: [
-                        {
-                            name: 'OBJECTID_12', 
-                            alias: 'id', 
-                            editable: false //disable editing on this field 
-                            },
-                        {
-                            name: 'DEPARTAMEN', 
-                            alias: 'Departamento', 
-                            editable: false //disable editing on this field 
-                        },
-                        {
-                            name: 'COD_DEPART', 
-                            alias: 'Cod_Departamento', 
-                            editable: false //disable editing on this field 
-                        },
-                        {
-                            name: 'REGION', 
-                            alias: 'Region'
-                        },
-                        {
-                            name: 'Poblado', 
-                            alias: 'Poblado'
-                        }
-                        ]
+                    fieldInfos
                 },
                     "myTableNode"
                 );
@@ -348,7 +329,63 @@ function cargarTablaResultados(widget) {
     
                 myTable.on("row-select", function (evt) {
                     myTable.getFeatureDataById(myTable.selectedRowIds).then(function (features) {
-                        var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0, 0, 0, 2]), 3), new Color([0, 0, 0, 1]));
+                        // var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0, 0, 0, 2]), 3), new Color([0, 0, 0, 1]));
+                        if (tipoResultado === consts.consultaSimple.consultaSimple) {
+                            console.log(tipoResultado)
+                            console.log("selectedRowIds => ", myTable.selectedRowIds)
+                            console.log("selectedRows => ", myTable.selectedRows)
+                            console.log("featureCollection => ", widget.data.featureCollection)
+                            if(features.features.length > 0) EsriMap.setExtent(objConsultaSimple.featuresSelected.filter(e => e.attributes.OBJECTID == features.features[0].attributes.OBJECTID)[0].geometry.getExtent())
+                        } else {
+                            objetoMapa.graphics.clear() 
+                            const rfeatures = features.features;
+                            selectedRegisterFromTable.features = rfeatures;
+                            selectedRegisterFromTable.rows = myTable.selectedRows;
+                            rfeatures.forEach(feature => {
+                                var myPolygon = {
+                                    "geometry":{
+                                        "rings":feature.geometry.rings,
+                                        "spatialReference":{"wkid":4326},
+                                        "attributes":feature.attributes
+                                    },
+                                    "symbol":{
+                                        "color":[0,0,0,64],
+                                        "outline":{
+                                            "color":[0,0,0,255],
+                                            "width":1,
+                                            "type":"esriSLS",
+                                            "style":"esriSLSSolid"
+                                        },
+                                        "type":"esriSFS",
+                                        "style":"esriSFSSolid"
+                                    }
+                                };
+                                var graphic = new Graphic(myPolygon, symbol);
+                                objetoMapa.graphics.add(graphic);
+                                
+                            });
+                            if (features.geometryType == "esriGeometryPoint") {
+                                tipoGeometria = "Punto";
+                            } else {
+                                tipoGeometria = "Poligono";
+                            }
+        
+                            var extentT = esri.graphicsExtent(features.features);
+                            // var sistemaRefSalida = new SpatialReference({ wkid: 3115 });		              
+                            // var sistemaRefSalida = new SpatialReference({ wkid: 102100 });		              
+                            var sistemaRefSalida = new SpatialReference({ wkid: 4326 });		              
+        
+        
+                            sg ? '' : sg = new GeometryService("https://utility.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer");
+                            var extentConver = new Extent(extentT.xmin, extentT.ymin, extentT.xmax, extentT.ymax, sistemaRefSalida);		                
+        
+                            sg.project([extentConver], sistemaRefSalida, function (resultados) {
+                                realizarExtent(resultados, tipoGeometria, features);
+                            }, function (error) {
+                                console.log("FALLO....");
+                            });
+                        }
+
                         // var geometria = features.features[0].geometry;
                         // var graphic = new Graphic(geometria, symbol);
                         /* var myPolygon = { // poligono de prueba
@@ -367,65 +404,29 @@ function cargarTablaResultados(widget) {
                                 "style":"esriSFSSolid"
                             }
                         }; */
-                        objetoMapa.graphics.clear() 
-                        const rfeatures = features.features;
-                        selectedRegisterFromTable.features = rfeatures;
-                        selectedRegisterFromTable.rows = myTable.selectedRows;
-                        rfeatures.forEach(feature => {
-                            var myPolygon = {
-                                "geometry":{
-                                    "rings":feature.geometry.rings,
-                                    "spatialReference":{"wkid":4326},
-                                    "attributes":feature.attributes
-                                },
-                                "symbol":{
-                                    "color":[0,0,0,64],
-                                    "outline":{
-                                        "color":[0,0,0,255],
-                                        "width":1,
-                                        "type":"esriSLS",
-                                        "style":"esriSLSSolid"
-                                    },
-                                    "type":"esriSFS",
-                                    "style":"esriSFSSolid"
-                                }
-                            };
-                            var graphic = new Graphic(myPolygon, symbol);
-                            objetoMapa.graphics.add(graphic);
-                            
-                        });
+                        
+                        
+
                         // let feature = features.features[0];
                         
                         // if (myTable.selectedRows.length === 1) {
                         //     objetoMapa.graphics.clear() 
                         // }
     
-                        console.log(myTable.selectedRows);
     
                         // objetoMapa.graphics.add(graphic);
     
     
-                        if (features.geometryType == "esriGeometryPoint") {
-                            tipoGeometria = "Punto";
-                        } else {
-                            tipoGeometria = "Poligono";
-                        }
-    
-                        var extentT = esri.graphicsExtent(features.features);
-                        // var sistemaRefSalida = new SpatialReference({ wkid: 3115 });		              
-                        // var sistemaRefSalida = new SpatialReference({ wkid: 102100 });		              
-                        var sistemaRefSalida = new SpatialReference({ wkid: 4326 });		              
-    
-    
-                        sg ? '' : sg = new GeometryService("https://utility.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer");
-                        var extentConver = new Extent(extentT.xmin, extentT.ymin, extentT.xmax, extentT.ymax, sistemaRefSalida);		                
-    
-                        sg.project([extentConver], sistemaRefSalida, function (resultados) {
-                            realizarExtent(resultados, tipoGeometria, features);
-                        }, function (error) {
-                            console.log("FALLO....");
-                        });
+                        
                         document.querySelector("#btnExportar").style.display = "block"
+
+                        const divMap = document.getElementById("map");
+                        divMap.style.position = divMap.style.position === 'absolute' ? 'initial': 'absolute'; // ayuda a redimensionar todo el mapa
+                        divMap.style.position === 'initial';
+                        setTimeout(() => {
+                            divMap.style.position === 'absolute';
+                        }, 1000);
+                            
                     });
                 });
     
@@ -434,27 +435,34 @@ function cargarTablaResultados(widget) {
                         console.log(featureDeselect);
     
                         let graphicsOn = objetoMapa.graphics.graphics;
-                        if (graphicsOn.length === 1) {
-                            objetoMapa.graphics.remove(graphicsOn[0])
-                            document.querySelector("#btnExportar").style.display = "none"
+
+                        if(widget.data.tipoResultado === consts.consultaSimple.consultaSimple){
+
                         }else{
-                            let deselecGraphics = featureDeselect.features
-                            let graphicToRemove = [];
-                            graphicsOn.forEach(go => {
-                                let find = false;
-                                deselecGraphics.forEach(dg => {
-                                    if(go.geometry.attributes.COD_DEPART === dg.attributes.COD_DEPART){
-                                        find = true;
+                            if (graphicsOn.length === 1) {
+                                objetoMapa.graphics.remove(graphicsOn[0])
+                                document.querySelector("#btnExportar").style.display = "none"
+                            }else{
+                                let deselecGraphics = featureDeselect.features
+                                let graphicToRemove = [];
+                                graphicsOn.forEach(go => {
+                                    let find = false;
+                                    deselecGraphics.forEach(dg => {
+                                        if(go.geometry.attributes.COD_DEPART === dg.attributes.COD_DEPART){
+                                            find = true;
+                                        }
+                                    });
+                                    if (!find) {
+                                        graphicToRemove.push(go);
                                     }
                                 });
-                                if (!find) {
-                                    graphicToRemove.push(go);
-                                }
-                            });
-                            graphicToRemove.forEach(gtr => {
-                                objetoMapa.graphics.remove(gtr)
-                            });
+                                graphicToRemove.forEach(gtr => {
+                                    objetoMapa.graphics.remove(gtr)
+                                });
+                            }
                         }
+
+
                     });
                 });
 

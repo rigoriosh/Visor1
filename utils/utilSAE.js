@@ -164,33 +164,7 @@ function crearPoligono(feature) {
       return poligono
 }
 
-function cerrarWidgetResultados(wiget) {
-    require(["jimu/PanelManager"],
-        function (PanelManager) {
-            /////codigo q cierra el widgetResultados
-            var panelManager = PanelManager.getInstance();
-            var widgetCerrar;            
-            for (var e in PanelManager.getInstance().panels) {
-                if (PanelManager.getInstance().panels[e].id == wiget) {
-                    widgetCerrar = PanelManager.getInstance().panels[e].id;
-                }
 
-            }            
-            var ajustar = true;
-            if (widgetCerrar != undefined) {
-                panelManager.closePanel(wiget);
-                panelManager.destroyPanel(wiget);             
-                ajustar = false;
-
-                var currentLayer = appGlobal.map.getLayer("capaResultadoCA");
-                if (currentLayer != null) {
-                    appGlobal.map.removeLayer(currentLayer);
-                }
-            }
-            widgetOpen = false;
-        }
-      )
-};
 
 function renderGrafico(data, div, width, height) {
     // var chart = echarts.init(dom, 'purple-passion');
@@ -327,10 +301,52 @@ function pintarFeaturesConInfoTemplate(featureSet) { //función que se encarga d
                     return myGraphic;                
                 }
             });
-            EsriMap.setExtent(featureSet.features[0].geometry.getExtent())
-            setTimeout(() => {
-                EsriMap.setScale(300000);
-                
-            }, 1000);
+            /* if (featureSet.features.length > 1) {
+                setTimeout(() => {
+                    EsriMap.setExtent(featureSet.features[0].geometry.getExtent())
+                    EsriMap.setScale(90000);
+                    
+                }, 1000);
+            } */
         })
 }
+
+const abrirWidgetResultados = (data) => {
+    var widget = appGlobal.appConfig.getConfigElementById(consts.widgetMyResultados);
+    var widgetId = widget.id;
+    widget.data = data;
+    appGlobal.openWidgetById(widgetId);
+}
+
+function cerrarWidgetResultados() {
+    require(["jimu/PanelManager"],
+        function (PanelManager) {
+            /////codigo q cierra el widgetResultados
+            // this.widgetResultados.cerradoManual = 0;
+            var panelManager = PanelManager.getInstance();
+            var widgetCerrar;            
+            for (var e in PanelManager.getInstance().panels) {
+                if (PanelManager.getInstance().panels[e].id == consts.widgetMyResultadosPanel) {
+                    widgetCerrar = PanelManager.getInstance().panels[e].id;
+                }
+
+            }            
+            var ajustar = true;
+            if (widgetCerrar != undefined) {
+                panelManager.closePanel(consts.widgetMyResultadosPanel);
+                panelManager.destroyPanel(consts.widgetMyResultadosPanel);             
+                ajustar = false;
+
+
+                /* var currentLayer = appGlobal.map.getLayer("capaResultadoCA");
+                if (currentLayer != null) {
+                    appGlobal.map.removeLayer(currentLayer);
+                } */
+            }
+            widgetOpen = false;
+            appGlobal.map.graphics.clear()
+            appGlobal.map.setExtent(appGlobal.map._initialExtent);
+            // console.log("cerrarWidgetResultados");
+        }
+      )
+};
