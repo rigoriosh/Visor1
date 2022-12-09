@@ -1,7 +1,13 @@
-define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/_base/json",
-    "dojo/_base/array", "dojo/string", "esri/request", "dojo/domReady!",
-    "jimu/WidgetManager"],
-  function(declare, BaseWidget, WidgetManager) {
+var loading, selCapas, EsriMap;
+var objetoGrupos = [];
+var objetoCapas = [];
+var objetoCampos = [];
+var aplicacion = null;
+var objConsultaAvanzada = {
+  nameObjConsulta: "ConsultaAvanzada"
+}
+define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"],
+  function (declare, BaseWidget, query) {
     //To create a widget, you need to derive from BaseWidget.
     return declare([BaseWidget], {
       // Custom widget code goes here
@@ -19,53 +25,45 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/_base/json",
       //   console.log('postCreate');
       // },
 
-      startup: function() {
+      startup: function () {
         // this.inherited(arguments);
         // this.mapIdNode.innerHTML = 'map id:' + this.map.id;
         // console.log('startup');
         obtenerApp(this);
-      },
+        appGlobal = this;
+        EsriMap = this.map
+        loading = document.getElementById('loading');
+        agregarDataSelectValueLabel(servConsultaSimple, 'selServiciosCA');
+        query("#selAtributosCA").on("change", async function (evt) {
+          // undoManager.undo();
+          objConsultaAvanzada.atributo = evt.target.value !== "0" ? evt.target.value : '';
+          ejecutarQueryAndQueryTask(objConsultaAvanzada)
+      });
 
-      onOpen: function() {
 
-        html = "";
-        var servicios = {
-          "urlServicios": [
-            {
-              "url": "http://172.17.3.59:85/ArcGIS2/rest/services/QuindioFaseII/CartografiaBasica1_Nuevo/MapServer?f=json",
-              "nombreMostrar": "CARTOGRAFÍA BÁSICA"
-            },
-            {
-              "url": "http://172.17.3.142:6080/arcgis/rest/services/QUINDIO_III/Ambiental/MapServer?f=json",
-              "nombreMostrar": "AMBIENTAL"
-            },
-            {
-              "url": "http://172.17.3.59:85/ArcGIS2/rest/services/QuindioFaseII/Educacion_T/MapServer?f=json",
-              "nombreMostrar": "EDUCACIÓN"
-            },
-            {
-              "url": "http://172.17.3.59:85/ArcGIS2/rest/services/QuindioFaseII/Salud_T/MapServer?f=json",
-              "nombreMostrar": "SALUD"
-            },
-            {
-              "url": "http://172.17.3.59:85/ArcGIS2/rest/services/QuindioFaseII/CulturaTurismo_T/MapServer?f=json",
-              "nombreMostrar": "CULTURA Y TURISMO"
-            }
-		]
-        };
+
+
+        /* html = "";
+
 
         html += "<option value=" + 'Seleccione...' + ">" +
           'Seleccione...' + "</option>"
 
-        for (var i in servicios.urlServicios) {
-          html += "<option value=" + servicios.urlServicios[i].url +
-            ">" + servicios.urlServicios[i].nombreMostrar + "</option>"
+        const { urlServicios } = servConsultaSAvanzada;
+        for (var i in urlServicios) {
+          html += "<option value=" + urlServicios[i].url +
+            ">" + urlServicios[i].nombreMostrar + "</option>"
         }
 
         document.getElementById("selectServiciosCA").innerHTML = html;
 
         var divCarga = document.getElementById("loading");
-        divCarga.style.visibility = 'hidden';
+        divCarga.style.visibility = 'hidden'; */
+      },
+
+      onOpen: function () {
+        var panel = this.getPanel();
+        ajustarTamanioWidget(panel, 600, 400)
       },
 
       // onClose: function(){
@@ -101,15 +99,18 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/_base/json",
     });
   });
 
-var objetoGrupos = [];
-var objetoCapas = [];
-var objetoCampos = [];
-var aplicacion = null;
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  
+
 
 function obtenerSelects(select) {
   require(["jimu/WidgetManager", "jimu/PanelManager", "esri/graphic",
-      "esri/geometry/Extent", "esri/SpatialReference"],
-    function(WidgetManager, PanelManager, Graphic, Extent, SpatialReference) {
+    "esri/geometry/Extent", "esri/SpatialReference"],
+    function (WidgetManager, PanelManager, Graphic, Extent, SpatialReference) {
       var valorSeleccionado = null;
       var urlPeticion = null;
       var divGrupos = document.getElementById("divGrupos");
@@ -146,7 +147,7 @@ function obtenerSelects(select) {
 
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", urlPeticion, false);
-        xmlhttp.onreadystatechange = function() {
+        xmlhttp.onreadystatechange = function () {
           if (xmlhttp.readyState == XMLHttpRequest.DONE) {
             if (xmlhttp.status == 200) {
               if (xmlhttp.responseText) {
@@ -352,8 +353,8 @@ function llenarObjetoCapas(id, nombre, grupoPadre) {
 
 function obtenerCamposCapa(urlPeticion) {
   require(["dojo/_base/json", "dojo/_base/array", "dojo/string", "esri/request",
-      "dojo/domReady!"],
-    function(dojoJson, array, dojoString, esriRequest) {
+    "dojo/domReady!"],
+    function (dojoJson, array, dojoString, esriRequest) {
 
       var divCarga = document.getElementById("loading");
       divCarga.style.visibility = 'visible';
@@ -390,7 +391,7 @@ function obtenerCamposCapa(urlPeticion) {
 
 
 function obtenerValoresCapa(campo, url) {
-  require(["esri/tasks/query", "esri/tasks/QueryTask"], function(Query,
+  require(["esri/tasks/query", "esri/tasks/QueryTask"], function (Query,
     QueryTask) {
 
     var queryTask = new QueryTask(url);
@@ -416,7 +417,7 @@ function obtenerValoresCapa(campo, url) {
         }
       }
 
-      resultadosFinal = resultItems.filter(function(item, pos) {
+      resultadosFinal = resultItems.filter(function (item, pos) {
         return resultItems.indexOf(item) == pos;
       });
 
@@ -467,7 +468,7 @@ function obtenerApp(app) {
 }
 
 function ejecutarConsulta() {
-  require(["esri/tasks/query", "esri/tasks/QueryTask"], function(Query,
+  require(["esri/tasks/query", "esri/tasks/QueryTask"], function (Query,
     QueryTask) {
 
 
@@ -503,7 +504,7 @@ function cargarWidgetResultados(resultados) {
   var divCarga = document.getElementById("loading");
   // divCarga.style.visibility = 'visible';
 
-  require(["jimu/WidgetManager", 'jimu/BaseWidget'], function(WidgetManager,
+  require(["jimu/WidgetManager", 'jimu/BaseWidget'], function (WidgetManager,
     BaseWidget) {
     // var wm = WidgetManager.getInstance().getWidgetById('widgetResultados');
     // WidgetManager.getInstance().openWidget(widget);

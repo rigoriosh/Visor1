@@ -183,6 +183,20 @@
       background-color: #ffffffeb !important;
     }
 
+    .newHeader{
+      display: none;
+      position: absolute;
+      z-index: auto;
+      top: 5px;
+      left: 5px;
+      height: 82px;
+    }
+
+    .NewImgHeader{
+      width: 205px;
+      height: 60px;
+    }
+
     @media (min-width:700px) {
       .browser-logo img {
         width: 4rem;
@@ -264,6 +278,10 @@
         <li class="browser-logo"><a href="https://www.microsoft.com/edge"><img alt="Edge" src="./browser-message/edge.png"></a></li>
       </ul>
     </div>
+  </div>
+
+  <div class="newHeader" id="IdNewHeader">
+    <img src="images/app-logo2.png" alt="" srcset="" class="NewImgHeader">
   </div>
 
   <!-- Modal -->

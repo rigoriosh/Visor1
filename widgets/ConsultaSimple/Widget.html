@@ -10,17 +10,7 @@
 	<div class="form-group">
 		<label class="labels" for="selServicios">Temática:</label>
 		<select id="selServicios" class="form-control form-control-sm"
-			onchange="if(this.selectedIndex >=0) consultaCapasSegunTematica(this)">
-			<option value="0">Seleccione...</option>
-			<option value="https://172.17.3.205:6443/arcgis/rest/services/SAE/PRUEBA/MapServer">
-				SAE/PRUEBA
-			</option>
-			<option value="https://172.17.3.205:6443/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer">
-				Cartografía Básica</option>
-			<option value="https://172.17.3.205:6443/arcgis/rest/services/SAE/OTROS/MapServer">
-				Capas adicionales
-			</option>
-			
+			onchange="if(this.selectedIndex >=0) consultaCapasSegunTematica(this, objConsultaSimple)">
 		</select>
 
 		<label class="labels" for="selCapas">Capa:</label>

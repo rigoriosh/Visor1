@@ -26,6 +26,28 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                     console.log("exporto the wollow");
                     console.log(selectedRegisterFromTable.features);
                     console.log(selectedRegisterFromTable.rows);
+                    // let fieldAliases = {};
+                    // widgetResultados.data.featureCollection.layerDefinition.fields.forEach(f => fieldAliases[f.name] = f.name)
+                    const featureDataSet = {
+                        ...widgetResultados.data.response,
+                        features: selectedRegisterFromTable.features,
+                        spatialReference: {
+                            wkid: widgetResultados.data.response.spatialReference.wkid
+                        }
+                    }
+                    /* const featureDataSet = {
+                        displayFieldName: objConsultaSimple.atributo,
+                        geometryType: widgetResultados.data.featureCollection.layerDefinition.geometryType,
+                        spatialReference: {wkid:EsriMap.spatialReference.wkid},
+                        fields:widgetResultados.data.featureCollection.layerDefinition.fields,
+                        features:selectedRegisterFromTable.features,
+                        // exceededTransferLimit: false
+                        fieldAliases,
+                        transform: null,
+                        _ssl: undefined
+                    } */
+                    // console.log(JSON.stringify([featureDataSet]))
+                    exportarShape(featureDataSet)
                     
                 });
             },
@@ -33,7 +55,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
             onOpen: function () {
                 window.widgetOpen = true;
                 
-                var widgetResultados = this.appConfig.getConfigElementById(consts.widgetMyResultados);
+                widgetResultados = this.appConfig.getConfigElementById(consts.widgetMyResultados);
                 console.log(widgetResultados);
                 
                 var panel = this.getPanel();
@@ -221,10 +243,11 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
 
 var objetoMapa = null;
 function cargarTablaResultados(widget) {
-    require(["esri/layers/FeatureLayer", "esri/dijit/FeatureTable", "esri/tasks/GeometryService",
-	"esri/SpatialReference", "esri/geometry/Extent", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", 
-	"esri/graphic"],
-		function (FeatureLayer, FeatureTable, GeometryService, SpatialReference, Extent, Graphic) {
+    require(["esri/layers/FeatureLayer", "esri/dijit/FeatureTable", "esri/tasks/GeometryService", "esri/SpatialReference", 
+    "esri/geometry/Extent", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", "esri/graphic",
+    "esri/graphicsUtils", "esri/tasks/query"],
+		function (FeatureLayer, FeatureTable, GeometryService, SpatialReference, 
+            Extent, SimpleFillSymbol, SimpleLineSymbol, Color, Graphic, graphicsUtils, Query) {
 		    
             var myFeatureLayer, fieldInfos;
             const {featureCollection, tipoResultado} = widget.data
@@ -329,13 +352,88 @@ function cargarTablaResultados(widget) {
     
                 myTable.on("row-select", function (evt) {
                     myTable.getFeatureDataById(myTable.selectedRowIds).then(function (features) {
-                        // var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0, 0, 0, 2]), 3), new Color([0, 0, 0, 1]));
+                        var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0, 0, 0, 2]), 3), new Color([0, 0, 0, 1]));
                         if (tipoResultado === consts.consultaSimple.consultaSimple) {
+                            const lastLayerLoad = EsriMap.getLayer('test');
                             console.log(tipoResultado)
                             console.log("selectedRowIds => ", myTable.selectedRowIds)
                             console.log("selectedRows => ", myTable.selectedRows)
                             console.log("featureCollection => ", widget.data.featureCollection)
+                            selectedRegisterFromTable.features = []
+                            console.log(FeatureLayer)
+                            widget.data.featuresSelected.forEach(f => {
+                                myTable.selectedRowIds.forEach(objectid => {
+                                    if(objectid == f.attributes.OBJECTID){
+                                        f.symbol = symbol;
+                                        selectedRegisterFromTable.features.push(f);
+                                    } 
+                                })
+                            })
+                            pintarFeaturesConInfoTemplate({features:selectedRegisterFromTable.features});
+                            const finalFeature = [];
+                            //creacion del query y asignacion de los ids seleccionados
+                            var query = new Query();
+                            query.objectIds = myTable.selectedRowIds;
+                            lastLayerLoad.selectFeatures(query, FeatureLayer.SELECTION_NEW, dojo.hitch(this, function(features) {
+                                console.log(features)
+                                features.forEach((f, i) => {
+                                    finalFeature.push({
+                                        // ...features2[i],
+                                        ...f,
+                                        _extent: EsriMap.graphics.graphics[0].geometry.getExtent(),
+                                        _offsets: EsriMap.graphics.graphics[0]._offsets,
+                                        _shape: EsriMap.graphics.graphics[0]._shape,
+                                        symbol: EsriMap.graphics.graphics[0].symbol,
+                                        geometry: EsriMap.graphics.graphics[0].geometry
+                                        // _layer: EsriMap.getLayer('test'),
+                                        // _graphicsLayer: EsriMap.getLayer('test'),
+                                        // _sourceLayer: EsriMap.getLayer('test')
+                                    });
+                                    // finalFeature[finalFeature.length - 1].geometry._ring = 0;
+                                    // finalFeature[finalFeature.length - 1]._layer.fields = widgetResultados.data.response.fields;
+                                    // finalFeature[finalFeature.length - 1]._graphicsLayer.fields = widgetResultados.data.response.fields;
+                                    // finalFeature[finalFeature.length - 1]._sourceLayer.fields = widgetResultados.data.response.fields;
+                                })
+                                selectedRegisterFromTable.features = finalFeature;
+                                /* var stateExtent = graphicsUtils.graphicsExtent(features);
+                                EsriMap.setExtent(stateExtent.expand(1.5)) */;
+                            }));
+                        /* 
+                            // widget.data.featureCollection.featureSet.features.forEach(f => {
+                            widget.data.featuresSelected.forEach(f => {
+                                myTable.selectedRowIds.forEach(objectid => {
+                                    if(objectid == f.attributes.OBJECTID){
+                                        f.symbol = symbol;
+                                        selectedRegisterFromTable.features.push(f);
+                                    } 
+                                })
+                            })
+                            pintarFeaturesConInfoTemplate({features:selectedRegisterFromTable.features});
+                            const features2 = []
+                            widget.data.featureCollection.featureSet.features.forEach(f => {
+                                myTable.selectedRowIds.forEach(objectid => {
+                                    if(objectid == f.attributes.OBJECTID) features2.push(f)
+                                })
+                            })
+                            const finalFeature = [];
+                            selectedRegisterFromTable.features.forEach((f, i) => {
+                                finalFeature.push({
+                                    ...features2[i],
+                                    ...f,
+                                    _extent: f.geometry.getExtent(),
+                                    _offsets: EsriMap.graphics.graphics[0]._offsets,
+                                    _shape: EsriMap.graphics.graphics[0]._shape,
+                                    // _layer: EsriMap.getLayer('test'),
+                                    // _graphicsLayer: EsriMap.getLayer('test'),
+                                    // _sourceLayer: EsriMap.getLayer('test')
+                                });
+                                finalFeature[finalFeature.length - 1]._layer.fields = widgetResultados.data.response.fields;
+                                finalFeature[finalFeature.length - 1]._graphicsLayer.fields = widgetResultados.data.response.fields;
+                                finalFeature[finalFeature.length - 1]._sourceLayer.fields = widgetResultados.data.response.fields;
+                            })
+                            selectedRegisterFromTable.features = finalFeature;
                             if(features.features.length > 0) EsriMap.setExtent(objConsultaSimple.featuresSelected.filter(e => e.attributes.OBJECTID == features.features[0].attributes.OBJECTID)[0].geometry.getExtent())
+                        */
                         } else {
                             objetoMapa.graphics.clear() 
                             const rfeatures = features.features;
@@ -416,9 +514,11 @@ function cargarTablaResultados(widget) {
     
                         // objetoMapa.graphics.add(graphic);
     
-    
                         
-                        document.querySelector("#btnExportar").style.display = "block"
+                        if (myTable.selectedRowIds.length > 0) {
+                            document.querySelector("#btnExportar").style.display = "block"
+                        }
+                        
 
                         const divMap = document.getElementById("map");
                         divMap.style.position = divMap.style.position === 'absolute' ? 'initial': 'absolute'; // ayuda a redimensionar todo el mapa
@@ -441,7 +541,6 @@ function cargarTablaResultados(widget) {
                         }else{
                             if (graphicsOn.length === 1) {
                                 objetoMapa.graphics.remove(graphicsOn[0])
-                                document.querySelector("#btnExportar").style.display = "none"
                             }else{
                                 let deselecGraphics = featureDeselect.features
                                 let graphicToRemove = [];
@@ -460,6 +559,10 @@ function cargarTablaResultados(widget) {
                                     objetoMapa.graphics.remove(gtr)
                                 });
                             }
+                        }
+
+                        if (myTable.selectedRowIds.length === 0) {
+                            document.querySelector("#btnExportar").style.display = "none"
                         }
 
 

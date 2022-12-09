@@ -1,4 +1,4 @@
-console.log("utilsSAE");
+var loading = document.getElementById("loading")
 
 var loadHtml = document.createElement('div');
 loadHtml.innerHTML = '<img id="gifLoader" class="spinner" src="images/loadingCapa.gif" alt="SIG SAE"/>';
@@ -54,6 +54,15 @@ const agregarDataSelect2 = (data, selec) => {
     if (data[0] != "Seleccione") select.options[select.options.length] = new Option("Seleccione...", 0);
     data.forEach(d => {
         select.options[select.options.length] = new Option(d, d)
+    });
+};
+
+const agregarDataSelectValueLabel = (data, selec) => {
+    const select = document.getElementById(selec);
+    select.options.length = 0;
+    if (data[0].label != "Seleccione") select.options[select.options.length] = new Option("Seleccione...", 0);
+    data.forEach(d => {
+        select.options[select.options.length] = new Option(d.label, d.value)
     });
 };
 
@@ -231,7 +240,7 @@ const pintarFeatureLayer = (url, id, map) => {//pintar capa
             id: id,
             outFields: ['*'],
             //infoTemplate : new (InfoTemplate),
-            mode: FeatureLayer.MODE_ONDEMAND,
+            mode: FeatureLayer.MODE_AUTO,
             definitionExpression:"1=1",
             visible: true,
             showLabels:true
@@ -350,3 +359,225 @@ function cerrarWidgetResultados() {
         }
       )
 };
+
+const exportarShape = (featureDataSet) => {
+
+    /* 
+        ejemplo featureDataSet
+        featureDataSet = {
+            features:[],
+            geometryType:"",
+            spatialReference:{}
+        }
+     */
+
+    require(["esri/tasks/Geoprocessor",], function (Geoprocessor,) {
+        document.getElementById("loadingResultados").style.display = 'flex';
+        document.getElementById("loadingResultados").style.zIndex = 1;
+        var gp = new Geoprocessor(SERVICIO_SHAPEFILE);
+        let parametros = {featureDataSet};
+        console.log(parametros)
+        gp.execute(parametros, exportarShapeCompleto, errorExportarShapeCompleto);
+
+        function exportarShapeCompleto(e) {
+            if (e[1].value == true) {
+                var link = document.createElement('a');
+                link.setAttribute('href', e[0].value.url);
+                link.setAttribute('download', 'Shape' + '.zip');
+                link.setAttribute('type', "application/zip");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                createDialogInformacionGeneral("Error", "No se pudo generar el archivo Shape")
+            }
+            document.getElementById("loadingResultados").style.display = 'none';
+        }
+
+        function errorExportarShapeCompleto(e) {
+            document.getElementById("loadingResultados").style.display = 'none';
+            createDialogInformacionGeneral("Error", consts.notas.consultaSimple[0].body);
+        }
+
+    });
+
+
+}
+
+function consultaCapasSegunTematica(_this, obj) { // implementado en consulta Simple y Avanzada
+        // console.log(_this)
+        // console.log(obj)
+        let select = _this.attributes.id.nodeValue;
+        selAtributos = document.getElementById(select);
+    
+        let urlSel = _this.value;
+      
+        // document.getElementById("palabraClave").value = "";
+        // selAtributos.options.length = 0;
+        if (urlSel !== '0') {
+    
+            require([ "esri/request" ], function (esriRequest) {
+                var lasCapas = "";
+               
+                loading.style.display = 'flex';
+    
+    
+                var layersRequest = esriRequest({
+                    url: urlSel,
+                    content: { f: "json" },
+                    handleAs: "json",
+                    callbackParamName: "callback"
+                });
+                layersRequest.then((response) =>
+                    requestSucceeded(response),
+                    function (error) {
+                        console.log("Error: ", error.message);
+                        createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, consts.notas.consultaSimple[0].body)
+                        loading.style.display = 'none';
+                    });
+    
+                function requestSucceeded(response) {
+                    if (response.hasOwnProperty("layers")) {
+    
+                        var layerInfo = [];
+                        var pad;
+                        pad = dojo.string.pad;
+                        layerInfo = dojo.map(response.layers, function (f) {
+                            // return pad(f.id, 2, " ", true) + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
+                            return pad(f.id, 2, " ", true).trim() + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
+                        });
+                        lasCapas = layerInfo;
+                        var todo = [];
+                        for (var i = 0; i < lasCapas.length.toString(); i++) {
+                            var capa = [];
+                            capa = lasCapas[i].split("/");
+                            todo.push(capa);
+                        }
+    
+                        if (todo.length>0) {
+                            insetarCapas(todo, "selCapasCA");
+                        } else {
+                            createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, 'Esta temática no contiene capas a mostrar')
+                        }
+                    }
+                    loading.style.display = 'none';
+                }
+    
+            });
+        } else {
+            selCapas.options.length = 0;
+            obj = {
+                atributo: '',
+                capaSelected: {},
+                palabraClave: '',
+                urlCapa: ''
+            }
+        }
+    }
+
+function insetarCapas(capas, select) { // implementado en consulta Simple y Avanzada
+    selCapas = document.getElementById(select);
+    selCapas.options.length = 0;
+    // selGrupos.options.length = 0;
+    // document.getElementById("grupoLabel").style.display = 'inline';
+    // document.getElementById("selGrupos").style.display = 'inline';
+    var optsel = document.createElement('option');
+    optsel.value = "Seleccione...";
+    optsel.text = "Seleccione...";
+    selCapas.options.add(optsel);
+    // for (var i = 1; i < capas.length; i++) {
+    for (var i = 0; i < capas.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = capas[i][0];
+        opt.text = capas[i][1];
+        selCapas.options.add(opt);
+    }
+}
+
+/* function consultaAtributosSegunCapa(selGrupos, selCapas, selServicios, objConsulta) { // implementado en consulta Simple y Avanzada
+
+    let capaSeleccionado = selGrupos.value.trim();
+    document.getElementById("palabraClave").value = "";
+    if (capaSeleccionado !== 'Seleccione...') {
+        require([
+            "esri/request"
+        ], function (esriRequest) {
+
+            // selCapas.options.length = 0;
+            // txtCampos.options.length = 0;
+            // selValores.options.length = 0;
+            // document.getElementById("palabraClave").value = "";
+            // consultarCapas(urlCapa);
+
+            loading.style.display = 'flex';
+
+            let urlCapa = selServicios.value + "/" + capaSeleccionado;
+            
+            // pintarFeatureLayer("https://mapassig.icbf.gov.co:6443/arcgis/rest/services/ICBF/Administrativo/MapServer/4", 'test', EsriMap);
+            pintarFeatureLayer(urlCapa, objConsulta.nameObjConsulta, EsriMap);
+
+            objConsulta.urlCapa = urlCapa;
+            // const queryAtributos =  await ejecutarConsulta(urlCapa);
+            // console.log(queryAtributos)
+
+            var requestHandle = esriRequest({
+                "url": urlCapa,
+                "content": {
+                    "f": "json"
+                },
+                "callbackParamName": "callback",
+            });
+
+            requestHandle.then(requestSucceeded);
+            function requestSucceeded(response) {
+                objConsulta.capaSelected = response;
+                console.log(response)
+                fixAttributesToShow(response.fields, "selAtributosCA");
+            }
+        }
+
+        )
+    } else {
+        objConsultaSimple.urlCapa = '';
+        objConsultaSimple.capaSelected = {};
+    }
+
+} */
+
+/* function fixAttributesToShow(fields, select) { // implementado en consulta Simple y Avanzada
+    let fieldsToShow = fields.filter(e => (e.name !== 'OBJECTID_1' && e.name !== 'OBJECTID' && e.name !== 'Shape_Leng'
+        && e.name !== 'Shape' && e.name !== 'Shape.STArea()' && e.name !== 'Shape.STLength()'
+        && e.name !== 'SHAPE_Leng' && e.name !== 'SHAPE' && e.name !== 'SHAPE.STArea()' && e.name !== 'SHAPE.STLength()'));
+    let finalFieldsToShow = [];
+    fieldsToShow.forEach(fts => {
+        finalFieldsToShow.push(fts.name)
+    });
+    agregarDataSelect2(finalFieldsToShow, select)
+
+    loading.style.display = 'none';
+
+} */
+
+/* const ejecutarQueryAndQueryTask = (objConsulta) => {
+    const {urlCapa, atributo} = objConsulta;
+    require(["esri/tasks/query", "esri/tasks/QueryTask"], function (Query, QueryTask) {
+        let queryTask = new QueryTask(urlCapa);
+        let query = new Query();
+        let where = '1=1';
+        query.outSpatialReference = EsriMap.spatialReference;
+        query.returnGeometry = true;
+        query.where = where;
+        query.outFields = [atributo];
+        // query.outFields = [objConsultaSimple.atributo + ", OBJECTID"];
+        // query.outFields = ["*"];
+        queryTask.execute(query, succeededRequest, errorRequest);
+    })
+} */
+    
+/* const succeededRequest = (response) => {
+    console.log(response)
+}
+
+const errorRequest = (error) => {
+    console.log(error)
+} */

@@ -224,6 +224,10 @@ select{
     border-radius: 10px;
 }
 
-#dijit_Dialog_1_title{
-    
+.columnaCA{
+    width: 100%;
+    text-align: initial;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
 }

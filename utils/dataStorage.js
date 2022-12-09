@@ -15,7 +15,7 @@ var consts = {
         consultaSimple: [
             {
                 titulo: 'Lo sentimos',
-                body: 'Fallo de comunicación del sistema.'
+                body: 'Fallo de comunicación con el sistema.'
             },
             {
                 titulo: 'Atensión',
