@@ -278,8 +278,8 @@ define(['dojo/_base/declare',
           //var widget = appconfig.getConfigElementById('widgets_Legend_Widget_18');
           //var widgetId = widget.id;
           // this.openWidgetById('widgets_Legend_Widget_18');
-          console.log("Este");
-          console.log(este);
+          //console.log("Este");
+          //console.log(este);
           primeraVez = false;
           agregarCapaMapa(data.node);
         });
@@ -312,7 +312,7 @@ define(['dojo/_base/declare',
 
                 if (!capasPrendidas[a].id.indexOf("631c") == 0)
                 {
-                    console.log(capasPrendidas[a].id);
+                    //console.log(capasPrendidas[a].id);
                     removerCapaMapa(capasPrendidas[a]);
                 
                 }
@@ -367,7 +367,7 @@ define(['dojo/_base/declare',
 
       },
       onOpen: function () {
-          console.log(this);
+          //console.log(this);
           if (window.appInfo.isRunInMobile) {
               $('#widgets_OverviewMap_Widget_23').hide();
               $('#ContadorVisitas').hide();
@@ -455,7 +455,7 @@ define(['dojo/_base/declare',
 
 
           if (tituloCapa == "Modelo de elevaci\u00f3n ") {
-              console.log("si lo coge modelo");
+              //console.log("si lo coge modelo");
 
               var urlMDE = SERVICIO_MDE;
           
@@ -471,7 +471,7 @@ define(['dojo/_base/declare',
               layer = new ArcGISDynamicMapServiceLayer("http://132.255.20.184:6080/arcgis/rest/services/QUINDIO_III/Modelo_de_Elevacion/MapServer", {
                   id: idCapaMapa
               });
-              console.log(idCapaServicio);
+              //console.log(idCapaServicio);
               layer.setVisibleLayers([idCapaServicio]);
 
               */
@@ -492,7 +492,7 @@ define(['dojo/_base/declare',
                   infoTemplate: new InfoTemplate()
               });
 
-              console.log(url);
+              //console.log(url);
               /* layer =  new FeatureLayer(url, {
                   mode: FeatureLayer.MODE_ONDEMAND,
                   // id: idCapaMapa,
@@ -551,8 +551,8 @@ define(['dojo/_base/declare',
     function removerCapaMapa(capa) {
 
         var idCapa = capa.id;
-        console.log(idCapa);
-        console.log(idCapa.indexOf("631c"));
+        //console.log(idCapa);
+        //console.log(idCapa.indexOf("631c"));
         //if (!idCapa.indexOf("596c") == 0) {
           
           

@@ -37,10 +37,11 @@ var consts = {
             }
         ]
     },
-    consultaSimple:{
-        consultaSimple: 'consultaSimple'
+    consultas:{
+        consultaSimple: 'consultaSimple',
+        consultaAvanzada: 'consultaAvanzada',
     }
 
 
 }
-console.log("dataStorage", dataStorage);
+//console.log("dataStorage", dataStorage);

@@ -11,7 +11,7 @@ function (declare, BaseWidget, query) {
         
         startup: function() {
 
-          console.log("widgets_ExportarGeometrias_Widget_46");
+          //console.log("widgets_ExportarGeometrias_Widget_46");
           this.inherited(arguments);
           // this.mapIdNoderrh.innerHTML = 'map id is:' + this.map.id;
           

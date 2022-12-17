@@ -39,7 +39,7 @@ var ie = (function() {
   if (ie < 8){
     var mainLoading = document.getElementById('main-loading');
     var appLoading = document.getElementById('app-loading');
-    console.log("appLoading", appLoading);
+    //console.log("appLoading", appLoading);
     var ieNotes = document.getElementById('ie-note');
     appLoading.style.display = 'none';
     ieNotes.style.display = 'block';
@@ -92,7 +92,7 @@ var ie = (function() {
       dojoConfig.has['dojo-bidi'] = true;
     }
 
-    console.log("init");
+    //console.log("init");
     resources = resources.concat([
       window.apiUrl + 'dojo/resources/dojo.css',
       window.apiUrl + 'dijit/themes/claro/claro.css',
@@ -205,20 +205,20 @@ var ie = (function() {
     ];
 
     loadResources(resources, null, function(url, loaded) {
-    console.log("3333333333333");
+    //console.log("3333333333333");
 
       if (typeof loadingCallback === 'function') {
-    console.log("888888888");
+    //console.log("888888888");
 
         loadingCallback(url, loaded, resources.length);
       }
     }, function() {
-    console.log("99999999");
+    //console.log("99999999");
 
       continueLoad();
 
       function continueLoad(){
-    console.log("444444");
+    //console.log("444444");
 
         if(typeof require === 'undefined'){
           if (window.console){
@@ -229,17 +229,17 @@ var ie = (function() {
         }
 
         _loadPolyfills("", function() {
-    console.log("555555555555555");
+    //console.log("555555555555555");
 
           window.appInfo.appPath = window.path;
           window.avoidRequireCache(require);
           require(['dojo/aspect', 'dojo/request/util'], function(aspect, requestUtil) {
-    console.log("66666666666");
+    //console.log("66666666666");
 
             window.avoidRequestCache(aspect, requestUtil);
 
             require(['jimu/main'/*, 'libs/main'*/], function(jimuMain) {
-    console.log("777777777");
+    //console.log("777777777");
 
               //loadingCallback('jimu', resources.length + 1, resources.length);
               window.showWarningForLimitedBrowser(window.jimuNls);
@@ -252,7 +252,7 @@ var ie = (function() {
   }
 
   function setLocale(){
-    console.log("setLocale");
+    //console.log("setLocale");
     if(window.queryObject.locale){
       var locale = window.queryObject.locale.toLowerCase();
       dojoConfig.locale = ['hi'].indexOf(locale) >= 0 ? 'en' : locale;

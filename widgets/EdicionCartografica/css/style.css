@@ -1,0 +1,53 @@
+#TipoDeGeometria{
+    margin-top: 5px;
+    border-radius: 6px;
+    border-style: solid;
+    border-width: thin;
+    border-color: #8080804d;
+    padding-left: 10px;
+}
+
+#iconoEditarNodos {
+    background-image: url(../images/EditarIcon.png);
+    height: 50px;
+    width: 50px;
+    background-size: 100%;
+}
+/* #iconoEditarNodos:hover{
+    background-color: black;
+} */
+
+#iconoGuardarGeometrias {
+    background-image: url(../images/GuardarIcon.png);
+    height: 50px;
+    width: 50px;
+    background-size: 100%;
+}
+#iconoUnirGeometrias{
+    background-image: url(../images/UnirIcon.png);
+    height: 50px;
+    width: 50px;
+    background-size: 100%;
+}
+#iconoExportarGeometrias{
+    background-image: url(../images/ExportarIcon.png);
+    height: 50px;
+    width: 50px;
+    background-size: 100%;
+}
+#iconoCrearGeometrias{
+    background-image: url(../images/CrearIcon.png);
+    height: 50px;
+    width: 50px;
+    background-size: 100%;
+}
+#idHerramientas{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.test{
+    background-color: blue;
+}

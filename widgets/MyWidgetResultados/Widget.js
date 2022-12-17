@@ -23,16 +23,16 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
 
                 setearMapa(this);
                 query("#btnExportar").on("click", async function (evt) {
-                    console.log("exporto the wollow");
-                    console.log(selectedRegisterFromTable.features);
-                    console.log(selectedRegisterFromTable.rows);
+                    //console.log("exporto the wollow");
+                    //console.log(selectedRegisterFromTable.features);
+                    //console.log(selectedRegisterFromTable.rows);
                     // let fieldAliases = {};
                     // widgetResultados.data.featureCollection.layerDefinition.fields.forEach(f => fieldAliases[f.name] = f.name)
                     const featureDataSet = {
                         ...widgetResultados.data.response,
                         features: selectedRegisterFromTable.features,
                         spatialReference: {
-                            wkid: widgetResultados.data.response.spatialReference.wkid
+                            wkid: EsriMap.spatialReference.wkid
                         }
                     }
                     /* const featureDataSet = {
@@ -46,7 +46,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                         transform: null,
                         _ssl: undefined
                     } */
-                    // console.log(JSON.stringify([featureDataSet]))
+                    // //console.log(JSON.stringify([featureDataSet]))
                     exportarShape(featureDataSet)
                     
                 });
@@ -56,7 +56,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                 window.widgetOpen = true;
                 
                 widgetResultados = this.appConfig.getConfigElementById(consts.widgetMyResultados);
-                console.log(widgetResultados);
+                //console.log(widgetResultados);
                 
                 var panel = this.getPanel();
                 // panel.position.width = 1000;
@@ -77,28 +77,35 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                 let divResulConsultaCatastro = dom.byId("divResulConsultaCatastro");
                 switch (widgetResultados.data.tipoResultado) {
                     case consts.consulAvaluoMasivo:
-                        console.log(consts.consulAvaluoMasivo);
+                        //console.log(consts.consulAvaluoMasivo);
                         cargarTablaResultados(widgetResultados);
                         divResulConsultaUnica.style.display = "none";
                         divResulConsultaCatastro.style.display = "none";
                         divResulConsultaMultiple.style.display = "display";
                         break;
                     case consts.consulAvaluoUnica:
-                        console.log(consts.consulAvaluoUnica);
+                        //console.log(consts.consulAvaluoUnica);
                         divResulConsultaCatastro.style.display = "none";
                         divResulConsultaMultiple.style.display = "none";
                         divResulConsultaUnica.style.display = "display";
                         this.ejecutarConsultaUnica();
                         break;
                     case consts.consulCatastro:
-                        console.log(consts.consulCatastro);
+                        //console.log(consts.consulCatastro);
                         divResulConsultaUnica.style.display = "none";
                         divResulConsultaMultiple.style.display = "none";
                         divResulConsultaCatastro.style.display = "display";
                         // this.ejecutarConsultaUnica();
                         break;
-                    case consts.consultaSimple.consultaSimple:
-                        console.log(consts.consultaSimple.consultaSimple);
+                    case consts.consultas.consultaSimple:
+                        //console.log(consts.consultas.consultaSimple);
+                        cargarTablaResultados(widgetResultados);
+                        divResulConsultaUnica.style.display = "none";
+                        divResulConsultaCatastro.style.display = "none";
+                        divResulConsultaMultiple.style.display = "display";
+                        break;
+                    case consts.consultas.consultaAvanzada:
+                        //console.log(consts.consultas.consultaAvanzada);
                         cargarTablaResultados(widgetResultados);
                         divResulConsultaUnica.style.display = "none";
                         divResulConsultaCatastro.style.display = "none";
@@ -129,7 +136,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
             },
 
             ejecutarConsultaUnica: ()=>{
-                console.log("ejecutarConsultaUnica  ===>");
+                //console.log("ejecutarConsultaUnica  ===>");
                 const simulaRespCosUni = [
                     {
                         label: 'FOLIO DE MATRICULA',
@@ -251,7 +258,7 @@ function cargarTablaResultados(widget) {
 		    
             var myFeatureLayer, fieldInfos;
             const {featureCollection, tipoResultado} = widget.data
-            if (tipoResultado === consts.consultaSimple.consultaSimple) {
+            if (tipoResultado === consts.consultas.consultaSimple || tipoResultado === consts.consultas.consultaAvanzada) {
                 myFeatureLayer = new FeatureLayer(featureCollection, {
                     showLabels: true
                   });
@@ -353,14 +360,39 @@ function cargarTablaResultados(widget) {
                 myTable.on("row-select", function (evt) {
                     myTable.getFeatureDataById(myTable.selectedRowIds).then(function (features) {
                         var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0, 0, 0, 2]), 3), new Color([0, 0, 0, 1]));
-                        if (tipoResultado === consts.consultaSimple.consultaSimple) {
-                            const lastLayerLoad = EsriMap.getLayer('test');
-                            console.log(tipoResultado)
-                            console.log("selectedRowIds => ", myTable.selectedRowIds)
-                            console.log("selectedRows => ", myTable.selectedRows)
-                            console.log("featureCollection => ", widget.data.featureCollection)
+                        if (tipoResultado === consts.consultas.consultaAvanzada) {
+                           //console.log(widget) 
+                           
+                        var query = new Query();
+                        query.objectIds = myTable.selectedRowIds;
+                        query.returnGeometry = true;
+                        query.outSpatialReference = EsriMap.spatialReference;
+                        EsriMap.graphics.clear()
+                        EsriMap.lastfeatureLayerDrawed.selectFeatures(query, FeatureLayer.SELECTION_NEW, dojo.hitch(this, function(features) {
+                            //console.log(features)
+                            selectedRegisterFromTable.features.length = 0
+                            widget.data.objConsultaAvanzada.queryFinalyResponse.features.forEach(finalfeature => {
+                                features.forEach(feature => {
+                                    if(feature.attributes.OBJECTID == finalfeature.attributes.OBJECTID){
+                                        let featureFixed = {...feature, ...finalfeature}
+                                        featureFixed.symbol = symbol;
+                                        featureFixed._extent = finalfeature.geometry.getExtent()
+                                        selectedRegisterFromTable.features.push(featureFixed);
+                                        pintarFeaturesConInfoTemplate({features:[finalfeature]});
+                                        EsriMap.setExtent(selectedRegisterFromTable.features[0].geometry.getExtent())
+                                    } 
+                                })
+                            });
+                        }))
+                        //console.log(selectedRegisterFromTable.features)
+                        } else if (tipoResultado === consts.consultas.consultaSimple) {
+                            const lastLayerLoad = EsriMap.getLayer(widget.data.objConsulta.nameObjConsulta);
+                            //console.log(tipoResultado)
+                            //console.log("selectedRowIds => ", myTable.selectedRowIds)
+                            //console.log("selectedRows => ", myTable.selectedRows)
+                            //console.log("featureCollection => ", widget.data.featureCollection)
                             selectedRegisterFromTable.features = []
-                            console.log(FeatureLayer)
+                            //console.log(FeatureLayer)
                             widget.data.featuresSelected.forEach(f => {
                                 myTable.selectedRowIds.forEach(objectid => {
                                     if(objectid == f.attributes.OBJECTID){
@@ -369,13 +401,14 @@ function cargarTablaResultados(widget) {
                                     } 
                                 })
                             })
+                            EsriMap.graphics.clear()
                             pintarFeaturesConInfoTemplate({features:selectedRegisterFromTable.features});
                             const finalFeature = [];
                             //creacion del query y asignacion de los ids seleccionados
                             var query = new Query();
                             query.objectIds = myTable.selectedRowIds;
                             lastLayerLoad.selectFeatures(query, FeatureLayer.SELECTION_NEW, dojo.hitch(this, function(features) {
-                                console.log(features)
+                                //console.log(features)
                                 features.forEach((f, i) => {
                                     finalFeature.push({
                                         // ...features2[i],
@@ -395,6 +428,7 @@ function cargarTablaResultados(widget) {
                                     // finalFeature[finalFeature.length - 1]._sourceLayer.fields = widgetResultados.data.response.fields;
                                 })
                                 selectedRegisterFromTable.features = finalFeature;
+                                EsriMap.setExtent(finalFeature[0].geometry.getExtent())
                                 /* var stateExtent = graphicsUtils.graphicsExtent(features);
                                 EsriMap.setExtent(stateExtent.expand(1.5)) */;
                             }));
@@ -480,7 +514,7 @@ function cargarTablaResultados(widget) {
                             sg.project([extentConver], sistemaRefSalida, function (resultados) {
                                 realizarExtent(resultados, tipoGeometria, features);
                             }, function (error) {
-                                console.log("FALLO....");
+                                //console.log("FALLO....");
                             });
                         }
 
@@ -532,11 +566,12 @@ function cargarTablaResultados(widget) {
     
                 myTable.on("row-deselect", function (evt) {
                     myTable.getFeatureDataById(myTable.selectedRowIds).then(function (featureDeselect) {
-                        console.log(featureDeselect);
+                        //console.log(featureDeselect);
     
                         let graphicsOn = objetoMapa.graphics.graphics;
 
-                        if(widget.data.tipoResultado === consts.consultaSimple.consultaSimple){
+                        if(widget.data.tipoResultado === consts.consultas.consultaSimple 
+                            || widget.data.tipoResultado === consts.consultas.consultaAvanzada){
 
                         }else{
                             if (graphicsOn.length === 1) {
@@ -576,7 +611,7 @@ function setearMapa(mapa) {
     objetoMapa = mapa.map;
 }
 function Exportar() {
-    console.log(object);
+    //console.log(object);
     //ResultadosJson
     
     //exportar a CSV

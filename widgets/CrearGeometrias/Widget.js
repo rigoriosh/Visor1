@@ -32,7 +32,7 @@ define([
       baseClass: "jimu-widget-CrearGeometrias",
 
       startup: function () {
-        console.log("CrearGeometrias");
+        //console.log("CrearGeometrias");
         this.inherited(arguments);
         // this.mapIdNoderrh.innerHTML = 'map id is:' + this.map.id;
 
@@ -44,7 +44,7 @@ define([
           if (myMap.graphics.graphics.length > 1) {
             graphicRemoved.push(myMap.graphics.graphics[myMap.graphics.graphics.length - 1])
             myMap.graphics.remove(myMap.graphics.graphics[myMap.graphics.graphics.length - 1]);
-            console.log(myMap.graphics.graphics)
+            //console.log(myMap.graphics.graphics)
           }
           if (myMap.graphics.graphics.length == 1) {
             textInfo.style.display = 'none';
@@ -55,7 +55,7 @@ define([
             let graphicToWork = graphicRemoved.length - 1;
             myMap.graphics.add(graphicRemoved[graphicToWork]);
             graphicRemoved.length = graphicToWork;
-            console.log(myMap.graphics.graphics)
+            //console.log(myMap.graphics.graphics)
             textInfo.style.display = 'block'
           }
         });
@@ -92,7 +92,7 @@ define([
       },
 
       initToolbar: function () {
-        console.log("initToolbar")
+        //console.log("initToolbar")
         dibujo = new Draw(this.map);
         dibujo.on("draw-end", this.addGraphic);
 

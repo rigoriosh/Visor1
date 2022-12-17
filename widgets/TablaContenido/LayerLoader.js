@@ -843,12 +843,12 @@ define(["dojo/_base/declare",
               }
               if (esriLang.isDefined(info.showLegend)) {
                 // TODO?
-                console.log('');
+                //console.log('');
               }
               if (esriLang.isDefined(info.timeAnimation)) {
                 if (info.timeAnimation === false) {
                   // TODO?
-                  console.log("");
+                  //console.log("");
                 }
               }
               layerDefinition = info.layerDefinition;

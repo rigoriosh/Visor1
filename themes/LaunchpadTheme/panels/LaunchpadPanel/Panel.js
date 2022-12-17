@@ -11,12 +11,10 @@ define("dojo/_base/declare dojo/_base/lang dojo/_base/html dojo/on dojo/keys doj
                 "minimized" ===
                 this.windowState && this.makeMoveable(this.domNode, 40, 40)
             }))); this.own(m(this.iconNode, "click", d.hitch(this, function () { "minimized" === this.windowState && (this.panelManager.normalizePanel(this), c.set(this.domNode, "overflow", "visible")) })))
-        }, startup: function () {
-            console.log(11111111111);
+        }, startup: function () {            
             this.inherited(arguments); this.panelManager.normalizePanel(this); h.setAttr(this.domNode, "role", "dialog"); h.setAttr(this.domNode, "aria-label", this.label); h.setAttr(this.iconNode, "alt", this.config.label); h.setAttr(this.maxNode, "aria-label", this.headerNls.maxWindow);
             h.setAttr(this.closeNode, "aria-label", this.headerNls.closeWindow); this.own(m(this.domNode, "keydown", d.hitch(this, function (a) { h.hasClass(a.target, "close-btn") || a.keyCode !== k.ESCAPE || this.closeNode.focus() })))
-        }, _makeOriginalBox: function () {
-            console.log(2222222222222);
+        }, _makeOriginalBox: function () {            
              this._originalBox = { w: this.position.width || 350, h: this.position.height || 480, l: this.position.left || 0, t: this.position.top || 0 } }, makeMoveable: function (a, b, f) {
             this.disableMoveable(); var e = this._getLayoutBox(); e.l = e.l - b + f; e.w += 2 * (b - f); this.moveable = new w.boxConstrainedMoveable(this.domNode,
                 { box: e, handle: a || this.titleNode, within: !0 }); this.own(m(this.moveable, "MoveStart", d.hitch(this, this.onMoveStart))); this.own(m(this.moveable, "Moving", d.hitch(this, this.onMoving))); this.own(m(this.moveable, "MoveStop", d.hitch(this, this.onMoveStop)))
@@ -69,7 +67,6 @@ define("dojo/_base/declare dojo/_base/lang dojo/_base/html dojo/on dojo/keys doj
                     "minimized"); g.add(this.domNode, "maximized"); this.resize()
             }))
         }, resize: function (a) {
-            console.log(333333333333);
              if (a) { this.position = { left: a.l ? a.l : this.position.left, top: a.t ? a.t : this.position.top, width: a.w ? a.w : this.position.width, height: a.h ? a.h : this.position.height, zIndex: this.position.zIndex }; var b = q.getPositionStyle(this.position); window.isRTL && "right" in b && (b.left = b.right, b.right = ""); c.set(this.domNode, b) } this.inherited(arguments) }, _onResponsible: function () {
             window.appInfo.isRunInMobile ? ("minimized" !== this.windowState && this.disableMoveable(),
                 this.disableResizable(), c.set(this.maxNode, "display", "")) : (c.set(this.maxNode, "display", "none"), this.makeResizable(), this.makeMoveable(this.titleLabelNode, this.position.width, .25 * this.position.width))

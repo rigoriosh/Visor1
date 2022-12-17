@@ -11,7 +11,7 @@ function (declare, BaseWidget, query) {
         startup: function() {
             this.inherited(arguments);
             appGlobal = this;
-            console.log(appGlobal);
+            //console.log(appGlobal);
 
             query("#IdnumeroPredial").on("change", async function (evt) {
                 const value = evt.target.value;
@@ -19,7 +19,7 @@ function (declare, BaseWidget, query) {
                     ...appGlobal.widgetConsCatastro,
                     numPredial: value
                 }
-                console.log(appGlobal.widgetConsCatastro);
+                //console.log(appGlobal.widgetConsCatastro);
             });
             query("#IdmatriculaInmobiliaria").on("change", async function (evt) {
                 const value = evt.target.value;
@@ -27,7 +27,7 @@ function (declare, BaseWidget, query) {
                     ...appGlobal.widgetConsCatastro,
                     matriculaInmobiliaria: value
                 }
-                console.log(appGlobal.widgetConsCatastro);
+                //console.log(appGlobal.widgetConsCatastro);
             });
             query("#Idchip").on("change", async function (evt) {
                 const value = evt.target.value;
@@ -35,10 +35,10 @@ function (declare, BaseWidget, query) {
                     ...appGlobal.widgetConsCatastro,
                     chip: value
                 }
-                console.log(appGlobal.widgetConsCatastro);
+                //console.log(appGlobal.widgetConsCatastro);
             });
             query("#btnConsultaCatastro").on("click", async function (evt) {
-                console.log(appGlobal.widgetConsCatastro);
+                //console.log(appGlobal.widgetConsCatastro);
                 appGlobal._fixDataToSendWidResultados({
                     tipoResultado: consts.consulCatastro,
                     data:{

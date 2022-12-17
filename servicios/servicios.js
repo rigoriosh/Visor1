@@ -15,7 +15,10 @@ const servConsultaSimple = [
         label: "SAE/PRUEBA"
     },
     {
-        value: "https://172.17.3.205:6443/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer",
+        // value: "https://172.17.3.205:6443/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer",
+        value: "https://sae.igac.gov.co/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer",
+        
+        // value: "http://localhost:3000/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer",
         label: "Cartografía Básica"
     },
     {
@@ -31,7 +34,7 @@ const servConsultaSAvanzada = {
         "nombreMostrar": "SAE/PRUEBA"
       },
       {
-        "url": "https://172.17.3.205:6443/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer",
+        "url": "https://sae.igac.gov.co/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer",
         "nombreMostrar": "Cartografía Básica"
       }
   ]

@@ -217,7 +217,9 @@ select{
 }
 
 .fade.show {
-    background-color: #000000b5 !important;
+    /* background-color: #000000b5 !important; */
+    background-color: #0000001a !important;
+    
 }
 
 #dijit_Menu_0{

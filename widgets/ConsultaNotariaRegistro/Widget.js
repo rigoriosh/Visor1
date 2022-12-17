@@ -12,7 +12,7 @@ function (declare, BaseWidget, query) {
         startup: function() {
             this.inherited(arguments);
             appGlobal = this;
-            console.log(appGlobal);
+            //console.log(appGlobal);
 
             query("#IdFMI").on("change", async function (evt) {
                 const value = evt.target.value;
@@ -20,7 +20,7 @@ function (declare, BaseWidget, query) {
                     ...appGlobal.widgetConsNotariadoRegistro,
                     fichaMatriInmob: value
                 }
-                console.log(appGlobal.widgetConsNotariadoRegistro);
+                //console.log(appGlobal.widgetConsNotariadoRegistro);
             });
             query("#IdnumeroPredial").on("change", async function (evt) {
                 const value = evt.target.value;
@@ -28,10 +28,10 @@ function (declare, BaseWidget, query) {
                     ...appGlobal.widgetConsNotariadoRegistro,
                     numeroPredial: value
                 }
-                console.log(appGlobal.widgetConsNotariadoRegistro);
+                //console.log(appGlobal.widgetConsNotariadoRegistro);
             });
             query("#btnConsultaNotariadoRegistro").on("click", async function (evt) {
-                console.log(appGlobal.widgetConsNotariadoRegistro);
+                //console.log(appGlobal.widgetConsNotariadoRegistro);
                 appGlobal._fixDataToSendWidResultados({
                     tipoResultado: consts.consulCatastro,
                     data:{
@@ -46,7 +46,7 @@ function (declare, BaseWidget, query) {
         },
         onOpen: function () {
             var panel = this.getPanel();
-            console.log(panel);
+            //console.log(panel);
             ajustarTamanioWidget(panel, panel.position.width, 300)
 
         },

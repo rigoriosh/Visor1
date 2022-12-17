@@ -6,5 +6,12 @@
     "/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public":"/tablaDeContenido",
     "/arcgis/rest/services/QUINDIO_III/Salud_T/MapServer/4?f=json&wab_dv=2.5":"/clinicaFracturas",
     "/arcgis/rest/services/QUINDIO_III/RiesgoConsulta/MapServer/0?f=json":"/zonasRiesgos",
-    "/arcgis/rest/services/SAE/PRUEBA/MapServer/0/query?f=json&where=1%3D1&returnGeometry=true&spatialRel=esriSpatialRelIntersects&outFields=*&outSR=102100":"/SAEPrueba"
+    "/arcgis/rest/services/SAE/PRUEBA/MapServer/0/query?f=json&where=1%3D1&returnGeometry=true&spatialRel=esriSpatialRelIntersects&outFields=*&outSR=102100":"/SAEPrueba",
+    "/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer?f=json":"/cartografiaBasica",
+    "/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/13?f=json":"/capa13SAEpredios",
+    "/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/13/query?f=json&where=1%3D1&returnGeometry=true&spatialRel=esriSpatialRelIntersects&outFields=*&outSR=102100":"/querySAEpredios",
+    "/3":"/",
+    "/4":"/",
+    "/5":"/",
+    "/6":"/"
 }

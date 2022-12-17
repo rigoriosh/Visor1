@@ -25,7 +25,7 @@ define("dojo/_base/declare dojo/_base/lang dojo/_base/array dojo/_base/html dojo
                 "auto", a.domNode.style.top = "auto", a.domNode.style.bottom = "auto", a.domNode.style.width = "280px", b.place(a.domNode, this.searchNode), this._boxSizes.searchWidgetBox = { w: 280, h: 30 })
         }, _detachSearchWidget: function () { b.empty(this.searchNode); this._boxSizes.searchWidgetBox = { w: 0, h: 0 } }, _getSearchWidgetInHeader: function () { var a, c = this.widgetManager.getWidgetsByName("Search"); p.some(c, e.hitch(this, function (d) { if (!d.closeable && d.isOnScreen) return a = d, this._searchWidgetId = d.id, !0 })); return a },
          startup: function () {
-            console.log("startup Header")
+            //console.log("startup Header")
             setTimeout(() => {
                 document.getElementById("IdNewHeader").style.display = 'flex';
             }, 500);

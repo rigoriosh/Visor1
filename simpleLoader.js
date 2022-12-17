@@ -147,7 +147,7 @@
   })
   ************/
   function testLoad(testObj){
-    console.log(testObj);
+    //console.log(testObj);
     testObj.success = !!testObj.success? isArray(testObj.success)?
       testObj.success: [testObj.success]: [];
     testObj.failure = !!testObj.failure?

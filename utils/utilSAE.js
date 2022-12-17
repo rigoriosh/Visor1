@@ -72,9 +72,9 @@ const retunMunicipios = (departSelect) => {
 
 const validarSoloEspacios = (dataIn) => {
     let di = dataIn.trim();
-    console.log(di);
+    //console.log(di);
     di = di.length;
-    console.log(di);
+    //console.log(di);
     if (di > 0) {
         return true
     } else {
@@ -193,7 +193,7 @@ function renderGrafico(data, div, width, height) {
 
     myChart.on('click', function(params) {
         // Print name in console
-        console.log(params.name);
+        //console.log(params.name);
     });
 
     let currentIndex = -1;
@@ -220,7 +220,7 @@ function renderGrafico(data, div, width, height) {
 }
 
 const renderModal = (modal, render, titulo, body) => {
-    console.log("renderModal")
+    //console.log("renderModal")
     let myModal = document.getElementById(modal);
     if (render) {
         myModal.style.display = 'block';
@@ -247,7 +247,7 @@ const pintarFeatureLayer = (url, id, map) => {//pintar capa
         });
         map.addLayer(featureLayer);
         map.lastfeatureLayerDrawed = featureLayer;    
-        console.log(5555)  
+        //console.log(5555)  
         // map.setExtent(featureLayer.initialExtent)  
     });
     return featureLayer;
@@ -261,7 +261,7 @@ function pintarFeaturesConInfoTemplate(featureSet) { //función que se encarga d
         function (SimpleMarkerSymbol, SimpleLineSymbol, Color,
             Graphic, SimpleFillSymbol, TooltipDialog, InfoTemplate,
             domConstruct, SpatialReference, projection) {
-                var myGraphic
+            var myGraphic
             featureSet.features.forEach(element => {
                 if (element.geometry != undefined) {
                     let f = Object.keys(featureSet.features[0].attributes);
@@ -295,12 +295,12 @@ function pintarFeaturesConInfoTemplate(featureSet) { //función que se encarga d
                             wkid: parseInt(datumtrans, 10)
                         } : null;
                         geometryService.project(PrjParams, function (outputpoint) {
-                            console.log(outputpoint)
+                            //console.log(outputpoint)
                             EsriMap.graphics.add(outputpoint)
                             EsriMap.setExtent(outputpoint.geometry.getExtent())
                         }); */
                     }
-                    
+                    myGraphic.attributes = element.attributes
                     if (element.geometry.type == "polygon") {
                         myGraphic.symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleLineSymbol.STYLE_LONGDASHDOT, new Color([255, 0, 0, 1]), 3), new Color([255, 128, 0, 0.15]));
                     } else if (element.geometry.type == "point") {
@@ -310,7 +310,7 @@ function pintarFeaturesConInfoTemplate(featureSet) { //función que se encarga d
                     return myGraphic;                
                 }
             });
-            /* if (featureSet.features.length > 1) {
+            /* if (featureSet.features.length > 0) {
                 setTimeout(() => {
                     EsriMap.setExtent(featureSet.features[0].geometry.getExtent())
                     EsriMap.setScale(90000);
@@ -355,7 +355,7 @@ function cerrarWidgetResultados() {
             widgetOpen = false;
             appGlobal.map.graphics.clear()
             appGlobal.map.setExtent(appGlobal.map._initialExtent);
-            // console.log("cerrarWidgetResultados");
+            // //console.log("cerrarWidgetResultados");
         }
       )
 };
@@ -376,7 +376,7 @@ const exportarShape = (featureDataSet) => {
         document.getElementById("loadingResultados").style.zIndex = 1;
         var gp = new Geoprocessor(SERVICIO_SHAPEFILE);
         let parametros = {featureDataSet};
-        console.log(parametros)
+        //console.log(parametros)
         gp.execute(parametros, exportarShapeCompleto, errorExportarShapeCompleto);
 
         function exportarShapeCompleto(e) {
@@ -404,76 +404,7 @@ const exportarShape = (featureDataSet) => {
 
 }
 
-function consultaCapasSegunTematica(_this, obj) { // implementado en consulta Simple y Avanzada
-        // console.log(_this)
-        // console.log(obj)
-        let select = _this.attributes.id.nodeValue;
-        selAtributos = document.getElementById(select);
-    
-        let urlSel = _this.value;
-      
-        // document.getElementById("palabraClave").value = "";
-        // selAtributos.options.length = 0;
-        if (urlSel !== '0') {
-    
-            require([ "esri/request" ], function (esriRequest) {
-                var lasCapas = "";
-               
-                loading.style.display = 'flex';
-    
-    
-                var layersRequest = esriRequest({
-                    url: urlSel,
-                    content: { f: "json" },
-                    handleAs: "json",
-                    callbackParamName: "callback"
-                });
-                layersRequest.then((response) =>
-                    requestSucceeded(response),
-                    function (error) {
-                        console.log("Error: ", error.message);
-                        createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, consts.notas.consultaSimple[0].body)
-                        loading.style.display = 'none';
-                    });
-    
-                function requestSucceeded(response) {
-                    if (response.hasOwnProperty("layers")) {
-    
-                        var layerInfo = [];
-                        var pad;
-                        pad = dojo.string.pad;
-                        layerInfo = dojo.map(response.layers, function (f) {
-                            // return pad(f.id, 2, " ", true) + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
-                            return pad(f.id, 2, " ", true).trim() + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
-                        });
-                        lasCapas = layerInfo;
-                        var todo = [];
-                        for (var i = 0; i < lasCapas.length.toString(); i++) {
-                            var capa = [];
-                            capa = lasCapas[i].split("/");
-                            todo.push(capa);
-                        }
-    
-                        if (todo.length>0) {
-                            insetarCapas(todo, "selCapasCA");
-                        } else {
-                            createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, 'Esta temática no contiene capas a mostrar')
-                        }
-                    }
-                    loading.style.display = 'none';
-                }
-    
-            });
-        } else {
-            selCapas.options.length = 0;
-            obj = {
-                atributo: '',
-                capaSelected: {},
-                palabraClave: '',
-                urlCapa: ''
-            }
-        }
-    }
+
 
 function insetarCapas(capas, select) { // implementado en consulta Simple y Avanzada
     selCapas = document.getElementById(select);
@@ -494,10 +425,11 @@ function insetarCapas(capas, select) { // implementado en consulta Simple y Avan
     }
 }
 
-/* function consultaAtributosSegunCapa(selGrupos, selCapas, selServicios, objConsulta) { // implementado en consulta Simple y Avanzada
+function consultaAtributosSegunCapa(selCapas, selServicios, selAtributos, objConsulta, load) { // implementado en consulta Simple y Avanzada
 
-    let capaSeleccionado = selGrupos.value.trim();
-    document.getElementById("palabraClave").value = "";
+    if(EsriMap.lastfeatureLayerDrawed)EsriMap.removeLayer(EsriMap.lastfeatureLayerDrawed)
+    let capaSeleccionado = selCapas.value.trim();
+    // document.getElementById("palabraClave").value = "";
     if (capaSeleccionado !== 'Seleccione...') {
         require([
             "esri/request"
@@ -509,16 +441,21 @@ function insetarCapas(capas, select) { // implementado en consulta Simple y Avan
             // document.getElementById("palabraClave").value = "";
             // consultarCapas(urlCapa);
 
-            loading.style.display = 'flex';
+            load.style.display = 'flex';
 
             let urlCapa = selServicios.value + "/" + capaSeleccionado;
             
             // pintarFeatureLayer("https://mapassig.icbf.gov.co:6443/arcgis/rest/services/ICBF/Administrativo/MapServer/4", 'test', EsriMap);
             pintarFeatureLayer(urlCapa, objConsulta.nameObjConsulta, EsriMap);
+            setTimeout(() => {
+                if(EsriMap.lastfeatureLayerDrawed._graphicsVal.length > 0 && EsriMap.lastfeatureLayerDrawed._graphicsVal[0].geometry.rings.length > 0){
+                    EsriMap.setExtent(EsriMap.lastfeatureLayerDrawed._graphicsVal[0].geometry.getExtent())
+                }
+            }, 500);
 
             objConsulta.urlCapa = urlCapa;
             // const queryAtributos =  await ejecutarConsulta(urlCapa);
-            // console.log(queryAtributos)
+            // //console.log(queryAtributos)
 
             var requestHandle = esriRequest({
                 "url": urlCapa,
@@ -531,20 +468,20 @@ function insetarCapas(capas, select) { // implementado en consulta Simple y Avan
             requestHandle.then(requestSucceeded);
             function requestSucceeded(response) {
                 objConsulta.capaSelected = response;
-                console.log(response)
-                fixAttributesToShow(response.fields, "selAtributosCA");
+                //console.log(response)
+                fixAttributesToShow(response.fields, selAtributos, load);
             }
         }
 
         )
     } else {
-        objConsultaSimple.urlCapa = '';
-        objConsultaSimple.capaSelected = {};
+        objConsulta.urlCapa = '';
+        objConsulta.capaSelected = {};
     }
 
-} */
+}
 
-/* function fixAttributesToShow(fields, select) { // implementado en consulta Simple y Avanzada
+function fixAttributesToShow(fields, select, load) { // implementado en consulta Simple y Avanzada
     let fieldsToShow = fields.filter(e => (e.name !== 'OBJECTID_1' && e.name !== 'OBJECTID' && e.name !== 'Shape_Leng'
         && e.name !== 'Shape' && e.name !== 'Shape.STArea()' && e.name !== 'Shape.STLength()'
         && e.name !== 'SHAPE_Leng' && e.name !== 'SHAPE' && e.name !== 'SHAPE.STArea()' && e.name !== 'SHAPE.STLength()'));
@@ -554,30 +491,41 @@ function insetarCapas(capas, select) { // implementado en consulta Simple y Avan
     });
     agregarDataSelect2(finalFieldsToShow, select)
 
-    loading.style.display = 'none';
+    load.style.display = 'none';
 
-} */
+}
 
-/* const ejecutarQueryAndQueryTask = (objConsulta) => {
-    const {urlCapa, atributo} = objConsulta;
+const ejecutarQueryAndQueryTask = (objConsulta, succeededRequest, errorRequest) => {
+    const {urlCapa, atributo = '*', where = '1=1', returnGeometry = true} = objConsulta;
     require(["esri/tasks/query", "esri/tasks/QueryTask"], function (Query, QueryTask) {
         let queryTask = new QueryTask(urlCapa);
         let query = new Query();
-        let where = '1=1';
         query.outSpatialReference = EsriMap.spatialReference;
-        query.returnGeometry = true;
+        query.returnGeometry = returnGeometry;
         query.where = where;
         query.outFields = [atributo];
         // query.outFields = [objConsultaSimple.atributo + ", OBJECTID"];
         // query.outFields = ["*"];
         queryTask.execute(query, succeededRequest, errorRequest);
     })
-} */
-    
-/* const succeededRequest = (response) => {
-    console.log(response)
 }
 
-const errorRequest = (error) => {
-    console.log(error)
-} */
+const crearfeatureSet = (features) => {
+    var featureSet
+    require(["esri/graphic", "esri/tasks/FeatureSet"],
+        function (Graphic, FeatureSet) {
+            //console.log("Creating a featureSet")
+            const graphics = [];
+            features.forEach(element => {
+                var graphic = new Graphic({
+                    geometry: element.geometry,
+                    attributes: element.attributes
+                });
+                graphics.push(graphic);
+            });
+            featureSet = new FeatureSet();
+            featureSet.features = graphics;
+        })
+    return featureSet;
+
+}

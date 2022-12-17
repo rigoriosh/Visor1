@@ -1,4 +1,4 @@
-var loading, selCapas, EsriMap;
+var loadingCA, selCapas, EsriMap;
 var objetoGrupos = [];
 var objetoCapas = [];
 var objetoCampos = [];
@@ -22,26 +22,40 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
 
       // postCreate: function() {
       //   this.inherited(arguments);
-      //   console.log('postCreate');
+      //   //console.log('postCreate');
       // },
 
       startup: function () {
         // this.inherited(arguments);
         // this.mapIdNode.innerHTML = 'map id:' + this.map.id;
-        // console.log('startup');
+        // //console.log('startup');
         obtenerApp(this);
         appGlobal = this;
         EsriMap = this.map
-        loading = document.getElementById('loading');
+        loadingCA = document.getElementById('loadingCA');
         agregarDataSelectValueLabel(servConsultaSimple, 'selServiciosCA');
         query("#selAtributosCA").on("change", async function (evt) {
           // undoManager.undo();
-          objConsultaAvanzada.atributo = evt.target.value !== "0" ? evt.target.value : '';
-          ejecutarQueryAndQueryTask(objConsultaAvanzada)
-      });
+          objConsultaAvanzada.campoAtributo = evt.target.value !== "0" ? evt.target.value : '';
+          formarExpresion(objConsultaAvanzada.campoAtributo)
+          loadingCA.style.display = 'flex';
+          ejecutarQueryAndQueryTask(objConsultaAvanzada, appGlobal.succeededRequest, appGlobal.errorRequest)
+        });
 
+        query("#selValoresCA").on("change", async function (evt) {
+          objConsultaAvanzada.campoValores = evt.target.value !== "0" ? evt.target.value.trim() : '';
+          formarExpresion(`'${objConsultaAvanzada.campoValores}'`)
+          //console.log(objConsultaAvanzada)
+        });
 
-
+        query("#btnConsultar").on("click", async function (evt) {
+          //console.log("btnConsultar")
+          //console.log(objConsultaAvanzada)
+          objConsultaAvanzada.returnGeometry = true;
+          objConsultaAvanzada.campoExpresion = document.getElementById("expresion").value;
+          objConsultaAvanzada.where = objConsultaAvanzada.campoExpresion;
+          ejecutarQueryAndQueryTask(objConsultaAvanzada, appGlobal.succeededFinalyRequest, appGlobal.errorRequest)
+        });
 
         /* html = "";
 
@@ -57,42 +71,98 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
 
         document.getElementById("selectServiciosCA").innerHTML = html;
 
-        var divCarga = document.getElementById("loading");
+        var divCarga = document.getElementById("loadingCA");
         divCarga.style.visibility = 'hidden'; */
       },
 
+      succeededRequest: function(response) {
+        //console.log(response)
+        objConsultaAvanzada.queryAtributtes = response;
+        agregarDataSelect(response.features, "selValoresCA", objConsultaAvanzada.campoAtributo, objConsultaAvanzada.campoAtributo)
+        loadingCA.style.display = 'none';
+      },
+
+      succeededFinalyRequest: function(response){
+        //console.log(response)
+        if (response.features.length < 1) {
+          createDialogInformacionGeneral("Respuesta", "La presente consulta no arrojó resultados")
+        } else {
+          objConsultaAvanzada.queryFinalyResponse = response;
+          abrirWidgetResultados({
+            data: {
+                panel: {
+                    width: 700,
+                    height: 500
+                }
+            },
+            objConsultaAvanzada,
+            featureCollection: {
+                featureSet: crearfeatureSet(response.features),
+                layerDefinition: {
+                  geometryType: response.geometryType,
+                  fields: response.fields
+                },
+            },
+            tipoResultado: consts.consultas.consultaAvanzada,
+            objConsulta:objConsultaAvanzada
+
+          });
+        }
+      },
+    
+      errorRequest: function(error){
+        console.error(error)
+        createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, consts.notas.consultaSimple[0].body)
+        loadingCA.style.display = 'none';
+      },
+
       onOpen: function () {
+        appGlobal = this;
         var panel = this.getPanel();
         ajustarTamanioWidget(panel, 600, 400)
       },
 
-      // onClose: function(){
-      //   console.log('onClose');
-      // },
+      onClose: function () {
+        //console.log('onClose');
+        this.limpiar()
+        cerrarWidgetResultados();
+        if(EsriMap.lastfeatureLayerDrawed)EsriMap.removeLayer(EsriMap.lastfeatureLayerDrawed)
+      },
+
+      limpiar: function() {
+        document.getElementById("selServiciosCA").value = 0
+        document.getElementById("selCapasCA").value = "Seleccione..."
+        document.getElementById("selAtributosCA").options.length = 0;
+        document.getElementById("selValoresCA").options.length = 0
+        document.getElementById("expresion").value = ""
+        objConsultaAvanzada = {
+          nameObjConsulta: "ConsultaAvanzada"
+        }
+      }
 
       // onMinimize: function(){
-      //   console.log('onMinimize');
+      //   //console.log('onMinimize');
       // },
 
       // onMaximize: function(){
-      //   console.log('onMaximize');
+      //   //console.log('onMaximize');
       // },
 
       // onSignIn: function(credential){
       //   /* jshint unused:false*/
-      //   console.log('onSignIn');
+      //   //console.log('onSignIn');
       // },
 
       // onSignOut: function(){
-      //   console.log('onSignOut');
+      //   //console.log('onSignOut');
       // }
 
       // onPositionChange: function(){
-      //   console.log('onPositionChange');
+      //   //console.log('onPositionChange');
       // },
 
       // resize: function(){
-      //   console.log('resize');
+      //   //console.log('resize');
       // }
 
       //methods to communication between widgets:
@@ -102,12 +172,82 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
 
 
   ///////////////////////////////////////////////////////////////////////////////////////////
+  function consultaCapasSegunTematicaCA(_this, obj) { // implementado en consulta Simple y Avanzada
+    // //console.log(_this)
+    // //console.log(obj)
+    let select = _this.attributes.id.nodeValue;
+    selAtributos = document.getElementById(select);
 
+    let urlSel = _this.value;
+  
+    // document.getElementById("palabraClave").value = "";
+    // selAtributos.options.length = 0;
+    if (urlSel !== '0') {
+
+        require([ "esri/request" ], function (esriRequest) {
+            var lasCapas = "";
+           
+            loadingCA.style.display = 'flex';
+
+
+            var layersRequest = esriRequest({
+                url: urlSel,
+                content: { f: "json" },
+                handleAs: "json",
+                callbackParamName: "callback"
+            });
+            layersRequest.then((response) =>
+                requestSucceeded(response),
+                function (error) {
+                    //console.log("Error: ", error.message);
+                    createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, consts.notas.consultaSimple[0].body)
+                    loadingCA.style.display = 'none';
+                    document.getElementById("selServiciosCA").value = 0
+                });
+
+            function requestSucceeded(response) {
+                if (response.hasOwnProperty("layers")) {
+
+                    var layerInfo = [];
+                    var pad;
+                    pad = dojo.string.pad;
+                    layerInfo = dojo.map(response.layers, function (f) {
+                        // return pad(f.id, 2, " ", true) + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
+                        return pad(f.id, 2, " ", true).trim() + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
+                    });
+                    lasCapas = layerInfo;
+                    var todo = [];
+                    for (var i = 0; i < lasCapas.length.toString(); i++) {
+                        var capa = [];
+                        capa = lasCapas[i].split("/");
+                        if(capa[2] == "null" )todo.push(capa);
+                    }
+
+                    if (todo.length>0) {
+                        insetarCapas(todo, "selCapasCA");
+                    } else {
+                        createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, 'Esta temática no contiene capas a mostrar')
+                    }
+                }
+                loadingCA.style.display = 'none';
+            }
+
+        });
+    } else {
+        selCapas.options.length = 0;
+        obj = {
+            atributo: '',
+            capaSelected: {},
+            palabraClave: '',
+            urlCapa: ''
+        }
+    }
+}
   ///////////////////////////////////////////////////////////////////////////////////////////
   
 
 
-function obtenerSelects(select) {
+/* function obtenerSelects(select) {
   require(["jimu/WidgetManager", "jimu/PanelManager", "esri/graphic",
     "esri/geometry/Extent", "esri/SpatialReference"],
     function (WidgetManager, PanelManager, Graphic, Extent, SpatialReference) {
@@ -141,7 +281,7 @@ function obtenerSelects(select) {
         objetoGrupos = [];
         objetoCapas = [];
 
-        var divCarga = document.getElementById("loading");
+        var divCarga = document.getElementById("loadingCA");
         // divCarga.style.display = 'block';
         divCarga.style.visibility = 'visible';
 
@@ -152,7 +292,7 @@ function obtenerSelects(select) {
             if (xmlhttp.status == 200) {
               if (xmlhttp.responseText) {
                 eval("jsonRespuesta=" + xmlhttp.responseText);
-                console.log(jsonRespuesta);
+                //console.log(jsonRespuesta);
 
                 for (var x in jsonRespuesta.layers) {
                   if (jsonRespuesta.layers[x].subLayerIds != null) {
@@ -168,7 +308,7 @@ function obtenerSelects(select) {
                 }
               }
             } else {
-              console.log('Error: ' + xmlhttp.statusText)
+              //console.log('Error: ' + xmlhttp.statusText)
             }
           }
         }
@@ -178,7 +318,7 @@ function obtenerSelects(select) {
         // divCarga.style.display = 'none';
 
         if (objetoGrupos.length != 0) {
-          console.log("HAY GRUPOS...");
+          //console.log("HAY GRUPOS...");
           divGrupos.style.visibility = 'visible';
 
           html += "<option value=" + 'Seleccione...' + ">" + 'Seleccione...' +
@@ -189,7 +329,7 @@ function obtenerSelects(select) {
           }
           document.getElementById("selectGruposCA").innerHTML = html;
         } else {
-          console.log("NO HAY GRUPOS...");
+          //console.log("NO HAY GRUPOS...");
           divGrupos.style.visibility = 'hidden';
 
           html += "<option value=" + 'Seleccione...' + ">" + 'Seleccione...' +
@@ -208,7 +348,7 @@ function obtenerSelects(select) {
           "selectValoresCA").options.length;
 
         if (numOptionSelectCamposCapa != 0 || numOptionSelectValoresCapa != 0) {
-          console.log("HAY QUE BORRAR ELEMENTOS...");
+          //console.log("HAY QUE BORRAR ELEMENTOS...");
           document.getElementById("selectCamposCA").options.length = 0;
           document.getElementById("selectValoresCA").options.length = 0;
         }
@@ -249,7 +389,7 @@ function obtenerSelects(select) {
 
           aplicacion.map.setExtent(startExtent);
         } else {
-          console.log("NO EXISTE LA CAPA......");
+          //console.log("NO EXISTE LA CAPA......");
         }
       } else if (select == "capas") {
         var selectCapas = document.getElementById("selectCapasCA");
@@ -268,7 +408,7 @@ function obtenerSelects(select) {
           "selectValoresCA").options.length;
 
         if (numOptionSelectCamposCapa != 0 || numOptionSelectValoresCapa != 0) {
-          console.log("HAY QUE BORRAR ELEMENTOS...");
+          //console.log("HAY QUE BORRAR ELEMENTOS...");
           document.getElementById("selectCamposCA").options.length = 0;
           document.getElementById("selectValoresCA").options.length = 0;
         }
@@ -299,7 +439,7 @@ function obtenerSelects(select) {
 
           aplicacion.map.setExtent(startExtent);
         } else {
-          console.log("NO EXISTE LA CAPA......");
+          //console.log("NO EXISTE LA CAPA......");
         }
 
       } else if (select == "campos") {
@@ -319,7 +459,7 @@ function obtenerSelects(select) {
           urlFormatear) + "/" + valorSeleccionadoCapas;
         textConsulta.value += " " + valorSeleccionado;
 
-        var divCarga = document.getElementById("loading");
+        var divCarga = document.getElementById("loadingCA");
         divCarga.style.visibility = 'visible';
 
         obtenerValoresCapa(valorSeleccionado, urlPeticionCampos);
@@ -334,29 +474,29 @@ function obtenerSelects(select) {
         textConsulta.value += " " + "'" + valorSeleccionado + "'";
       }
     });
-}
-
+} */
+/* 
 function llenarObjetoGrupos(id, nombre) {
   objetoGrupos.push({
     idGrupo: id,
     nombreGrupo: nombre
   });
-}
+} */
 
-function llenarObjetoCapas(id, nombre, grupoPadre) {
+/* function llenarObjetoCapas(id, nombre, grupoPadre) {
   objetoCapas.push({
     idCapa: id,
     nombreCapa: nombre,
     grupoPadre: grupoPadre
   });
-}
-
+} */
+/* 
 function obtenerCamposCapa(urlPeticion) {
   require(["dojo/_base/json", "dojo/_base/array", "dojo/string", "esri/request",
     "dojo/domReady!"],
     function (dojoJson, array, dojoString, esriRequest) {
 
-      var divCarga = document.getElementById("loading");
+      var divCarga = document.getElementById("loadingCA");
       divCarga.style.visibility = 'visible';
 
       var requestHandle = esriRequest({
@@ -383,13 +523,13 @@ function obtenerCamposCapa(urlPeticion) {
       }
 
       function requestFailed(error, io) {
-        console.log("ERROR EN LA PETICION...");
+        //console.log("ERROR EN LA PETICION...");
         divCarga.style.visibility = 'hidden';
       }
     });
 }
-
-
+ */
+/* 
 function obtenerValoresCapa(campo, url) {
   require(["esri/tasks/query", "esri/tasks/QueryTask"], function (Query,
     QueryTask) {
@@ -397,7 +537,7 @@ function obtenerValoresCapa(campo, url) {
     var queryTask = new QueryTask(url);
     var query = new Query();
 
-    var divCarga = document.getElementById("loading");
+    var divCarga = document.getElementById("loadingCA");
     divCarga.style.visibility = 'visible';
 
     query.returnGeometry = true;
@@ -427,16 +567,20 @@ function obtenerValoresCapa(campo, url) {
     }
   });
 }
-
+ */
 function borrarTextAreaConsulta() {
-  var textConsulta = document.getElementById("textCondicionBusqueda");
+  var textConsulta = document.getElementById("expresion");
   textConsulta.value = "";
 }
 
-function obtenerBotonesConsulta(texto) {
-  var textConsulta = document.getElementById("textCondicionBusqueda");
-
-  if (texto == "LIKE") {
+function formarExpresion(texto) {
+  var textConsulta = document.getElementById("expresion");
+  textConsulta.value === ""
+  ? textConsulta.value = texto
+  : textConsulta.value += " " + texto;
+  objConsultaAvanzada.campoExpresion = textConsulta.value;
+  //console.log(objConsultaAvanzada)
+  /* if (texto == "LIKE") {
     textConsulta.value += " " + texto;
   } else if (texto == "AND") {
     textConsulta.value += " " + texto;
@@ -460,26 +604,23 @@ function obtenerBotonesConsulta(texto) {
     textConsulta.value += " " + texto;
   } else if (texto == "<=") {
     textConsulta.value += " " + texto;
-  }
+  }  else if (texto == "%") {
+    textConsulta.value += " " + texto;
+  }  else if (texto == "<=") {
+    textConsulta.value += " " + texto;
+  } */
 }
 
 function obtenerApp(app) {
   aplicacion = app;
 }
-
+/* 
 function ejecutarConsulta() {
   require(["esri/tasks/query", "esri/tasks/QueryTask"], function (Query,
     QueryTask) {
 
 
-    var divCarga = document.getElementById("loading");
-    // divCarga.style.display = 'block';
-    divCarga.style.visibility = 'visible';
 
-    var textExpresion = document.getElementById("textCondicionBusqueda").value;
-    var urlConsulta = document.getElementById("selectServiciosCA").value;
-    var capaSeleccionada = document.getElementById("selectCapasCA").value;
-    var urlFormatear = urlConsulta.indexOf("?");
     var urlPeticionConsulta = urlConsulta.substring(0, urlFormatear) + "/" +
       capaSeleccionada;
     var queryTask = new QueryTask(urlPeticionConsulta);
@@ -492,7 +633,7 @@ function ejecutarConsulta() {
 
     function showResults(results) {
       var objetoLocalResults = null;
-      // console.log(results);
+      // //console.log(results);
       objetoLocalResults = results;
 
       cargarWidgetResultados(objetoLocalResults);
@@ -501,7 +642,7 @@ function ejecutarConsulta() {
 }
 
 function cargarWidgetResultados(resultados) {
-  var divCarga = document.getElementById("loading");
+  // var divCarga = document.getElementById("loadingCA");
   // divCarga.style.visibility = 'visible';
 
   require(["jimu/WidgetManager", 'jimu/BaseWidget'], function (WidgetManager,
@@ -529,9 +670,10 @@ function cargarWidgetResultados(resultados) {
     var widget = aplicacion.appConfig.getConfigElementById(
       'widgetResultados');
     var widgetId = widget.id;
-    console.log(resultados);
+    //console.log(resultados);
 
     aplicacion.openWidgetById(widgetId);
   });
   divCarga.style.visibility = 'hidden';
 }
+ */

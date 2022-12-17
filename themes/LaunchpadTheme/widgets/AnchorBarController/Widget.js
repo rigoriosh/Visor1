@@ -8,14 +8,14 @@ require({
             define("dojo/_base/declare dojo/_base/lang dojo/dom-class dojo/dom-attr dojo/_base/fx ./BaseIconItem".split(" "), function (C, r, g, n, t, k) {
                 return C([k], {
                     visible: !0, postCreate: function () {
-                        console.log(11111111111);
+                        
                         this.inherited(arguments); g.add(this.iconItemNode, "dockable"); n.set(this.domNode, "settingid", this.config.id)
                     }, hideAnim: function () {
-                        console.log(22222222222222);
+                        
                         var q = this.domNode.style, v = [], z = {}; window.isRTL ? z["margin-right"] = 0 : z["margin-left"] = 0; g.remove(this.iconItemStatus,
                             "selected"); v.push(t.animateProperty({ node: this.domNode, duration: 500, properties: z, onEnd: r.hitch(this, function () { q.display = "none"; this.visible = !1 }) })); v.push(t.animateProperty({ node: this.iconItemNode, duration: 500, properties: { width: 1 } })); v.push(t.animateProperty({ node: this.imgNode, duration: 500, properties: { width: 1 } })); return v
                     }, showAnim: function (q) {
-                        console.log(333333333333333);
+                        
                         var v = this.domNode.style, z = this.iconItemNode.style, A = this.imgNode.style, w = [], B = this.size, d = {}; q = { start: function () { v.display = ""; return 0 }, end: q }; window.isRTL ?
                             d["margin-right"] = q : d["margin-left"] = q; w.push(t.animateProperty({ node: this.domNode, duration: 500, properties: d, onEnd: r.hitch(this, function () { this.isOpen && g.add(this.iconItemStatus, "selected"); this.visible = !0 }) })); w.push(t.animateProperty({ node: this.iconItemNode, duration: 500, properties: { width: { start: function () { z.width = "1px"; return 1 }, end: B } } })); w.push(t.animateProperty({ node: this.imgNode, duration: 500, properties: { width: { start: function () { A.width = "1px"; return 1 }, end: 20 } } })); return w
                     }
@@ -24,7 +24,7 @@ require({
         }, "themes/LaunchpadTheme/widgets/AnchorBarController/BaseIconItem": function () {
             define("dojo/_base/declare dojo/_base/lang dojo/_base/html dojo/dom-class dojo/dom-style dojo/on dojo/keys dojo/mouse dojo/Evented dijit/_WidgetBase dijit/_TemplatedMixin dijit/popup dijit/TooltipDialog dojo/text!./BaseIconItem.html".split(" "),
                 function (C, r, g, n, t, k, q, v, z, A, w, B, d, p) {
-                    console.log(4444);
+                    
                     return C([A, w, z], {
                         baseClass: "jimu-anchorbar-iconitem jimu-float-leading", templateString: p, config: null, backgroundIndex: -1, isOpen: !1, panelIndex: -1, size: 40, postCreate: function () {
                             this.inherited(arguments); this.tooltipDialog = new d({ content: this.config.label, "class": "launchpad-tooltip" }); window.isRTL && this.config.mirrorIconForRTL && n.add(this.imgNode, "jimu-flipx"); g.setAttr(this.iconItemNode, "tabindex", this.itemTabIndex); g.setAttr(this.iconItemNode, "aria-label", this.config.label);
@@ -44,12 +44,12 @@ require({
                 function (C, r, g, n, t, k, q, v, z, A, w, B, d, p, e, m, u, y) {
                     return C([e, m, A], {
                         baseClass: "jimu-anchorbar-controller-group", templateString: u, config: null, dockableItem: null, backgroundColor: null, itemList: [], box: null, postMixInProperties: function () {
-                            console.log(1212);
+                            
                             this.headerNls = window.jimuNls.panelHeader
                         }, postCreate: function () {
-                            console.log(2323);
+                            
                             this.inherited(arguments); r.forEach(this.config.widgets, function (l, x) {
-                                console.log(4545);
+                                
                                 x = new y({ config: l, backgroundIndex: x, itemTabIndex: 0 }); x.placeAt(this.containerNode); this.own(k(x, "nodeClick", g.hitch(this, this._onIconClick)));
                                 this.itemList.push(x); z.addTooltipByDomNode(v, x.iconItemNode, l.label)
                             }, this); B.add(this.colorfulHeader, "icon-item-background" + this.dockableItem.getBackgroundColorIndex()); this.own(k(this.domNode, "keydown", g.hitch(this, function (l) {
@@ -91,7 +91,7 @@ require({
                         n.setStyle(this.domNode,
                             "display", "none"); this.forIcon && this.forIcon.setOpened(!1)
                     }, show: function () { n.setStyle(this.domNode, "display", "block") }, _calculateGridParam: function () {
-                        console.log(8888888888);
+                        
                         var d = !1, p = !0; var e = n.getContentBox(jimuConfig.mapId); var m = Math.min(e.w, e.h) - 40; if (240 <= m) var u = 80; else { u = Math.floor(m / 3); if (10 > u) return null; d = !0; 60 > u && (p = !1) } m = Math.floor((e.h - 40) / u); var y = Math.floor((e.w - 40) / u); m = 4 < m ? 4 : m; m = 3 > m ? 3 : m; y = 3 > m ? 3 : 4 < y ? 4 : y; return {
                             rows: m, cols: y, cellSize: u, iconScaled: d, showLabel: p, position: {
                                 top: (e.h - u * m) / 2, bottom: (e.h - u * m) /
@@ -112,7 +112,7 @@ define("dojo/_base/declare dojo/_base/lang dojo/_base/array dojo/_base/html dojo
     return C([m, u], {
         baseClass: "jimu-anchorbar-controller", visibleIcons: 0, iconList: [], enableNext: !1, enablePrevious: !1, currentMode: 1, iconMargin: 8,
         groupList: [], openedIds: [], currentStyle: "default", constructor: function () {
-            console.log(222222222222); this.previousNls = window.jimuNls.common.previous; this.nextNls = window.jimuNls.common.next }, postCreate: function () {
+             this.previousNls = window.jimuNls.common.previous; this.nextNls = window.jimuNls.common.next }, postCreate: function () {
             this.inherited(arguments); this.iconList = []; this.groupList = []; this.openedIds = []; this.currentStyle = this.appConfig.theme.styles[0]; this.allConfigs = this.getAllConfigs(); g.forEach(this.allConfigs, function (a, b) { this._createItem(a, b) }, this); n.setAttr(this.previousButton, "tabindex", this.tabIndex); n.setAttr(this.nextButton, "tabindex",
                 this.tabIndex)
         }, _createItem: function (a, b) {
@@ -121,7 +121,7 @@ define("dojo/_base/declare dojo/_base/lang dojo/_base/array dojo/_base/html dojo
                 this.own(A(c, "nodeClick", r.hitch(this, function (h) { this._onGroupNodeClick(h.target, f) }))); this.groupList.push(f)
             } else this.own(A(c, "nodeClick", r.hitch(this, function (h) { this._onDockableNodeClick(h.target) }))); d.addTooltipByDomNode(B, c.iconItemNode, a.label); return c
         }, startup: function () {
-            console.log(9999999999999); this.inherited(arguments); this.resize(); g.some(this.iconList, function (a, b) { if (a.isOpenAtStart()) return window.appInfo.isRunInMobile || this._makeIconVisible(b), a._onNodeClick(), !0 }, this) }, destroy: function () {
+             this.inherited(arguments); this.resize(); g.some(this.iconList, function (a, b) { if (a.isOpenAtStart()) return window.appInfo.isRunInMobile || this._makeIconVisible(b), a._onNodeClick(), !0 }, this) }, destroy: function () {
             this.inherited(arguments);
             g.forEach(this.groupList, function (a) { a.destroy() })
         }, onAction: function (a, b) { "highLight" === a && b && (b = p('div[settingid\x3d"' + b.widgetId + '"]', this.domNode)[0], this._highLight(b)); "removeHighLight" === a && this._removeHighLight() }, onOpen: function () { 0 === this.iconList.length && "config" !== this.appConfig.mode && this.widgetManager.closeWidget(this) }, onAppConfigChanged: function (a) { this.currentStyle = a.theme.styles[0] }, setOpenedIds: function (a) {
@@ -129,7 +129,7 @@ define("dojo/_base/declare dojo/_base/lang dojo/_base/array dojo/_base/html dojo
                 b = this._getIconItemById(c); null !==
                     b && b._onNodeClick()
             }, this)
-        }, getOpenedIds: function () {console.log(8888888); this.inherited(arguments); return g.filter(this.openedIds, function (a) { return "undefined" !== typeof a }) }, _highLight: function (a) { this.hlDiv && this._removeHighLight(); if (a && "none" !== k.get(a, "display")) { var b = k.get(a, "margin-left"), c = t.getMarginBox(a); b = { position: "absolute", left: c.l + b + "px", top: c.t + "px", width: "40px", height: "40px" }; "style2" !== this.currentStyle && (b["margin-top"] = "-20px"); this.hlDiv = v.create("div", { style: b, "class": "icon-highlight" }, a, "before") } },
+        }, getOpenedIds: function () { this.inherited(arguments); return g.filter(this.openedIds, function (a) { return "undefined" !== typeof a }) }, _highLight: function (a) { this.hlDiv && this._removeHighLight(); if (a && "none" !== k.get(a, "display")) { var b = k.get(a, "margin-left"), c = t.getMarginBox(a); b = { position: "absolute", left: c.l + b + "px", top: c.t + "px", width: "40px", height: "40px" }; "style2" !== this.currentStyle && (b["margin-top"] = "-20px"); this.hlDiv = v.create("div", { style: b, "class": "icon-highlight" }, a, "before") } },
         _removeHighLight: function () { this.hlDiv && (v.destroy(this.hlDiv), this.hlDiv = null) }, clearIconGroupNode: function () { for (; this.iconGroupNode.firstChild;)this.iconGroupNode.removeChild(this.iconGroupNode.firstChild) }, resize: function () {
             window.appInfo.isRunInMobile ? (1 === this.currentMode && (this.currentMode = 2, q.add(this.domNode, "mobile"), this.clearIconGroupNode(), this.lastVisibleIcons = 0), this.popupMore && this.popupMore.hide(), this.switchToMobileStyle()) : (2 === this.currentMode && (this.currentMode = 1, q.remove(this.domNode,
                 "mobile"), this.clearIconGroupNode(), this.lastVisibleIcons = 0, k.set(this.iconGroupNode, "width", 80 * this.allConfigs.length + "px"), g.forEach(this.iconList, function (a) { a.placeAt(this.iconGroupNode) }, this)), this.switchToNormalStyle()); this._resizeOpenedPanel()

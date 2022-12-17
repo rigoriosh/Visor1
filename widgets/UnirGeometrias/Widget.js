@@ -11,7 +11,7 @@ function (declare, BaseWidget, query) {
         
         startup: function() {
 
-          console.log(111111);
+          //console.log(111111);
           this.inherited(arguments);
           // this.mapIdNoderrh.innerHTML = 'map id is:' + this.map.id;
           

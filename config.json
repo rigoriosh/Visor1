@@ -395,7 +395,7 @@
                         "maxRecordCount": 1000
                     }
                 },
-                "index": 5,
+                "index": 4,
                 "id": "widgets_AddData_Widget_38"
             },
             {
@@ -412,9 +412,20 @@
                     "defaultLayout": "MAP_ONLY",
                     "copyrightEditable": true
                 },
-                "index": 6,
+                "index": 5,
                 "id": "widgets_Print_Widget_39"
-            }
+            },
+            {
+                "name": "EdicionCartografica",
+                "label": "Edición Cartográfica",
+                "version": "2.5",                
+                "uri": "widgets/EdicionCartografica/Widget",
+                "index": 8,
+                "id": "widgets_EdicionCartografica_Widget_44",
+                "config": {
+                    "defaultLayout": "MAP_ONLY"
+                }
+              }
         ],
         "groups": [
             {
@@ -620,62 +631,6 @@
                   }
                 },
                 "icon":"./jimu.js/images/Consultas.png"
-
-            },
-            {
-                "label": "Herramientas Espaciales",
-                "widgets": [
-                  {
-                    "name": "EditarNodos",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/EditarNodos/Widget",
-                    "index": 6,
-                    "id": "widgets_EditarNodos_Widget_42"
-                  },
-                  {
-                    "name": "GuardarGeometrias",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/GuardarGeometrias/Widget",
-                    "index": 6,
-                    "id": "widgets_GuardarGeometrias_Widget_43"
-                  },
-                  {
-                    "name": "UnirGeometrias",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/UnirGeometrias/Widget",
-                    "index": 6,
-                    "id": "widgets_UnirGeometrias_Widget_44"
-                  },
-                  {
-                    "name": "CrearGeometrias",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/CrearGeometrias/Widget",
-                    "index": 6,
-                    "id": "widgets_CrearGeometrias_Widget_45"
-                  },
-                  {
-                    "name": "ExportarGeometrias",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/ExportarGeometrias/Widget",
-                    "index": 6,
-                    "id": "widgets_ExportarGeometrias_Widget_46"
-                  }
-                ],
-                "index": 7,
-                "id": "_42",
-                "visible": true,
-                "panel": {
-                  "uri": "themes/LaunchpadTheme/panels/LaunchpadPanel/Panel",
-                  "position": {
-                    "relativeTo": "map"
-                  }
-                },
-                "icon":"./jimu.js/images/VisibilidadCapa.png"
 
             }
         ]

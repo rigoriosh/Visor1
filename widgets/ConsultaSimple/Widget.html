@@ -1,5 +1,5 @@
 <div>
-	<div id="loading" class="loader" style="display: none;">
+	<div id="loadingCS" class="loader" style="display: none;">
 		<span id="status"></span>
 		<!-- <img src="../../images/loadingCapa.gif" alt=""> -->
 		<img src="./images/loadingCapa.gif" alt="">
@@ -15,7 +15,9 @@
 
 		<label class="labels" for="selCapas">Capa:</label>
 		<select id="selCapas" class="form-control form-control-sm"
-			onchange="consultaAtributosSegunCapa(this, document.getElementById('selCapas'), document.getElementById('selServicios'))">
+			onchange="consultaAtributosSegunCapa(this,
+			document.getElementById('selServicios'),
+			'selAtributos', objConsultaSimple, loadingCS)">
 			<option value="">Seleccione...</option>
 		</select>
 

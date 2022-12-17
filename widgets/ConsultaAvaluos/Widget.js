@@ -28,7 +28,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
         },
         postCreate: function() {
             this.inherited(arguments);
-            console.log('postCreate');
+            //console.log('postCreate');
         },
 
         startup: function() {
@@ -36,18 +36,18 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             tw = this;
             appGlobal = this;
             // this.mapIdNode.innerHTML = 'map id:' + this.map.id;
-            console.log('startup');
+            //console.log('startup');
             
             /*  */
             /* query("#xxx").on("change", async function (evt) {
                 var xxx = this.options[this.selectedIndex].text;
-                console.log(xxx);
+                //console.log(xxx);
                 
             }); */
 
             query("#selectConsulta").on("change", async function (evt) {
                 var consuSelected = this.options[this.selectedIndex].text;
-                console.log(consuSelected);
+                //console.log(consuSelected);
                 divConsultaMasiva = document.querySelector("#divConsultaMasiva");
                 tw._getDivs();
                 if (consuSelected === consts.avaluosMultiple) {
@@ -73,7 +73,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                         } 
                         agregarDataSelect(depart, "sDepart","DEPARTAMEN","COD_DEPART");
                         // construirTabla(depart, 'idDivTabla')  
-                        console.log(depart);
+                        //console.log(depart);
                     } catch (error) {
                         console.error(error)
                         divConsultaMasiva.style.display = 'none';
@@ -89,11 +89,11 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             query("#sDepart").on("change", async function (evt) {
                 var departSelected = this.options[this.selectedIndex].value;
                 if (departSelected !== 0) {
-                    console.log(departSelected);
+                    //console.log(departSelected);
                     storeConsultaAvaluos.departamento = dataStorage.departamentos.filter(e => e.attributes.COD_DEPART === departSelected)[0].attributes;
                     const municipios = retunMunicipios(departSelected);
                     storeConsultaAvaluos.municipios = municipios;
-                    console.log(municipios);
+                    //console.log(municipios);
                     divMunicipio.style.display = 'contents';
                     agregarDataSelect(municipios, "sMunicipio","NOM_MUNICI","COD_DANE");
                     divTipInmu?divTipInmu.style.display = 'none':'';
@@ -103,7 +103,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             query("#sMunicipio").on("change", async function (evt) {
                 var muniSelected = this.options[this.selectedIndex].value;
                 if (muniSelected !== 0) {
-                    console.log(muniSelected);
+                    //console.log(muniSelected);
                     storeConsultaAvaluos.municipio = storeConsultaAvaluos.municipios.filter(e => e.attributes.COD_DANE === muniSelected)[0].attributes;
                     tw._getTiposBienInmueble();
                 }else{
@@ -115,9 +115,9 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
 
             query("#btnConsultaMasiva").on("click", async function (evt) {
                 // var xxx = this.options[this.selectedIndex].text;
-                console.log(storeConsultaAvaluos.departamento);
-                console.log(storeConsultaAvaluos.municipio);
-                console.log(storeConsultaAvaluos.tiposBienInmnuebleSelected);
+                //console.log(storeConsultaAvaluos.departamento);
+                //console.log(storeConsultaAvaluos.municipio);
+                //console.log(storeConsultaAvaluos.tiposBienInmnuebleSelected);
                 cerrarWidgetResultados("widgets_MyWidgetResultados_Widget_41")
                 // tw._abrirWresultados();
                 // tw._fixDataToSendWidResultados(tw.widgetConsAval.urlDparts);
@@ -131,7 +131,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                         }
                     },
                     respuestaTest: function(par){
-                        console.log("in respuesta", par);
+                        //console.log("in respuesta", par);
                     }
                 });
                 
@@ -139,9 +139,9 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
 
             query("#btnConsultaUnica").on("click", async function (evt) {
                 // var xxx = this.options[this.selectedIndex].text;
-                // console.log(storeConsultaAvaluos.departamento);
-                // console.log(storeConsultaAvaluos.municipio);
-                // console.log(storeConsultaAvaluos.tiposBienInmnuebleSelected);
+                // //console.log(storeConsultaAvaluos.departamento);
+                // //console.log(storeConsultaAvaluos.municipio);
+                // //console.log(storeConsultaAvaluos.tiposBienInmnuebleSelected);
                 cerrarWidgetResultados("widgets_MyWidgetResultados_Widget_41")
 
                 // tw._abrirWresultados();
@@ -155,18 +155,18 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                         }
                     },
                     respuestaTest: function(par){
-                        console.log("in respuesta", par, this.data.response);
+                        //console.log("in respuesta", par, this.data.response);
                     }
                 });
                 
             });
             
             query("#folioMatricula").on("click", async function (evt) {
-                console.log(evt);
+                //console.log(evt);
                 
             });
             query("#ingresarGeograficas").on("click", async function (evt) {
-                console.log(evt);
+                //console.log(evt);
                 
             });
 
@@ -174,55 +174,55 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
         
 
         onOpen: function() {
-            console.log('onOpen');
+            //console.log('onOpen');
             var panel = this.getPanel();
-            console.log(panel);
+            //console.log(panel);
             ajustarTamanioWidget(panel, panel.position.width, 400)
         },
 
         bindEvents: function() {
-            console.log("bindEvents")
+            //console.log("bindEvents")
         },
 
         onExecute: function(featureSet) {
-            console.log("onExecute");
+            //console.log("onExecute");
 
         },
 
         onClose: function() {
-            console.log('onClose');
+            //console.log('onClose');
             divConsultaMasiva.style.display = 'none'
             divConsultaUnica.style.display = 'none';
             document.getElementById('selectConsulta').value = 0
         },
 
         onchange: function(){
-            console.log(storeConsultaAvaluos);
+            //console.log(storeConsultaAvaluos);
         },
 
         onMinimize: function(){
-            console.log('onMinimize');
+            //console.log('onMinimize');
         },
 
         onMaximize: function(){
-            console.log('onMaximize');
+            //console.log('onMaximize');
         },
 
         onSignIn: function(credential){
             /* jshint unused:false*/
-            console.log('onSignIn');
+            //console.log('onSignIn');
         },
 
         onSignOut: function(){
-            console.log('onSignOut');
+            //console.log('onSignOut');
         },
 
         onPositionChange: function(){
-            console.log('onPositionChange');
+            //console.log('onPositionChange');
         },
 
         resize: function(){
-            console.log('resize');
+            //console.log('resize');
         },
         _getDivs: function(){
             divConsultaUnica = document.querySelector("#divConsultaUnica");
@@ -246,7 +246,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             tw._loading(true);
             try {
                 storeConsultaAvaluos.tiposBienInmnueble = await ejecutarConsulta(urlTiposBienInmueble);
-                console.log(storeConsultaAvaluos.tiposBienInmnueble);
+                //console.log(storeConsultaAvaluos.tiposBienInmnueble);
                 divTipInmu.style.display = 'contents';
     
                 let tbi = [];//tipo bien inmueble
@@ -263,7 +263,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                 tw._loading(false);
                 
             } catch (error) {
-                console.log(error);
+                //console.log(error);
                 divTipInmu.style.display = 'none';
                 tw._loading(false);
             }
@@ -293,7 +293,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
 
 
 const starConsulta = async({value}) => {
-    console.log(value);
+    //console.log(value);
     divConsultaMasiva = document.querySelector("#divConsultaMasiva");
     divConsultaUnica = document.querySelector("#divConsultaUnica");
     btnConsultaMasiva = document.querySelector("#btnConsultaMasiva");
@@ -323,7 +323,7 @@ const starConsulta = async({value}) => {
         } 
         agregarDataSelect(depart, "sDepart","DEPARTAMEN","COD_DEPART");
         construirTabla(depart, 'idDivTabla')  
-        console.log(depart);
+        //console.log(depart);
         loading(false);
 
     } else if(value === consts.avaluosMultiple){
@@ -338,7 +338,7 @@ const cambioSelectDepart = ({id}) => {
     storeConsultaAvaluos.departamento = dataStorage.departamentos.filter(e => e.attributes.DEPARTAMEN === consuSelected)[0].attributes;
     const municipios = retunMunicipios(departSelected);
     storeConsultaAvaluos.municipios = municipios;
-    console.log(municipios);
+    //console.log(municipios);
     divMunicipio.style.display = 'contents';
     agregarDataSelect(municipios, "sMunicipio","NOM_MUNICI","COD_DANE");
     divTipInmu?divTipInmu.style.display = 'none':'';
@@ -358,7 +358,7 @@ const cambioSelectMuni = ({id}) => {
 const getTiposBienInmueble = async() => {
     loading(true);
     storeConsultaAvaluos.tiposBienInmnueble = await ejecutarConsulta(urlTiposBienInmueble);
-    console.log(storeConsultaAvaluos.tiposBienInmnueble);
+    //console.log(storeConsultaAvaluos.tiposBienInmnueble);
     divTipInmu.style.display = 'contents';
 
     let tbi = [];//tipo bien inmueble
@@ -377,17 +377,17 @@ const getTiposBienInmueble = async() => {
 
 const cambioSTipInmu = (d) => {
     storeConsultaAvaluos.tiposBienInmnuebleSelected = d.value;
-    console.log(storeConsultaAvaluos);
+    //console.log(storeConsultaAvaluos);
     
     btnConsultaMasiva.style.display = 'block';
 }
 
 const makeQuery = () => {
-    console.log("ejecutarConsultaMasiva");
+    //console.log("ejecutarConsultaMasiva");
 }
 
 const makeQueryUnica = () => {
-    console.log("ejecutarConsultaUnica");
+    //console.log("ejecutarConsultaUnica");
     
     const fnm = document.querySelector("#folioNumMatricula").value;
     const fnp = document.querySelector("#folioNumPredial").value;
@@ -396,14 +396,14 @@ const makeQueryUnica = () => {
         fnm = fnm.trim();
         fnp = fnp.trim();
         wcu.style.display = 'none'
-       console.log("make query unica", fnm, fnp);
+       //console.log("make query unica", fnm, fnp);
     }else{
         wcu.style.display = 'block';
     }
 }
 
 const inputFolio = (d) => {
-    console.log("inputFolio => ", d);
+    //console.log("inputFolio => ", d);
 }
 
 

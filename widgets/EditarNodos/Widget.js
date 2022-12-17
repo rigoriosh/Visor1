@@ -102,7 +102,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "esri/config",
 
 
                     dojo.connect(contentTree, "onClick", function (item, node, evt) {
-                        //console.log('content tree clicked', item, node, evt);                        
+                        ////console.log('content tree clicked', item, node, evt);                        
                         if (widgetEdit.editorWidget != undefined) {
                             widgetEdit.editorWidget.destroy();
                             document.getElementById('templatePickerPane').appendChild(widgetEdit.iDiv);
@@ -184,7 +184,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "esri/config",
                 var markerSymbol = new SimpleMarkerSymbol();
                
                 function initEditing(event) {
-                    console.log("initEditing", event);
+                    //console.log("initEditing", event);
                     var featureLayerInfos = arrayUtils.map(event.layers, function (layer) {
                         return {
                             "featureLayer": layer.layer
@@ -217,7 +217,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "esri/config",
                     var layers = arrayUtils.map(event.layers, function (result) {
                         return result.layer;
                     });
-                    //console.log("layers", layers);
+                    ////console.log("layers", layers);
 
                     var editToolbar = new Edit(map, {
                         ghostLineSymbol: ghostLine,

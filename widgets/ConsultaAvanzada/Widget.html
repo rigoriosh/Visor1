@@ -1,5 +1,5 @@
 <div>
-	<div id="loading" class="loader" style="display: none;">
+	<div id="loadingCA" class="loader" style="display: none;">
 		<span id="status"></span>
 		<!-- <img src="../../images/loadingCapa.gif" alt=""> -->
 		<img src="./images/loadingCapa.gif" alt="">
@@ -11,13 +11,13 @@
 	<div class="form-group">
 		<label class="labels" for="selServiciosCA">Temática:</label>
 		<select id="selServiciosCA" class="form-control form-control-sm"
-			onchange="if(this.selectedIndex >=0) consultaCapasSegunTematica(this, objConsultaAvanzada)">
+			onchange="if(this.selectedIndex >=0) consultaCapasSegunTematicaCA(this, objConsultaAvanzada)">
 		</select>
 
 		<label class="labels" for="selCapasCA">Capa:</label>
 		<select id="selCapasCA" class="form-control form-control-sm"
-			onchange="consultaAtributosSegunCapa(this, document.getElementById('selCapasCA'),
-			document.getElementById('selServiciosCA'), objConsultaAvanzada)">
+			onchange="consultaAtributosSegunCapa(this, document.getElementById('selServiciosCA'),
+			'selAtributosCA', objConsultaAvanzada, loadingCA)">
 			<option value="">Seleccione...</option>
 		</select>
 
@@ -29,41 +29,41 @@
 				</select>
 			</div>
 			<div class="columnaCA">
-				<label class="labels" for="selValores">Valores:</label>
-				<select id="selValores" class="form-control form-control-sm" size="5px">
+				<label class="labels" for="selValoresCA">Valores:</label>
+				<select id="selValoresCA" class="form-control form-control-sm" size="5px">
 					<option value="">Seleccione...</option>
 				</select>
 			</div>
 			<div style="width: 95%;">
 				<div style="text-align: center;">
-					<button id="btnBuscar" type="button" class="btn btn-outline-success btn-sm mt-3">Obtener valores</button>
+					<!-- <button id="btnBuscar" type="button" class="btn btn-outline-success btn-sm mt-3">Obtener valores</button> -->
 					<div>
-						<button style="width:3em" type="button" value="igual" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('=')">=</button>
-						<button style="width:3em" type="button" value="diferente" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('<>')"><></button>
-						<button id="btnLike" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('LIKE')">Como</button>
+						<button style="width:3em" type="button" value="igual" class="btnSmall fz-15" onclick="formarExpresion('=')">=</button>
+						<button style="width:3em" type="button" value="diferente" class="btnSmall fz-15" onclick="formarExpresion('<>')"><></button>
+						<button id="btnLike" style="width:3em" type="button" class="btnSmall " onclick="formarExpresion('LIKE')">Como</button>
 					</div>
 					<div>
-						<button style="width:3em" type="button" value="mayor" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('>')">></button>
-						<button style="width:3em" type="button" value="mayorigual" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('>=')"> >= </button>
-						<button id="btnAnd" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('AND')">Y</button>
+						<button style="width:3em" type="button" value="menor" class="btnSmall fz-15" onclick="formarExpresion('<')"> < </button>
+						<button style="width:3em" type="button" value="mayor" class="btnSmall fz-15" onclick="formarExpresion('>')">></button>
+						<button style="width:3em" type="button" value="mayorigual" class="btnSmall fz-15" onclick="formarExpresion('>=')"> >= </button>
 					</div>
 					<div>
-						<button style="width:3em" type="button" value="menor" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('<')"> < </button>
-						<button style="width:3em" type="button" value="menorigual" class="btnSmall fz-15" onclick="obtenerBotonesConsulta('<=')"> <= </button>
-						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('OR')">OR</button>
+						<button style="width:3em" type="button" value="menorigual" class="btnSmall fz-15" onclick="formarExpresion('<=')"> <= </button>
+						<button id="btnAnd" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('AND')">Y</button>
+						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('OR')">OR</button>
 					</div>
 					<div>
-						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('%')">%</button>
-						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('()')">()</button>
-						<button id="btnNot" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('NOT')">NOT</button>
+						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('%')">%</button>
+						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('(')">(</button>
+						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion(')')">)</button>
 					</div>
 					<div>
-						<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('_')">_</button>
-						<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('IS')">ES</button>
-						<button id="btnNull" style="width:3em" type="button" class="btnSmall" onclick="obtenerBotonesConsulta('NULL')">VACIO</button>	
+						<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('_')">_</button>
+						<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('IS')">ES</button>
+						<button id="btnNull" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('NULL')">VACIO</button>	
 					</div>
 					<div>
-						
+						<button id="btnNot" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('NOT')">NOT</button>
 					</div>
 				</div>
 
@@ -71,17 +71,18 @@
 		</div>
 		
 		<div>
-			<label class="labels" for="palabraClave">Expresión:</label>
-			<textarea id="palabraClave" class="form-control form-control-sm" rows="2" cols="23"></textarea>
+			<label class="labels" for="expresion">Expresión:</label>
+			<textarea id="expresion" class="form-control form-control-sm" rows="2" cols="23"></textarea>
 		</div>
 
 
 
 		<div class="fila" style="justify-content: end !important;">
-			<button id="btnBuscar" type="button" class="btn btn-outline-success btn-sm mt-3" style="margin-right: 10px;"
-				onclick="consultaSimple()">Consultar</button>
+			<button id="btnConsultar" type="button" class="btn btn-outline-success btn-sm mt-3" style="margin-right: 10px;">
+				Consultar
+			</button>
 			<button id="btnLimpiar" type="button" class="btn btn-outline-success btn-sm mt-3"
-				onclick="limpiar()">Limpiar</button>
+				onclick="borrarTextAreaConsulta()">Limpiar</button>
 		</div>
 
 
