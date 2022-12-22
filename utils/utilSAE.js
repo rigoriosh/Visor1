@@ -320,14 +320,14 @@ function pintarFeaturesConInfoTemplate(featureSet) { //función que se encarga d
         })
 }
 
-const abrirWidgetResultados = (data) => {
-    var widget = appGlobal.appConfig.getConfigElementById(consts.widgetMyResultados);
+const abrirWidgetResultados = (data, idWiget=consts.widgetMyResultados) => {
+    var widget = appGlobal.appConfig.getConfigElementById(idWiget);
     var widgetId = widget.id;
     widget.data = data;
     appGlobal.openWidgetById(widgetId);
 }
 
-function cerrarWidgetResultados() {
+function cerrarWidgetResultados(widgetACerrar=consts.widgetMyResultadosPanel) {
     require(["jimu/PanelManager"],
         function (PanelManager) {
             /////codigo q cierra el widgetResultados
@@ -335,15 +335,15 @@ function cerrarWidgetResultados() {
             var panelManager = PanelManager.getInstance();
             var widgetCerrar;            
             for (var e in PanelManager.getInstance().panels) {
-                if (PanelManager.getInstance().panels[e].id == consts.widgetMyResultadosPanel) {
+                if (PanelManager.getInstance().panels[e].id == widgetACerrar) {
                     widgetCerrar = PanelManager.getInstance().panels[e].id;
                 }
 
             }            
             var ajustar = true;
             if (widgetCerrar != undefined) {
-                panelManager.closePanel(consts.widgetMyResultadosPanel);
-                panelManager.destroyPanel(consts.widgetMyResultadosPanel);             
+                panelManager.closePanel(widgetACerrar);
+                panelManager.destroyPanel(widgetACerrar);             
                 ajustar = false;
 
 
@@ -353,8 +353,10 @@ function cerrarWidgetResultados() {
                 } */
             }
             widgetOpen = false;
-            appGlobal.map.graphics.clear()
-            appGlobal.map.setExtent(appGlobal.map._initialExtent);
+            if (typeof(appGlobal) !== 'undefined') {
+                appGlobal.map.graphics.clear()
+                appGlobal.map.setExtent(appGlobal.map._initialExtent);
+            }
             // //console.log("cerrarWidgetResultados");
         }
       )

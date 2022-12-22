@@ -61,8 +61,8 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                 var panel = this.getPanel();
                 // panel.position.width = 1000;
                 // panel.position.height = 300;
-                panel.position.width = widgetResultados.data.data.panel.width;
-                panel.position.height = widgetResultados.data.data.panel.height;
+                panel.position.width = !widgetResultados?.data?.data.panel.width?100:widgetResultados.data.data.panel.width;
+                panel.position.height = !widgetResultados?.data?.data.panel.height?100:widgetResultados.data.data.panel.height;
                 panel._originalBox = {
                     w: panel.position.width,
                     h: panel.position.height,
@@ -75,44 +75,46 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                 let divResulConsultaUnica = dom.byId("divResulConsultaUnica");
                 let divResulConsultaMultiple = dom.byId("divResulConsultaMultiple");
                 let divResulConsultaCatastro = dom.byId("divResulConsultaCatastro");
-                switch (widgetResultados.data.tipoResultado) {
-                    case consts.consulAvaluoMasivo:
-                        //console.log(consts.consulAvaluoMasivo);
-                        cargarTablaResultados(widgetResultados);
-                        divResulConsultaUnica.style.display = "none";
-                        divResulConsultaCatastro.style.display = "none";
-                        divResulConsultaMultiple.style.display = "display";
-                        break;
-                    case consts.consulAvaluoUnica:
-                        //console.log(consts.consulAvaluoUnica);
-                        divResulConsultaCatastro.style.display = "none";
-                        divResulConsultaMultiple.style.display = "none";
-                        divResulConsultaUnica.style.display = "display";
-                        this.ejecutarConsultaUnica();
-                        break;
-                    case consts.consulCatastro:
-                        //console.log(consts.consulCatastro);
-                        divResulConsultaUnica.style.display = "none";
-                        divResulConsultaMultiple.style.display = "none";
-                        divResulConsultaCatastro.style.display = "display";
-                        // this.ejecutarConsultaUnica();
-                        break;
-                    case consts.consultas.consultaSimple:
-                        //console.log(consts.consultas.consultaSimple);
-                        cargarTablaResultados(widgetResultados);
-                        divResulConsultaUnica.style.display = "none";
-                        divResulConsultaCatastro.style.display = "none";
-                        divResulConsultaMultiple.style.display = "display";
-                        break;
-                    case consts.consultas.consultaAvanzada:
-                        //console.log(consts.consultas.consultaAvanzada);
-                        cargarTablaResultados(widgetResultados);
-                        divResulConsultaUnica.style.display = "none";
-                        divResulConsultaCatastro.style.display = "none";
-                        divResulConsultaMultiple.style.display = "display";
-                        break;
-                    default:
-                        break;
+                if (widgetResultados.data) {
+                    switch (widgetResultados.data.tipoResultado) {
+                        case consts.consulAvaluoMasivo:
+                            //console.log(consts.consulAvaluoMasivo);
+                            cargarTablaResultados(widgetResultados);
+                            divResulConsultaUnica.style.display = "none";
+                            divResulConsultaCatastro.style.display = "none";
+                            divResulConsultaMultiple.style.display = "display";
+                            break;
+                        case consts.consulAvaluoUnica:
+                            //console.log(consts.consulAvaluoUnica);
+                            divResulConsultaCatastro.style.display = "none";
+                            divResulConsultaMultiple.style.display = "none";
+                            divResulConsultaUnica.style.display = "display";
+                            this.ejecutarConsultaUnica();
+                            break;
+                        case consts.consulCatastro:
+                            //console.log(consts.consulCatastro);
+                            divResulConsultaUnica.style.display = "none";
+                            divResulConsultaMultiple.style.display = "none";
+                            divResulConsultaCatastro.style.display = "display";
+                            // this.ejecutarConsultaUnica();
+                            break;
+                        case consts.consultas.consultaSimple:
+                            //console.log(consts.consultas.consultaSimple);
+                            cargarTablaResultados(widgetResultados);
+                            divResulConsultaUnica.style.display = "none";
+                            divResulConsultaCatastro.style.display = "none";
+                            divResulConsultaMultiple.style.display = "display";
+                            break;
+                        case consts.consultas.consultaAvanzada:
+                            //console.log(consts.consultas.consultaAvanzada);
+                            cargarTablaResultados(widgetResultados);
+                            divResulConsultaUnica.style.display = "none";
+                            divResulConsultaCatastro.style.display = "none";
+                            divResulConsultaMultiple.style.display = "display";
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
                 // var divCarga = document.getElementById("loadingFeatureTable");
@@ -123,14 +125,19 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
 
             onClose: function () {
            
-                for (var i = appGlobal.widgetManager.loaded.length; i > 0; i--) {
-                    var idWidgets = appGlobal.widgetManager.loaded[i - 1].id;
-                
-                    if (window.widgetOpen && idWidgets == consts.widgetMyResultados) {
-                        window.widgetOpen = false;
-                        cerrarWidgetResultados();                                    
-                        break;
+                if (typeof(appGlobal) !== 'undefined') {
+                    for (var i = appGlobal.widgetManager.loaded.length; i > 0; i--) {
+                        var idWidgets = appGlobal.widgetManager.loaded[i - 1].id;
+                    
+                        if (window.widgetOpen && idWidgets == consts.widgetMyResultados) {
+                            window.widgetOpen = false;
+                            cerrarWidgetResultados();                                    
+                            break;
+                        }
                     }
+                }else{
+                    cerrarWidgetResultados();                                    
+
                 }
 
             },

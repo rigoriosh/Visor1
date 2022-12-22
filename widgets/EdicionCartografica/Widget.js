@@ -8,8 +8,9 @@
     "location": location.pathname.replace(/\/[^/]+$/, "") + "myModules"
   }]
 }; */
-var dibujo, editToolbar, myMap, ctxMenuForGraphics, selected, textInfo;
+var dibujo, editToolbar, EsriMap, ctxMenuForGraphics, selected, textInfo, myThis;
 var graphicRemoved = [];
+var objEdicionCartografica = {}, appGlobal;
 
 define([
   "dojo/_base/declare", "jimu/BaseWidget", "dojo/query",
@@ -19,6 +20,7 @@ define([
   "esri/symbols/SimpleFillSymbol", "esri/graphic", "dijit/Menu", "dijit/MenuSeparator",
 
   "dojo/_base/connect", "esri/Color", "dojo/parser", "dijit/registry", "dijit/MenuItem",
+  "esri/InfoTemplate",
   "dojo/domReady!"
 ],
   function (declare, BaseWidget, query,
@@ -26,7 +28,7 @@ define([
     SimpleMarkerSymbol, SimpleLineSymbol,
     SimpleFillSymbol, Graphic, Menu, MenuSeparator,
     
-    connect, Color, parser, registry, MenuItem) {
+    connect, Color, parser, registry, MenuItem, InfoTemplate) {
 
     return declare([BaseWidget], {
       baseClass: "jimu-widget-EdicionCartografica",
@@ -34,100 +36,74 @@ define([
       startup: function () {
         //console.log("CrearGeometrias");
         this.inherited(arguments);
+        appGlobal = this;
         // this.mapIdNoderrh.innerHTML = 'map id is:' + this.map.id;
 
         // undoManager = new UndoManager();
         // hook up undo/redo buttons
-        myMap = this.map;
+        EsriMap = this.map;
+        myThis = this;
 
-        $(function () {
+        $(function () { //despliega los tooltip
           $('[data-toggle="tooltip"]').tooltip()
         })
 
         query("#undo").on("click", async function (evt) {
           // undoManager.undo();
-          if (myMap.graphics.graphics.length > 1) {
-            graphicRemoved.push(myMap.graphics.graphics[myMap.graphics.graphics.length - 1])
-            myMap.graphics.remove(myMap.graphics.graphics[myMap.graphics.graphics.length - 1]);
-            //console.log(myMap.graphics.graphics)
+          if (EsriMap.graphics.graphics.length > 1) {
+            graphicRemoved.push(EsriMap.graphics.graphics[EsriMap.graphics.graphics.length - 1])
+            EsriMap.graphics.remove(EsriMap.graphics.graphics[EsriMap.graphics.graphics.length - 1]);
+            //console.log(EsriMap.graphics.graphics)
           }
-          if (myMap.graphics.graphics.length == 1) {
+          if (EsriMap.graphics.graphics.length == 1) {
             textInfo.style.display = 'none';
           }
         });
         query("#redo").on("click", async function (evt) {
           if (graphicRemoved.length > 0) {
             let graphicToWork = graphicRemoved.length - 1;
-            myMap.graphics.add(graphicRemoved[graphicToWork]);
+            EsriMap.graphics.add(graphicRemoved[graphicToWork]);
             graphicRemoved.length = graphicToWork;
-            //console.log(myMap.graphics.graphics)
+            //console.log(EsriMap.graphics.graphics)
             textInfo.style.display = 'block'
           }
         });
         /* query("#btnAceptar").on("click", async function (evt) {
         }) */
         query("#btnAceptar").on("click", async function (evt) {
-          document.getElementById("idHerramientas").style.display = "flex";
-          document.getElementById("btnAceptar").style.display = "none";
+          
+          myThis.renderDivs({idHerramientas:'flex'});
+
         })
         query("#iconoEditarNodos").on("click", async function (evt) {
-          document.getElementById("idHerramientas").style.display = "none";
-          document.getElementById("unir").style.display = "none";
-          document.getElementById("crear").style.display = "none";
-          document.getElementById("guardar").style.display = "none";
-          document.getElementById("exportar").style.display = "none";
-          document.getElementById("btnAceptar").style.display = "none";
-          document.getElementById("editar").style.display = "flex";
-          document.getElementById("regresar").style.display = "flex";
+          myThis.renderDivs({editar:'flex',regresar:'flex'});
+
         });
         query("#iconoGuardarGeometrias").on("click", async function (evt) {
-          document.getElementById("idHerramientas").style.display = "none";
-          document.getElementById("unir").style.display = "none";
-          document.getElementById("crear").style.display = "none";
-          document.getElementById("guardar").style.display = "flex";
-          document.getElementById("exportar").style.display = "none";
-          document.getElementById("btnAceptar").style.display = "none";
-          document.getElementById("editar").style.display = "none";
-          document.getElementById("regresar").style.display = "flex";
+          
+          myThis.renderDivs({guardar:'flex', regresar:'flex'});
+
         });
         query("#iconoUnirGeometrias").on("click", async function (evt) {
-          document.getElementById("idHerramientas").style.display = "none";
-          document.getElementById("unir").style.display = "flex";
-          document.getElementById("crear").style.display = "none";
-          document.getElementById("guardar").style.display = "none";
-          document.getElementById("exportar").style.display = "none";
-          document.getElementById("btnAceptar").style.display = "none";
-          document.getElementById("editar").style.display = "none";
-          document.getElementById("regresar").style.display = "flex";
+          
+          myThis.renderDivs({unir:'flex', regresar:'flex'});
+
         });
         query("#iconoExportarGeometrias").on("click", async function (evt) {
-          document.getElementById("idHerramientas").style.display = "none";
-          document.getElementById("unir").style.display = "none";
-          document.getElementById("crear").style.display = "none";
-          document.getElementById("guardar").style.display = "none";
-          document.getElementById("exportar").style.display = "flex";
-          document.getElementById("btnAceptar").style.display = "none";
-          document.getElementById("editar").style.display = "none";
-          document.getElementById("regresar").style.display = "flex";
+         
+          
+          myThis.renderDivs({exportar:'flex', regresar:'flex'});
+
         });
         query("#iconoCrearGeometrias").on("click", async function (evt) {
-          document.getElementById("idHerramientas").style.display = "none";
-          document.getElementById("unir").style.display = "none";
-          document.getElementById("crear").style.display = "flex";
-          document.getElementById("guardar").style.display = "none";
-          document.getElementById("exportar").style.display = "none";
-          document.getElementById("btnAceptar").style.display = "none";
-          document.getElementById("editar").style.display = "none";
-          document.getElementById("regresar").style.display = "flex";
+          
+
+          myThis.renderDivs({crear:'flex', regresar:'flex'});
+
         });
         query("#regresar").on("click", async function (evt) {
-          document.getElementById("unir").style.display = "none";
-          document.getElementById("crear").style.display = "none";
-          document.getElementById("guardar").style.display = "none";
-          document.getElementById("exportar").style.display = "none";
-          document.getElementById("editar").style.display = "none";
-          document.getElementById("idHerramientas").style.display = "flex";
-          document.getElementById("regresar").style.display = "none";
+          
+          myThis.renderDivs({idHerramientas: 'flex'});
         });
         /* registry.byId("undo").on("click", function() {
           undoManager.undo();
@@ -157,14 +133,27 @@ define([
 
         this.initToolbar();
 
+      },
 
-
+      renderDivs: function ({idHerramientas="none",unir="none",crear="none",guardar="none",
+        exportar="none"/* ,btnAceptar="none" */,editar="none",regresar="none"}){
+          document.getElementById("idHerramientas").style.display = idHerramientas;
+          document.getElementById("unir").style.display = unir;
+          document.getElementById("crear").style.display = crear;
+          document.getElementById("guardar").style.display = guardar;
+          document.getElementById("exportar").style.display = exportar;
+          // document.getElementById("btnAceptar").style.display = btnAceptar;
+          document.getElementById("editar").style.display = editar;
+          document.getElementById("regresar").style.display = regresar;
       },
 
       initToolbar: function () {
         //console.log("initToolbar")
         dibujo = new Draw(this.map);
         dibujo.on("draw-end", this.addGraphic);
+        dibujo.on("click", function (evt) {
+          console.log(evt);
+        });
 
         // Create and setup editing tools
         editToolbar = new Edit(this.map);
@@ -219,19 +208,31 @@ define([
             ), new Color([r, g, b, 0.5]));
         }
 
-        var graphic = new Graphic(evt.geometry, symbol);
-        /* var operation = new CustomOperation.Add({
-          graphicsLayer: map.graphics,
-          addedGraphic: graphic
-        });
+        abrirWidgetResultados({
+          data: {
+              panel: {
+                  width: 350,
+                  height: 380
+              }
+          },
+          tipoResultado: consts.consultas.edicionCartografica,
+          objConsulta:objEdicionCartografica,
+          evt,
+          symbol
 
-        undoManager.add(operation); */
-        // lastGraphics.push(graphic);
+        }, consts.widgetAddAtributes);
+        
+        /* var infoTemplate = new InfoTemplate(`Vernal Pool Locations","Latitude: ${456} <br/>
+        Longitude: ${654} <br/>
+        Plant Name:${"Testing"}`);
+        var attr = {"Xcoord":"evt.mapPoint.x","Ycoord":"evt.mapPoint.y","Plant":"Mesa Mint"};
 
-        this.map.graphics.add(graphic);
+        var graphic = new Graphic(evt.geometry, symbol, attr, infoTemplate);
+
+        EsriMap.graphics.add(graphic);
         dibujo.deactivate();
         textInfo = document.querySelector("#textInfo");
-        textInfo.style.display = 'block';
+        textInfo.style.display = 'block'; */
       },
       createMapMenu: function () {
         // Creates right-click context menu for GRAPHICS
@@ -282,13 +283,13 @@ define([
         ctxMenuForGraphics.addChild(new MenuItem({
           label: "Delete",
           onClick: function () {
-            myMap.graphics.remove(selected);
+            EsriMap.graphics.remove(selected);
           }
         }));
 
         ctxMenuForGraphics.startup();
 
-        myMap.graphics.on("mouse-over", function (evt) {
+        EsriMap.graphics.on("mouse-over", function (evt) {
           // We'll use this "selected" graphic to enable editing tools
           // on this graphic when the user click on one of the tools
           // listed in the menu.
@@ -298,25 +299,25 @@ define([
           ctxMenuForGraphics.bindDomNode(evt.graphic.getDojoShape().getNode());
         });
 
-        myMap.graphics.on("mouse-out", function (evt) {
+        EsriMap.graphics.on("click", function (evt) {
+          console.log(evt)
+        });
+
+        EsriMap.graphics.on("mouse-out", function (evt) {
           ctxMenuForGraphics.unBindDomNode(evt.graphic.getDojoShape().getNode());
         });
       },
       onOpen: function () {
         var panel = this.getPanel();
-        ajustarTamanioWidget(panel, panel.position.width, 340)
+        ajustarTamanioWidget(panel, panel.position.width, 340);
+
+        
 
       },
       onClose: function () {
-        //console.log('onClose');
-        document.getElementById("unir").style.display = "none";
-        document.getElementById("crear").style.display = "none";
-        document.getElementById("guardar").style.display = "none";
-        document.getElementById("exportar").style.display = "none";
-        document.getElementById("editar").style.display = "none";
-        document.getElementById("idHerramientas").style.display = "none";
-        document.getElementById("regresar").style.display = "none";
-        document.getElementById("btnAceptar").style.display = "flex";
+        console.log('onClose');
+        myThis.renderDivs({});
+        cerrarWidgetResultados(consts.widgetAddAtributesPanel);
       },
     })
   });

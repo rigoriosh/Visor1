@@ -233,3 +233,16 @@ select{
     display: flex;
     flex-direction: column;
 }
+
+.inputInRow{
+    margin-left: 5px;
+    width: 80% !important;
+}
+
+.mt5px{
+    margin-top: 5px;
+}
+
+.claro .jimu-launchpad-panel .jimu-panel-content {
+    top: 10px !important;
+}

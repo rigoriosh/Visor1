@@ -11,6 +11,8 @@ var consts = {
     consulCatastro: "consulCatastro",
     widgetMyResultados: "widgets_MyWidgetResultados_Widget_41",
     widgetMyResultadosPanel: "widgets_MyWidgetResultados_Widget_41_panel",
+    widgetAddAtributes: "widgets_AddAtributes_Widget_43",
+    widgetAddAtributesPanel: "widgets_AddAtributes_Widget_43_panel",
     notas: {
         consultaSimple: [
             {
@@ -40,6 +42,7 @@ var consts = {
     consultas:{
         consultaSimple: 'consultaSimple',
         consultaAvanzada: 'consultaAvanzada',
+        edicionCartografica: 'edicionCartografica',
     }
 
 

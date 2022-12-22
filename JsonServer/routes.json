@@ -10,7 +10,7 @@
     "/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer?f=json":"/cartografiaBasica",
     "/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/13?f=json":"/capa13SAEpredios",
     "/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/13/query?f=json&where=1%3D1&returnGeometry=true&spatialRel=esriSpatialRelIntersects&outFields=*&outSR=102100":"/querySAEpredios",
-    "/3":"/",
+    "/arcgis/rest/services/ICBF/exportarSHAPE/GPServer/exportarSHAPE/execute":"/exportShape",
     "/4":"/",
     "/5":"/",
     "/6":"/"

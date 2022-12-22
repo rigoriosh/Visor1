@@ -5,6 +5,7 @@
     border-width: thin;
     border-color: #8080804d;
     padding-left: 10px;
+    width: 100%;
 }
 
 #iconoEditarNodos {
@@ -50,4 +51,11 @@
 
 .test{
     background-color: blue;
+}
+
+.filalabelBtn{
+    display: flex;
+    align-items: baseline;
+    flex-direction: row;
+    justify-content: space-between;
 }

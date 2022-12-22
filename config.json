@@ -139,7 +139,7 @@
                 "uri": "widgets/TablaContenido/Widget",
                 "name": "TablaContenido",
                 "label": "Tabla de Contenido",
-                "openAtStart": false
+                "openAtStart": true
             },
             {
                 "uri": "widgets/ZoomSlider/Widget",
@@ -271,6 +271,17 @@
                 "version": "2.25",
                 "id": "widgets_ExtentNavigate_Widget_34",
                 "name": "ExtentNavigate"
+            },
+            {
+                "uri": "widgets/AddAtributes/Widget",
+                "name": "Adicionar Atributos",
+                "version": "1.0",
+                "position": {
+                    "right": 20,
+                    "top": 270,
+                    "relativeTo": "map"
+                },
+                "id": "widgets_AddAtributes_Widget_43"
             }
         ],
         "panel": {
