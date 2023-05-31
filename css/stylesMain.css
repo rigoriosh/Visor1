@@ -30,6 +30,18 @@ p{
     align-items: center;
 }
 
+.loader2{
+    align-items: center;
+    background-color: #0000001f;
+    display: none;
+    height: inherit;
+    margin-top: 6px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 9999 !important;
+}
+
 .titulo{
     text-align: center;
     padding: 10px;
@@ -245,4 +257,73 @@ select{
 
 .claro .jimu-launchpad-panel .jimu-panel-content {
     top: 10px !important;
+}
+
+.jimu-panel-content{
+    margin-top: 7px;
+}    
+
+.img{
+    width: 100%;
+    /* height: 100%; */
+    background-image: url('../images/attributesToSelect.PNG');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+#widgets_AddAtributes_Widget_43{
+    height: 100%;
+}
+
+#attributesToSelect{
+    display: none;
+    flex-direction: column;
+    height: 100%;
+}
+
+.classHeader{
+    font-weight: bold;
+}
+.x{
+    margin-bottom: 1px;
+}
+.hilera{
+    margin-top: 5px;
+}
+.celda{
+    /* display: flex; */
+    justify-content: center;
+    padding-left: 4px;
+}
+
+.celdaCheck{
+    display: flex;
+    justify-content: center;
+    padding: 3px;
+    border: none;
+    border-bottom: solid 1px gray;
+}
+.celdaHeader{
+    padding: 5px;
+    background-color: gainsboro;
+}
+
+.jimu-nav-mode *:focus {
+    outline: none !important;
+}
+
+.btns-container{
+    z-index: 9999;
+}
+#widgets_AddData_Widget_38{
+    margin-top: 10px;
+}
+#widgets_ConsultaAvanzada_Widget_36{
+    margin-top: 10px;
+}
+#dijit__WidgetBase_16{
+    margin-top: 10px;
+}
+#dijit__WidgetBase_6{
+    margin-top: 10px;
 }

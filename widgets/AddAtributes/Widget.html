@@ -1,37 +1,55 @@
-<div id="divAddAtributes" style="height: 100%;">
-        <div class="" style="display: flex;">
-                <label class="labels" for="ID_PUNTO" style="width: 50% !important;">ID_PUNTO</label>
-                <input type="text" class="inputInRow form-control form-control-sm" id="ID_PUNTO" aria-describedby="ID_PUNTO">
+<div>
+        <div id="divAddAtributes" style="height: 100%; display: none;">
+                <div class="" style="display: flex;">
+                        <label class="labels" for="ID_PUNTO" style="width: 50% !important;">ID_PUNTO</label>
+                        <input type="text" class=" form-control form-control-sm" value="" id="ID_PUNTO" tabindex=1 aria-describedby="ID_PUNTO">
+                </div>
+                <div class="" style="display: flex;">
+                        <label class="labels" for="DESCRIPCION" style="width: 50% !important;">DESCRIPCION</label>
+                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=2 id="DESCRIPCION" aria-describedby="DESCRIPCION">
+                </div>
+                <div class="" style="display: flex;">
+                        <label class="labels" for="ID_PREDIO" style="width: 50% !important;">ID_PREDIO</label>
+                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=3 id="ID_PREDIO" aria-describedby="ID_PREDIO">
+                </div>
+                <div class="" style="display: flex;">
+                        <label class="labels" for="ACOMPAÑANTE" style="width: 50% !important;">ACOMPAÑANTE</label>
+                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=4 id="ACOMPAÑANTE" aria-describedby="ACOMPAÑANTE">
+                </div>
+                <div class="" style="display: flex;">
+                        <label class="labels" for="OBSERVACIONES" style="width: 50% !important;">OBSERVACIONES</label>
+                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=5 id="OBSERVACIONES" aria-describedby="OBSERVACIONES">
+                </div>
+                <div class="" style="display: flex;">
+                        <label class="labels" for="FECHA_CAPTURA" style="width: 50% !important;">FECHA_CAPTURA</label>
+                        <input type="date" class=" mt5px form-control form-control-sm" value="" tabindex=6 id="FECHA_CAPTURA" aria-describedby="FECHA_CAPTURA">
+                </div>
+                <div class="" style="display: flex;">
+                        <label class="labels" for="FUNCIONARIO_SAE" style="width: 50% !important;">FUNCIONARIO_SAE</label>
+                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=7 id="FUNCIONARIO_SAE" aria-describedby="FUNCIONARIO_SAE">
+                </div>
+                <div class="" style="display: flex;">
+                        <label class="labels" for="FIRMA" style="width: 50% !important;">FIRMA</label>
+                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=8 id="FIRMA" aria-describedby="FIRMA">
+                </div>
+                <button id="agregarGeometria" type="button" class="btn btn-outline-success btn-sm mt-3" style="margin-right: 10px;" tabindex=9>
+                        Agregar geometría
+                </button>
         </div>
-        <div class="" style="display: flex;">
-                <label class="labels" for="DESCRIPCION" style="width: 50% !important;">DESCRIPCION</label>
-                <input type="text" class="inputInRow mt5px form-control form-control-sm" id="DESCRIPCION" aria-describedby="DESCRIPCION">
+        <div id="attributesToSelect" >
+                <h6>Selecciona los atributos para la union de las geometrías</h6>
+                <!-- <div>a</div>
+                <div class="img"></div> -->
+                <div id="TablaSelectAtributes"></div>
+                <div style="display: flex;">
+                        <button id="btnUnirGeometrias" type="button" class="btn btn-outline-success btn-sm mt-3">
+                                Unir Geometrías
+                        </button>
+                        <button id="btnUnirCerrar" type="button" class="btn btn-outline-success btn-sm mt-3 ml-3">
+                                Cerrar
+                        </button>
+                </div>
+
         </div>
-        <div class="" style="display: flex;">
-                <label class="labels" for="ID_PREDIO" style="width: 50% !important;">ID_PREDIO</label>
-                <input type="text" class="inputInRow mt5px form-control form-control-sm" id="ID_PREDIO" aria-describedby="ID_PREDIO">
-        </div>
-        <div class="" style="display: flex;">
-                <label class="labels" for="ACOMPAÑANTE" style="width: 50% !important;">ACOMPAÑANTE</label>
-                <input type="text" class="inputInRow mt5px form-control form-control-sm" id="ACOMPAÑANTE" aria-describedby="ACOMPAÑANTE">
-        </div>
-        <div class="" style="display: flex;">
-                <label class="labels" for="OBSERVACIONES" style="width: 50% !important;">OBSERVACIONES</label>
-                <input type="text" class="inputInRow mt5px form-control form-control-sm" id="OBSERVACIONES" aria-describedby="OBSERVACIONES">
-        </div>
-        <div class="" style="display: flex;">
-                <label class="labels" for="FECHA_CAPTURA" style="width: 50% !important;">FECHA_CAPTURA</label>
-                <input type="text" class="inputInRow mt5px form-control form-control-sm" id="FECHA_CAPTURA" aria-describedby="FECHA_CAPTURA">
-        </div>
-        <div class="" style="display: flex;">
-                <label class="labels" for="FUNCIONARIO_SAE" style="width: 50% !important;">FUNCIONARIO_SAE</label>
-                <input type="text" class="inputInRow mt5px form-control form-control-sm" id="FUNCIONARIO_SAE" aria-describedby="FUNCIONARIO_SAE">
-        </div>
-        <div class="" style="display: flex;">
-                <label class="labels" for="FIRMA" style="width: 50% !important;">FIRMA</label>
-                <input type="text" class="inputInRow mt5px form-control form-control-sm" id="FIRMA" aria-describedby="FIRMA">
-        </div>
-        <button id="btnDibujar" type="button" class="btn btn-outline-success btn-sm mt-3" style="margin-right: 10px;">
-                Agregar geometría
-        </button>
+
 </div>

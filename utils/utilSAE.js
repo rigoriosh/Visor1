@@ -1,10 +1,18 @@
 var loading = document.getElementById("loading")
+// 
+// JSON.stringify(EsriMap.graphics.graphics[1].geometry.rings[0]) // toma los rings de un map grafic
 
 var loadHtml = document.createElement('div');
 loadHtml.innerHTML = '<img id="gifLoader" class="spinner" src="images/loadingCapa.gif" alt="SIG SAE"/>';
 
 function showLoader(idPage) { //metodo que se encarga de mostrar el icono de loader
+    console.log("showLoader");
     document.getElementById("main-page").appendChild(loadHtml);
+}
+
+function loader2(activar) {
+    const loader = document.getElementById("loader_2");
+    loader.style.display = activar?"flex":"none";
 }
 
 function ejecutarConsulta(url) { //metodo que genera consulta y retorna info en json
@@ -16,7 +24,7 @@ function ejecutarConsulta(url) { //metodo que genera consulta y retorna info en 
     return a;
 }
 
-function createDialogInformacionGeneral(titulo, contenido) {
+function createDialogInformacionGeneral(titulo="", contenido="") {
     require(["dijit/Dialog", "dojo/domReady!"], function (Dialog) {
         myDialogOT = new Dialog({
             title: titulo,
@@ -173,8 +181,6 @@ function crearPoligono(feature) {
       return poligono
 }
 
-
-
 function renderGrafico(data, div, width, height) {
     // var chart = echarts.init(dom, 'purple-passion');
 
@@ -253,6 +259,31 @@ const pintarFeatureLayer = (url, id, map) => {//pintar capa
     return featureLayer;
 }
 
+const pintarGeometry = (EsriMap, geometry, symbol={}, attributes={}, infoTemplate={}) => {
+    require(["esri/symbols/CartographicLineSymbol","esri/graphic", "esri/Color",
+    "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol"], 
+    function (CartographicLineSymbol, Graphic, Color, SimpleFillSymbol, SimpleLineSymbol) {
+
+        const symbol = new CartographicLineSymbol(
+            CartographicLineSymbol.STYLE_SOLID,
+            new Color([234,150,10]), 5, 
+            CartographicLineSymbol.CAP_ROUND,
+            CartographicLineSymbol.JOIN_MITER, 5
+          )
+          const polygonSymbol = new SimpleFillSymbol(
+            SimpleFillSymbol.STYLE_SOLID, 
+            new SimpleLineSymbol(
+              SimpleLineSymbol.STYLE_DOT, 
+              new Color([151, 249, 0, 0.8]),
+              3
+            ), 
+            new Color([151, 249, 0, 0.45])
+          );
+        EsriMap.graphics.add(new Graphic(geometry, symbol, attributes, infoTemplate));
+        
+    });
+}
+
 function pintarFeaturesConInfoTemplate(featureSet) { //función que se encarga de pintar features
     require(["esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", "esri/graphic",
         "esri/symbols/SimpleFillSymbol", "dijit/TooltipDialog", "esri/InfoTemplate",
@@ -327,7 +358,7 @@ const abrirWidgetResultados = (data, idWiget=consts.widgetMyResultados) => {
     appGlobal.openWidgetById(widgetId);
 }
 
-function cerrarWidgetResultados(widgetACerrar=consts.widgetMyResultadosPanel) {
+function cerrarWidgetResultados(widgetACerrar=consts.widgetMyResultadosPanel, clearGraphics=true) {
     require(["jimu/PanelManager"],
         function (PanelManager) {
             /////codigo q cierra el widgetResultados
@@ -353,7 +384,7 @@ function cerrarWidgetResultados(widgetACerrar=consts.widgetMyResultadosPanel) {
                 } */
             }
             widgetOpen = false;
-            if (typeof(appGlobal) !== 'undefined') {
+            if (typeof(appGlobal) !== 'undefined' && clearGraphics) {
                 appGlobal.map.graphics.clear()
                 appGlobal.map.setExtent(appGlobal.map._initialExtent);
             }
@@ -374,8 +405,8 @@ const exportarShape = (featureDataSet) => {
      */
 
     require(["esri/tasks/Geoprocessor",], function (Geoprocessor,) {
-        document.getElementById("loadingResultados").style.display = 'flex';
-        document.getElementById("loadingResultados").style.zIndex = 1;
+        // document.getElementById("loadingResultados").style.display = 'flex';
+        // document.getElementById("loadingResultados").style.zIndex = 1;
         var gp = new Geoprocessor(SERVICIO_SHAPEFILE);
         let parametros = {featureDataSet};
         //console.log(parametros)
@@ -390,23 +421,25 @@ const exportarShape = (featureDataSet) => {
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                loader2(false)
+                createDialogInformacionGeneral("Resultado", "La descarga se realizó correctamente")
             } else {
                 createDialogInformacionGeneral("Error", "No se pudo generar el archivo Shape")
+                loader2(false)
             }
-            document.getElementById("loadingResultados").style.display = 'none';
+            // document.getElementById("loadingResultados").style.display = 'none';
         }
 
         function errorExportarShapeCompleto(e) {
-            document.getElementById("loadingResultados").style.display = 'none';
+            // document.getElementById("loadingResultados").style.display = 'none';
             createDialogInformacionGeneral("Error", consts.notas.consultaSimple[0].body);
+            loader2(false)
         }
 
     });
 
 
 }
-
-
 
 function insetarCapas(capas, select) { // implementado en consulta Simple y Avanzada
     selCapas = document.getElementById(select);
@@ -531,3 +564,57 @@ const crearfeatureSet = (features) => {
     return featureSet;
 
 }
+
+const  generateUUID = () => {
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
+}
+
+const generarSymbol = (type) => {
+    let symbol
+    require(["esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleLineSymbol","esri/Color",
+    "esri/symbols/SimpleFillSymbol"],
+    function (SimpleMarkerSymbol, SimpleLineSymbol, Color, SimpleFillSymbol) {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        if (type === "point" || type === "multipoint") {
+            symbol = new SimpleMarkerSymbol(
+              SimpleMarkerSymbol.STYLE_CIRCLE,
+              20, new SimpleLineSymbol(
+                SimpleLineSymbol.STYLE_SOLID,
+                new Color([r, g, b, 0.5]),
+                10
+              ),
+              new Color([r, g, b, 0.9]));
+        } else if (type === "line" || type === "polyline") {
+        symbol = new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([r, g, b, 0.85]),
+            6
+        );
+        } else {
+            symbol = new SimpleFillSymbol(
+            SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([r, g, b, 0.9]),
+            3
+            ), new Color([r, g, b, 0.5]));
+        }
+
+    })
+    return symbol
+}
+
+const ocultarMostrarTootilp = (mostrar) => {
+    mostrar
+    ?document.getElementsByClassName("esriPopup").item(0).style.display="block"
+    :document.getElementsByClassName("esriPopup").item(0).style.display="none"
+}
+

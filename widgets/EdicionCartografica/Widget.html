@@ -5,31 +5,49 @@
                 <button id="btnAceptar" type="button" class="btn btn-outline-success btn-sm mt-3" >Consultar proyecto</button>
         </div>
         <div class="input-group ">
-                <input type="text" name="IdDelProyecto " id="IdDelProyecto " data-toggle="tooltip" data-placement="top" class="form-control ">
+                <input type="text" name="IdDelProyecto" id="IdDelProyecto" data-toggle="tooltip" data-placement="top" class="form-control ">
         </div>
 
-        <div id="idHerramientas" style="display: none;">
+        <div id="idHerramientas" style="display: none; margin-top: 50px;">
                 <div id="iconoEditarNodos"  title="Editar Nodos" data-toggle="tooltip" data-placement="top" data-customClass="test"></div>
-                <div id="iconoGuardarGeometrias" title="Guardar Geometrías" data-toggle="tooltip" data-placement="top"></div>               
                 <div id="iconoUnirGeometrias" title="Unir Geometrías" data-toggle="tooltip" data-placement="top"></div>               
                 <div id="iconoExportarGeometrias" title="Exportar Geometrías" data-toggle="tooltip" data-placement="top"></div>   
                 <div id="iconoCrearGeometrias" title="Crear Geometrías" data-toggle="tooltip" data-placement="top"></div>   
+                <div id="iconoGuardarGeometrias" title="Guardar Geometrías" data-toggle="tooltip" data-placement="top"></div>               
         </div>
 
-        <div id="editar" style="display: none; margin-top: 10px;">
-                <p>Herramienta <span style="font-weight: bold;">editar</span>, en construcción</p>
+        <div id="editar" style="display: none; margin-top: 10px; flex-direction: column;">
+                <p><span style="font-weight: bold;">EDITAR NODOS</span></p>
+                <p>De un click derecho sobre el nodo que desea editar</p>               
         </div>
-        <div id="unir" style="display: none; margin-top: 10px;">
-                <p>Herramienta <span style="font-weight: bold;">unir</span>, en construcción</p>
+        <div id="unir" style="display: none; margin-top: 10px; flex-direction: column; flex-direction: column;">
+                <p><span style="font-weight: bold;">UNIR GEOMETRÍAS</span></p>                
+                <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectGeometrias" >
+                        <label class="form-check-label" for="selectGeometrias">
+                                Seleccionar Geometrías
+                        </label>
+                </div>
+                <button id="btnSelectAtributos" type="button" class="btn btn-outline-success btn-sm mt-3">
+                        Seleccionar atributos
+                </button>
         </div>
-        <div id="guardar" style="display: none; margin-top: 10px;">
-                <p>Herramienta <span style="font-weight: bold;">guardar</span>, en construcción</p>
+        
+        <div id="exportar" style="display: none; margin-top: 10px; flex-direction: column;">
+                <p><span style="font-weight: bold;">EXPORTAR GEOMETRÍAS</span></p>
+                <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectGeometriasExportar" >
+                        <label class="form-check-label" for="selectGeometriasExportar">
+                                Seleccionar Geometrías
+                        </label>
+                </div>
+                <!-- <div class="fila"> -->
+                        <button id="exportarGeom" type="button" class="btn btn-outline-success btn-sm mt-3" >Exportar</button>
+                <!-- </div> -->
+
         </div>
-        <div id="exportar" style="display: none; margin-top: 10px;">
-                <p>Herramienta <span style="font-weight: bold;">exportar</span>, en construcción</p>
-        </div>
-        <div id="crear" style="display: none; margin-top: 10px;">
-                <!-- <p>Herramienta <span style="font-weight: bold;">crear</span>, en construcción</p> -->
+        <div id="crear" style="display: none; margin-top: 10px; flex-direction: column;">
+                <p><span style="font-weight: bold;">CREAR GEOMETRÍAS</span></p>
                 <div id="TipoDeGeometria">
                         <label class="labels" for="IdDelProyecto ">Tipo de geometría</label>
                         <div class="fila">
@@ -74,6 +92,10 @@
                 </div>
 
         </div>
+        <div id="guardar" style="display: none; margin-top: 10px; flex-direction: column;">
+                <p><span style="font-weight: bold;">GUARDAR GEOMETRÍAS</span></p>
+                <button id="btnGuardarNodos" type="button" class="btn btn-outline-success btn-sm mt-3" >Guardar </button>
+        </div>
 
 
 
@@ -84,6 +106,14 @@
         <div>
                 <button id="regresar" style="display: none;" type="button" class="btn btn-outline-success btn-sm mt-3" >Regresar</button>
         </div>
+
+        <div id="loader_2" class="justify-content-center loader2">
+                <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                </div>
+        </div>
+       
+        
       
       <!-- Modal -->
       <!-- <div class="modal fade" id="myModal" tabindex="999999" aria-labelledby="exampleModalLabel" aria-hidden="true">
