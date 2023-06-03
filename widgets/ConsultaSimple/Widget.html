@@ -13,8 +13,13 @@
 			onchange="if(this.selectedIndex >=0) consultaCapasSegunTematica(this, objConsultaSimple)">
 		</select>
 
-		<label class="labels" for="selCapas">Capa:</label>
-		<select id="selCapas" class="form-control form-control-sm"
+		<label class="labels" for="selCapas">Agrupaciones:</label>
+		<select id="selCapas" class="form-control form-control-sm">
+			<option value="">Seleccione...</option>
+		</select>
+
+		<label class="labels" for="subCapa">Capa:</label>
+		<select id="subCapa" class="form-control form-control-sm"
 			onchange="consultaAtributosSegunCapa(this,
 			document.getElementById('selServicios'),
 			'selAtributos', objConsultaSimple, loadingCS)">

@@ -6,14 +6,27 @@
 	</div>
 	
 	<div class="form-group">
-		<label class="labels" for="selServiciosCA">Temática:</label>
-		<select id="selServiciosCA" class="form-control form-control-sm"
-			onchange="if(this.selectedIndex >=0) consultaCapasSegunTematicaCA(this, objConsultaAvanzada)">
-		</select>
 
-		<label class="labels" for="selCapasCA">Capa:</label>
-		<select id="selCapasCA" class="form-control form-control-sm"
-			onchange="consultaAtributosSegunCapa(this, document.getElementById('selServiciosCA'),
+		<div style="display: flex; justify-content: space-around;">
+			<div style="width: 50%;">
+				<label class="labels" for="selServiciosCA">Temática:</label>
+				<select id="selServiciosCA" class="form-control form-control-sm"
+					onchange="if(this.selectedIndex >=0) consultaCapasSegunTematicaCA(this, objConsultaAvanzada)">
+				</select>
+			</div>
+
+			<div style="width: 50%;">
+				<label class="labels" for="selCapasCA">Agrupaciones:</label>
+				<select id="selCapasCA" class="form-control form-control-sm">
+					<option value="">Seleccione...</option>
+				</select>
+			</div>
+		</div>
+
+		<label class="labels" for="subCapaCA">Capa:</label>
+		<select id="subCapaCA" class="form-control form-control-sm"
+			onchange="consultaAtributosSegunCapa(this,
+			document.getElementById('selServiciosCA'),
 			'selAtributosCA', objConsultaAvanzada, loadingCA)">
 			<option value="">Seleccione...</option>
 		</select>
@@ -21,13 +34,13 @@
 		<div class="fila">
 			<div class="columnaCA">
 				<label class="labels" for="selAtributosCA">Atributo:</label>
-				<select id="selAtributosCA" class="form-control form-control-sm" size="5px">
+				<select id="selAtributosCA" class="form-control form-control-sm" size="4px">
 					<option value="">Seleccione...</option>
 				</select>
 			</div>
 			<div class="columnaCA">
 				<label class="labels" for="selValoresCA">Valores:</label>
-				<select id="selValoresCA" class="form-control form-control-sm" size="5px">
+				<select id="selValoresCA" class="form-control form-control-sm" size="4px">
 					<option value="">Seleccione...</option>
 				</select>
 			</div>
@@ -35,32 +48,32 @@
 				<div style="text-align: center;">
 					<!-- <button id="btnBuscar" type="button" class="btn btn-outline-success btn-sm mt-3">Obtener valores</button> -->
 					<div>
-						<button style="width:3em" type="button" value="igual" class="btnSmall fz-15" onclick="formarExpresion('=')">=</button>
-						<button style="width:3em" type="button" value="diferente" class="btnSmall fz-15" onclick="formarExpresion('<>')"><></button>
-						<button id="btnLike" style="width:3em" type="button" class="btnSmall " onclick="formarExpresion('LIKE')">Como</button>
+						<button style="width:3em" type="button" value="igual" class="btnSmall fz-15" onclick="formarExpresion('=', 'operador')">=</button>
+						<button style="width:3em" type="button" value="diferente" class="btnSmall fz-15" onclick="formarExpresion('<>', 'operador')"><></button>
+						<button id="btnLike" style="width:3em" type="button" class="btnSmall " onclick="formarExpresion('LIKE', 'operador')">Como</button>
 					</div>
 					<div>
-						<button style="width:3em" type="button" value="menor" class="btnSmall fz-15" onclick="formarExpresion('<')"> < </button>
-						<button style="width:3em" type="button" value="mayor" class="btnSmall fz-15" onclick="formarExpresion('>')">></button>
-						<button style="width:3em" type="button" value="mayorigual" class="btnSmall fz-15" onclick="formarExpresion('>=')"> >= </button>
+						<button style="width:3em" type="button" value="menor" class="btnSmall fz-15" onclick="formarExpresion('<', 'operador')"> < </button>
+						<button style="width:3em" type="button" value="mayor" class="btnSmall fz-15" onclick="formarExpresion('>', 'operador')">></button>
+						<button style="width:3em" type="button" value="mayorigual" class="btnSmall fz-15" onclick="formarExpresion('>=', 'operador')"> >= </button>
 					</div>
 					<div>
-						<button style="width:3em" type="button" value="menorigual" class="btnSmall fz-15" onclick="formarExpresion('<=')"> <= </button>
-						<button id="btnAnd" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('AND')">Y</button>
-						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('OR')">OR</button>
+						<button style="width:3em" type="button" value="menorigual" class="btnSmall fz-15" onclick="formarExpresion('<=', 'operador')"> <= </button>
+						<button id="btnAnd" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('AND', 'operador')">Y</button>
+						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('OR', 'operador')">OR</button>
 					</div>
 					<div>
-						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('%')">%</button>
-						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('(')">(</button>
-						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion(')')">)</button>
+						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('%', 'operador')">%</button>
+						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('(', 'operador')">(</button>
+						<button id="btnOr" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion(')', 'operador')">)</button>
 					</div>
 					<div>
-						<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('_')">_</button>
-						<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('IS')">ES</button>
-						<button id="btnNull" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('NULL')">VACIO</button>	
+						<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('_', 'operador')">_</button>
+						<button id="btnIs" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('IS', 'operador')">ES</button>
+						<button id="btnNull" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('NULL', 'operador')">VACIO</button>	
 					</div>
 					<div>
-						<button id="btnNot" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('NOT')">NOT</button>
+						<button id="btnNot" style="width:3em" type="button" class="btnSmall" onclick="formarExpresion('NOT', 'operador')">NOT</button>
 					</div>
 				</div>
 

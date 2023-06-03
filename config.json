@@ -139,7 +139,7 @@
                 "uri": "widgets/TablaContenido/Widget",
                 "name": "TablaContenido",
                 "label": "Tabla de Contenido",
-                "openAtStart": true
+                "openAtStart": false
             },
             {
                 "uri": "widgets/ZoomSlider/Widget",
@@ -444,7 +444,7 @@
                 "widgets": [
                     {
                         "name": "Select",
-                        "label": "Identificar",
+                        "label": "Selección Espacial",
                         "version": "2.5",
                         "uri": "widgets/Select/Widget",
                         "index": 7,
@@ -723,7 +723,7 @@
                     "version": "2.25",
                     "position": {
                         "left": 10,
-                        "bottom": 70,
+                        "bottom": 60,
                         "relativeTo": "map"
                     },
                     "closeable": true

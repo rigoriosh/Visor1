@@ -9,9 +9,12 @@ var selectedRegisterFromTable = {
     rows:[],
     features:[]
 }
-define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/_base/json",
-    "dojo/_base/array", "dojo/string", "esri/request", "jimu/PanelManager",  */"dojo/query", "dojo/domReady!"],
-    function (declare, BaseWidget, on, dom,/* PanelManager,  */query) {
+define(['dojo/_base/declare', 'jimu/BaseWidget',
+"esri/tasks/FeatureSet",
+ "dojo/dom", "dojo/query", "dojo/domReady!"],
+    function (declare, BaseWidget, 
+        FeatureSet,
+        dom, query) {
 
         var widgetOpen = false;
         //To create a widget, you need to derive from BaseWidget.
@@ -22,32 +25,17 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/on", "dojo/dom",/* "dojo/
                 extentInicial = this.map.extent;
 
                 setearMapa(this);
+                let thisMyWidResul = this;
                 query("#btnExportar").on("click", async function (evt) {
                     //console.log("exporto the wollow");
                     //console.log(selectedRegisterFromTable.features);
                     //console.log(selectedRegisterFromTable.rows);
-                    // let fieldAliases = {};
-                    // widgetResultados.data.featureCollection.layerDefinition.fields.forEach(f => fieldAliases[f.name] = f.name)
-                    const featureDataSet = {
-                        ...widgetResultados.data.response,
-                        features: selectedRegisterFromTable.features,
-                        spatialReference: {
-                            wkid: EsriMap.spatialReference.wkid
-                        }
-                    }
-                    /* const featureDataSet = {
-                        displayFieldName: objConsultaSimple.atributo,
-                        geometryType: widgetResultados.data.featureCollection.layerDefinition.geometryType,
-                        spatialReference: {wkid:EsriMap.spatialReference.wkid},
-                        fields:widgetResultados.data.featureCollection.layerDefinition.fields,
-                        features:selectedRegisterFromTable.features,
-                        // exceededTransferLimit: false
-                        fieldAliases,
-                        transform: null,
-                        _ssl: undefined
-                    } */
-                    // //console.log(JSON.stringify([featureDataSet]))
-                    exportarShape(featureDataSet)
+                    console.log(thisMyWidResul);
+                    var featureSet = new FeatureSet();
+                    featureSet.features = EsriMap.graphics.graphics;
+                    const load = widgetResultados.data.tipoResultado == consts.consultas.consultaAvanzada
+                    ? "loadingCA" : "loadingCS"
+                    exportarShape(featureSet, load)
                     
                 });
             },
@@ -370,28 +358,28 @@ function cargarTablaResultados(widget) {
                         if (tipoResultado === consts.consultas.consultaAvanzada) {
                            //console.log(widget) 
                            
-                        var query = new Query();
-                        query.objectIds = myTable.selectedRowIds;
-                        query.returnGeometry = true;
-                        query.outSpatialReference = EsriMap.spatialReference;
-                        EsriMap.graphics.clear()
-                        EsriMap.lastfeatureLayerDrawed.selectFeatures(query, FeatureLayer.SELECTION_NEW, dojo.hitch(this, function(features) {
-                            //console.log(features)
-                            selectedRegisterFromTable.features.length = 0
-                            widget.data.objConsultaAvanzada.queryFinalyResponse.features.forEach(finalfeature => {
-                                features.forEach(feature => {
-                                    if(feature.attributes.OBJECTID == finalfeature.attributes.OBJECTID){
-                                        let featureFixed = {...feature, ...finalfeature}
-                                        featureFixed.symbol = symbol;
-                                        featureFixed._extent = finalfeature.geometry.getExtent()
-                                        selectedRegisterFromTable.features.push(featureFixed);
-                                        pintarFeaturesConInfoTemplate({features:[finalfeature]});
-                                        EsriMap.setExtent(selectedRegisterFromTable.features[0].geometry.getExtent())
-                                    } 
-                                })
-                            });
-                        }))
-                        //console.log(selectedRegisterFromTable.features)
+                            var query = new Query();
+                            query.objectIds = myTable.selectedRowIds;
+                            query.returnGeometry = true;
+                            query.outSpatialReference = EsriMap.spatialReference;
+                            EsriMap.graphics.clear()
+                            EsriMap.lastfeatureLayerDrawed.selectFeatures(query, FeatureLayer.SELECTION_NEW, dojo.hitch(this, function(features) {
+                                //console.log(features)
+                                selectedRegisterFromTable.features.length = 0
+                                widget.data.objConsultaAvanzada.queryFinalyResponse.features.forEach(finalfeature => {
+                                    features.forEach(feature => {
+                                        if(feature.attributes.OBJECTID == finalfeature.attributes.OBJECTID){
+                                            let featureFixed = {...feature, ...finalfeature}
+                                            featureFixed.symbol = symbol;
+                                            featureFixed._extent = finalfeature.geometry.getExtent()
+                                            selectedRegisterFromTable.features.push(featureFixed);
+                                            pintarFeaturesConInfoTemplate({features:[finalfeature]});
+                                            EsriMap.setExtent(selectedRegisterFromTable.features[0].geometry.getExtent())
+                                        } 
+                                    })
+                                });
+                            }))
+                            //console.log(selectedRegisterFromTable.features)
                         } else if (tipoResultado === consts.consultas.consultaSimple) {
                             const lastLayerLoad = EsriMap.getLayer(widget.data.objConsulta.nameObjConsulta);
                             //console.log(tipoResultado)
@@ -436,8 +424,8 @@ function cargarTablaResultados(widget) {
                                 })
                                 selectedRegisterFromTable.features = finalFeature;
                                 EsriMap.setExtent(finalFeature[0].geometry.getExtent())
-                                /* var stateExtent = graphicsUtils.graphicsExtent(features);
-                                EsriMap.setExtent(stateExtent.expand(1.5)) */;
+                                // var stateExtent = graphicsUtils.graphicsExtent(features);
+                                // EsriMap.setExtent(stateExtent.expand(1.5));
                             }));
                         /* 
                             // widget.data.featureCollection.featureSet.features.forEach(f => {

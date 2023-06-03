@@ -10,8 +10,8 @@ function showLoader(idPage) { //metodo que se encarga de mostrar el icono de loa
     document.getElementById("main-page").appendChild(loadHtml);
 }
 
-function loader2(activar) {
-    const loader = document.getElementById("loader_2");
+function loader2(activar, load="loader_2") {
+    const loader = document.getElementById(load);
     loader.style.display = activar?"flex":"none";
 }
 
@@ -51,6 +51,7 @@ function createDialogInformacionGeneral(titulo="", contenido="") {
 const agregarDataSelect = (data, selec, campo1, campo2) => {
     const select = document.getElementById(selec);
     select.options.length = 0;
+    if (data.length < 1) {select.options[select.options.length] = new Option("Seleccione...", 0);return}
     if (data[0].attributes[campo1] != "Seleccione") select.options[select.options.length] = new Option("Seleccione...", 0);
     data.forEach(({attributes}) => {
         select.options[select.options.length] = new Option(attributes[campo1], attributes[campo2])
@@ -68,6 +69,7 @@ const agregarDataSelect2 = (data, selec) => {
 const agregarDataSelectValueLabel = (data, selec) => {
     const select = document.getElementById(selec);
     select.options.length = 0;
+    if (data.length < 1) {select.options[select.options.length] = new Option("Seleccione...", 0);return}
     if (data[0].label != "Seleccione") select.options[select.options.length] = new Option("Seleccione...", 0);
     data.forEach(d => {
         select.options[select.options.length] = new Option(d.label, d.value)
@@ -161,26 +163,6 @@ function ajustarTamanioWidget(panel, width, height) {
 
 }
 
-function crearPoligono(feature) {
-    //sirve para obtener el centroide
-    var poligono    
-    require([
-        "esri/geometry/Polygon", "esri/SpatialReference"], function(Polygon, SpatialReference) {
-            /* let RS = feature.geometry.spatialReference;
-            let R = feature.geometry.rings            
-            var b = {rings:[R]}
-            b.spatialReference = {wkid: RS.wkid}
-        poligono = new Polygon(RS);       
-        poligono.addRing(R)      
-        if(poligono.getCentroid() == null){
-            poligono = new Polygon(b)
-        } */
-        poligono = new Polygon(new SpatialReference({wkid:4326}));
-        poligono.addRing([[-180,-90],[-180,90],[180,90],[180,-90],[-180,-90]]);
-      });
-      return poligono
-}
-
 function renderGrafico(data, div, width, height) {
     // var chart = echarts.init(dom, 'purple-passion');
 
@@ -231,15 +213,16 @@ const renderModal = (modal, render, titulo, body) => {
     if (render) {
         myModal.style.display = 'block';
         myModal.className += " show"
+        document.getElementById("exampleModalLabel").innerHTML = titulo;
+        document.getElementById("bodyModal").innerHTML = body
     }else{
         myModal.style.display = 'none';
         myModal.className =  "modal fade"
     }
-    document.getElementById("exampleModalLabel").innerHTML = titulo;
-    document.getElementById("bodyModal").innerHTML = body
 }
 
 const pintarFeatureLayer = (url, id, map) => {//pintar capa
+    console.log("pintarFeatureLayer");
     var featureLayer;
     require(["esri/layers/FeatureLayer"], function (FeatureLayer) {
         featureLayer = new FeatureLayer(url, {
@@ -264,13 +247,14 @@ const pintarGeometry = (EsriMap, geometry, symbol={}, attributes={}, infoTemplat
     "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol"], 
     function (CartographicLineSymbol, Graphic, Color, SimpleFillSymbol, SimpleLineSymbol) {
 
-        const symbol = new CartographicLineSymbol(
+        let simbolo = symbol != {} ? new CartographicLineSymbol(
             CartographicLineSymbol.STYLE_SOLID,
             new Color([234,150,10]), 5, 
             CartographicLineSymbol.CAP_ROUND,
             CartographicLineSymbol.JOIN_MITER, 5
-          )
-          const polygonSymbol = new SimpleFillSymbol(
+        ) : symbol;
+
+        const polygonSymbol = new SimpleFillSymbol(
             SimpleFillSymbol.STYLE_SOLID, 
             new SimpleLineSymbol(
               SimpleLineSymbol.STYLE_DOT, 
@@ -278,10 +262,136 @@ const pintarGeometry = (EsriMap, geometry, symbol={}, attributes={}, infoTemplat
               3
             ), 
             new Color([151, 249, 0, 0.45])
-          );
-        EsriMap.graphics.add(new Graphic(geometry, symbol, attributes, infoTemplate));
+        );
+        
+        EsriMap.graphics.add(new Graphic(geometry, simbolo, attributes, infoTemplate));
         
     });
+}
+
+const pintarPuntos = (EsriMap, response, symbol={}) => {
+    require(["esri/graphic", "esri/layers/GraphicsLayer", "esri/geometry/Point"], 
+    function (Graphic, GraphicsLayer, Point) {
+
+        // let capaGrafica = new GraphicsLayer();
+        // const simbolo = symbol == {} ? generarSymbol(response.geometryType):symbol;
+        response.features.forEach(feature => {
+            const simbolo = generarSymbol(response.geometryType);
+            let longitud = feature.geometry.x;
+            let latitud = feature.geometry.y;
+            // let spatialRef = EsriMap.spatialReference
+            let spatialRef = feature.geometry.spatialReference
+            let loc = new Point(longitud, latitud, spatialRef);
+            const INFO_T = buildInfoTemplate("Información Punto",feature.attributes);
+            let newPunto = new Graphic(loc, simbolo, feature.attributes, INFO_T);
+            // let newPunto = new Graphic(feature.geometry, simbolo, feature.attributes, INFO_T);
+            // capaGrafica.add(newPunto);
+            // EsriMap.addLayer(capaGrafica);
+            EsriMap.graphics.add(newPunto);
+            EsriMap.centerAt(loc); 
+        })
+        // let newPunto = new Graphic(loc, simbolo, attr);
+        // let newZoom = 500000;
+        // EsriMap.setScale(newZoom);
+        
+    });
+}
+
+const pintarPolyLines = (EsriMap, response, symbol={}) => {
+    require(["esri/graphic", "esri/geometry/Polyline"], 
+    function (Graphic, Polyline) {
+
+        /* var mypolyline = new Polyline({
+            "paths":[
+              [
+                [-12484306,7244028],
+                [-7318386,10061803],
+                [-3013453,10727111]
+              ]
+            ],"spatialReference":{
+              "wkid":102100
+            }
+        });
+          var polylineSymbol = new SimpleLineSymbol();
+        EsriMap.graphics.add(new Graphic(mypolyline, polylineSymbol)); */
+        /* 
+            var polylineJson = {
+                "paths":[[[-122.68,45.53], [-122.58,45.55],
+                [-122.57,45.58],[-122.53,45.6]]],
+                "spatialReference":{"wkid":4326}
+            };
+         */
+        response.features.forEach(feature => {
+            const simbolo = generarSymbol(response.geometryType);
+            let polylineJson = {
+                "paths":feature.geometry.paths,
+                "spatialReference": feature.geometry.spatialReference
+            }            
+            const INFO_T = buildInfoTemplate("Información",feature.attributes);
+            let polyline = new Polyline(polylineJson)
+            let newGeometry = new Graphic(polyline, simbolo, feature.attributes, INFO_T);            
+            EsriMap.graphics.add(newGeometry);
+        })
+    });
+}
+
+const pintarPolygons = (EsriMap, response, symbol={}) => {
+    require(["esri/graphic", "esri/geometry/Polygon"], 
+    function (Graphic, Polygon) {
+
+        response.features.forEach(feature => {
+            const simbolo = generarSymbol(response.geometryType);
+            let polygonJson = {
+                "rings":feature.geometry.rings,
+                "spatialReference": feature.geometry.spatialReference
+            }            
+            const INFO_T = buildInfoTemplate("Información",feature.attributes);
+            let poligono = new Polygon(polygonJson);
+            let newGeometry = new Graphic(poligono, simbolo, feature.attributes, INFO_T);            
+            EsriMap.graphics.add(newGeometry);
+        })
+    });
+}
+function crearPoligono(feature) {
+    //sirve para obtener el centroide
+    var poligono    
+    require([
+        "esri/geometry/Polygon", "esri/SpatialReference"], function(Polygon, SpatialReference) {
+            /* 
+                let RS = feature.geometry.spatialReference;
+                let R = feature.geometry.rings            
+                var b = {rings:[R]}
+                b.spatialReference = {wkid: RS.wkid}
+                poligono = new Polygon(RS);       
+                poligono.addRing(R)      
+                if(poligono.getCentroid() == null){
+                    poligono = new Polygon(b)
+                } 
+            */
+        poligono = new Polygon(new SpatialReference({wkid:4326}));
+        poligono.addRing([[-180,-90],[-180,90],[180,90],[180,-90],[-180,-90]]);
+      });
+      return poligono
+}
+
+const buildInfoTemplate = (titulo, attributes) => {
+    let it
+    require(["esri/InfoTemplate"], 
+    function (InfoTemplate) {
+        /* 
+            ejemplo
+            var json = {
+                title:"Attributes",
+                content:"State Name: ${STATE_NAME}<br>Population: ${POP2001}"
+            }
+         */
+        let content = ``;
+        Object.keys(attributes).forEach(k => content += `${k}: ${attributes[k]} <br>`)
+        let json = {title:titulo, content}
+        // ,content:"State Name: ${STATE_NAME}<br>Population: ${POP2001}"}
+        it = new InfoTemplate(json);
+    });
+    return it;
 }
 
 function pintarFeaturesConInfoTemplate(featureSet) { //función que se encarga de pintar features
@@ -393,7 +503,7 @@ function cerrarWidgetResultados(widgetACerrar=consts.widgetMyResultadosPanel, cl
       )
 };
 
-const exportarShape = (featureDataSet) => {
+const exportarShape = (featureDataSet, load) => {
 
     /* 
         ejemplo featureDataSet
@@ -405,8 +515,7 @@ const exportarShape = (featureDataSet) => {
      */
 
     require(["esri/tasks/Geoprocessor",], function (Geoprocessor,) {
-        // document.getElementById("loadingResultados").style.display = 'flex';
-        // document.getElementById("loadingResultados").style.zIndex = 1;
+        loader2(true, load);
         var gp = new Geoprocessor(SERVICIO_SHAPEFILE);
         let parametros = {featureDataSet};
         //console.log(parametros)
@@ -421,11 +530,11 @@ const exportarShape = (featureDataSet) => {
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                loader2(false)
+                loader2(false, load)
                 createDialogInformacionGeneral("Resultado", "La descarga se realizó correctamente")
             } else {
                 createDialogInformacionGeneral("Error", "No se pudo generar el archivo Shape")
-                loader2(false)
+                loader2(false, load)
             }
             // document.getElementById("loadingResultados").style.display = 'none';
         }
@@ -433,7 +542,7 @@ const exportarShape = (featureDataSet) => {
         function errorExportarShapeCompleto(e) {
             // document.getElementById("loadingResultados").style.display = 'none';
             createDialogInformacionGeneral("Error", consts.notas.consultaSimple[0].body);
-            loader2(false)
+            loader2(false, load)
         }
 
     });
@@ -461,9 +570,11 @@ function insetarCapas(capas, select) { // implementado en consulta Simple y Avan
 }
 
 function consultaAtributosSegunCapa(selCapas, selServicios, selAtributos, objConsulta, load) { // implementado en consulta Simple y Avanzada
-
+    console.log("consultaAtributosSegunCapa");
     if(EsriMap.lastfeatureLayerDrawed)EsriMap.removeLayer(EsriMap.lastfeatureLayerDrawed)
     let capaSeleccionado = selCapas.value.trim();
+    agregarDataSelectValueLabel([], "selValoresCA"); // limpia el campo select
+    document.getElementById("expresion").value = "";
     // document.getElementById("palabraClave").value = "";
     if (capaSeleccionado !== 'Seleccione...') {
         require([
@@ -518,8 +629,9 @@ function consultaAtributosSegunCapa(selCapas, selServicios, selAtributos, objCon
 
 function fixAttributesToShow(fields, select, load) { // implementado en consulta Simple y Avanzada
     let fieldsToShow = fields.filter(e => (e.name !== 'OBJECTID_1' && e.name !== 'OBJECTID' && e.name !== 'Shape_Leng'
-        && e.name !== 'Shape' && e.name !== 'Shape.STArea()' && e.name !== 'Shape.STLength()'
-        && e.name !== 'SHAPE_Leng' && e.name !== 'SHAPE' && e.name !== 'SHAPE.STArea()' && e.name !== 'SHAPE.STLength()'));
+        && e.name !== 'Shape' && e.name !== 'Shape.STArea()' && e.name !== 'Shape.STLength()' && e.name !== 'SHAPE_Length'
+        && e.name !== 'SHAPE_Leng' && e.name !== 'SHAPE' && e.name !== 'SHAPE.STArea()' && e.name !== 'SHAPE.STLength()'
+        && e.name !== 'SHAPE_Area'));
     let finalFieldsToShow = [];
     fieldsToShow.forEach(fts => {
         finalFieldsToShow.push(fts.name)
@@ -583,29 +695,27 @@ const generarSymbol = (type) => {
         const r = Math.floor(Math.random() * 255);
         const g = Math.floor(Math.random() * 255);
         const b = Math.floor(Math.random() * 255);
-        if (type === "point" || type === "multipoint") {
+        if (type === "point" || type === "multipoint" || type === "esriGeometryPoint") {
             symbol = new SimpleMarkerSymbol(
               SimpleMarkerSymbol.STYLE_CIRCLE,
-              20, new SimpleLineSymbol(
+              10, new SimpleLineSymbol(
                 SimpleLineSymbol.STYLE_SOLID,
                 new Color([r, g, b, 0.5]),
                 10
               ),
               new Color([r, g, b, 0.9]));
-        } else if (type === "line" || type === "polyline") {
-        symbol = new SimpleLineSymbol(
-            SimpleLineSymbol.STYLE_SOLID,
-            new Color([r, g, b, 0.85]),
-            6
-        );
+        } else if (type === "line" || type === "polyline" || type === "esriGeometryPolyline") {
+            symbol = new SimpleLineSymbol(
+                SimpleLineSymbol.STYLE_SOLID,
+                new Color([r, g, b, 0.85]),
+                6
+            );
         } else {
             symbol = new SimpleFillSymbol(
-            SimpleFillSymbol.STYLE_SOLID,
-            new SimpleLineSymbol(
-            SimpleLineSymbol.STYLE_SOLID,
-            new Color([r, g, b, 0.9]),
-            3
-            ), new Color([r, g, b, 0.5]));
+                SimpleFillSymbol.STYLE_SOLID,
+                new SimpleLineSymbol(
+                    SimpleLineSymbol.STYLE_SOLID,
+                    new Color([r, g, b, 0.9]), 3), new Color([r, g, b, 0.5]));
         }
 
     })
@@ -617,4 +727,58 @@ const ocultarMostrarTootilp = (mostrar) => {
     ?document.getElementsByClassName("esriPopup").item(0).style.display="block"
     :document.getElementsByClassName("esriPopup").item(0).style.display="none"
 }
+
+const agruparDataAmostrar = (response, objPadre) => {                    
+    let data=[], pad, layerInfo = [];
+    pad = dojo.string.pad;
+
+    layerInfo = response.layers.filter(layer => layer.subLayerIds !== null)
+    objPadre.layers = layerInfo;
+    objPadre.fullLayers = response.layers;
+    objPadre.subLayers = [];
+    layerInfo.forEach(layer => data.push({label:layer.name,value:layer.id}))
+
+    /* 
+        layerInfo = dojo.map(response.layers, function (f) {
+            // return pad(f.id, 2, " ", true) + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
+            return pad(f.id, 2, " ", true).trim() + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
+        });
+        lasCapas = layerInfo;
+        for (var i = 0; i < lasCapas.length.toString(); i++) {
+            var capa = [];
+            capa = lasCapas[i].split("/");
+            todo.push(capa);
+        }
+    */
+    
+    
+    return data
+}
+
+const logicaSelectCapa = (objPadre, selectToLoad) => {
+    const fullLayers = objPadre.fullLayers, fullSubLayers = [];
+    const subLayerIds = objPadre.fullLayers.filter(cs => cs.id === Number(objPadre.capaSelected))[0].subLayerIds ;
+    subLayerIds.forEach(sli => fullSubLayers.push(fullLayers.find(fl => fl.id === sli)));
+    objPadre.fullSubLayers = fullSubLayers
+    agregarDataSelectValueLabel(ordenarDataSubLayers(fullSubLayers), selectToLoad)
+}
+const ordenarDataSubLayers = (data) => {
+    let dataFix = [];
+    data.forEach(dt => dataFix.push({label:dt.name,value:dt.id}))
+    return dataFix
+}
+const randomId = () => {
+    const id = Math.round(Number(new Date()) * Math.random())
+    return id;
+}
+const calcularLongitud = (geometry) => {
+    return 1;
+}
+const calcularAreaPoligono = (geometry) => {
+    return 1;
+}
+
+const fechaActual = ()=> new Date().toLocaleDateString().split('/').join('-');
+
+
 

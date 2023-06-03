@@ -8,6 +8,7 @@ define({
     _featureAction_ShowVertex: "Show Vertex Count",
     label1: "I am a demo widget.",
     label2: "This is configurable.",
+    rigo: "Text Rigo.",
   },
   ar: 0,
   cs: 0,

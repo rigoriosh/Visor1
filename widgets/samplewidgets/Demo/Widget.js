@@ -13,6 +13,8 @@ define(["dojo/_base/declare", "jimu/BaseWidget"], function (b, c) {
       this.inherited(arguments);
       this.mapIdNode.innerHTML = "map id:" + this.map.id;
       console.log("startup");
+      document.getElementById("btnTest").addEventListener("click",()=>this._funtionTest(this))
+      // document.getElementById("btnTest").addEventListener("click",()=>console.log(1111))
     },
     onOpen: function () {
       console.log("onOpen");
@@ -35,5 +37,8 @@ define(["dojo/_base/declare", "jimu/BaseWidget"], function (b, c) {
     showVertexCount: function (a) {
       this.vertexCount.innerHTML = "The vertex count is: " + a;
     },
+    _funtionTest: (d) => {
+      console.log(d);
+    }
   });
 });

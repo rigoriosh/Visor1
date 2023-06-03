@@ -1,24 +1,52 @@
 <div>
         <div id="divAddAtributes" style="height: 100%; display: none;">
-                <div class="" style="display: flex;">
-                        <label class="labels" for="ID_PUNTO" style="width: 50% !important;">ID_PUNTO</label>
-                        <input type="text" class=" form-control form-control-sm" value="" id="ID_PUNTO" tabindex=1 aria-describedby="ID_PUNTO">
+                <div id="mostrarCamposPunto" style="display: none;">
+                        <div class="" style="display: flex;">
+                                <label class="labels" for="ID_PUNTO" style="width: 50% !important;">ID_PUNTO</label>
+                                <input type="text" class=" form-control form-control-sm" value="" id="ID_PUNTO" tabindex=1 aria-describedby="ID_PUNTO">
+                        </div>
+                        <div class="" style="display: flex;">
+                                <label class="labels" for="DESCRIPCION_PUNTO" style="width: 50% !important;">DESCRIPCION</label>
+                                <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=2 id="DESCRIPCION_PUNTO" aria-describedby="DESCRIPCION_PUNTO">
+                        </div>
                 </div>
-                <div class="" style="display: flex;">
-                        <label class="labels" for="DESCRIPCION" style="width: 50% !important;">DESCRIPCION</label>
-                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=2 id="DESCRIPCION" aria-describedby="DESCRIPCION">
+                <div id="mostrarCamposLinea" style="display: none;">
+                        <!-- <div class="" style="display: flex;">
+                                <label class="labels" for="LONGITUD" style="width: 50% !important;">LONGITUD</label>
+                                <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=2 id="LONGITUD" aria-describedby="LONGITUD">
+                        </div> -->
                 </div>
+                <div id="mostrarCamposPoligono" style="display: none;">
+                        <div class="" style="display: flex;">
+                                <label class="labels" for="ID_INICIO" style="width: 50% !important;">ID_INICIO</label>
+                                <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=2 id="ID_INICIO" aria-describedby="ID_INICIO">
+                        </div>
+                        <div class="" style="display: flex;">
+                                <label class="labels" for="ID_FINAL" style="width: 50% !important;">ID_FINAL</label>
+                                <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=2 id="ID_FINAL" aria-describedby="ID_FINAL">
+                        </div>
+                        <div class="" style="display: flex;">
+                                <label class="labels" for="DESCRIPCION_POLIGONO" style="width: 50% !important;">DESCRIPCION</label>
+                                <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=2 id="DESCRIPCION_POLIGONO" aria-describedby="DESCRIPCION_POLIGONO">
+                        </div>
+                        <!-- <div class="" style="display: flex;">
+                                <label class="labels" for="AREA_M2" style="width: 50% !important;">AREA_M2</label>
+                                <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=2 id="AREA_M2" aria-describedby="AREA_M2">
+                        </div> -->
+                </div>
+                
+
                 <div class="" style="display: flex;">
                         <label class="labels" for="ID_PREDIO" style="width: 50% !important;">ID_PREDIO</label>
                         <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=3 id="ID_PREDIO" aria-describedby="ID_PREDIO">
+                </div>                
+                <div class="" style="display: flex;">
+                        <label class="labels" for="OBSERVACIONES" style="width: 50% !important;">OBSERVACIONES</label>
+                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=5 id="OBSERVACIONES" aria-describedby="OBSERVACIONES">
                 </div>
                 <div class="" style="display: flex;">
                         <label class="labels" for="ACOMPAÑANTE" style="width: 50% !important;">ACOMPAÑANTE</label>
                         <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=4 id="ACOMPAÑANTE" aria-describedby="ACOMPAÑANTE">
-                </div>
-                <div class="" style="display: flex;">
-                        <label class="labels" for="OBSERVACIONES" style="width: 50% !important;">OBSERVACIONES</label>
-                        <input type="text" class=" mt5px form-control form-control-sm" value="" tabindex=5 id="OBSERVACIONES" aria-describedby="OBSERVACIONES">
                 </div>
                 <div class="" style="display: flex;">
                         <label class="labels" for="FECHA_CAPTURA" style="width: 50% !important;">FECHA_CAPTURA</label>
@@ -50,6 +78,11 @@
                         </button>
                 </div>
 
+        </div>
+        <div id="loader_2" class="justify-content-center loader2">
+                <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                </div>
         </div>
 
 </div>

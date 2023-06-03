@@ -45,6 +45,12 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
                     // undoManager.undo();
                     objConsultaSimple.palabraClave = evt.target.value.trim();
                 });
+                query("#selCapas").on("change", async function (evt) {
+                    // undoManager.undo();
+                    objConsultaSimple.capaSelected = evt.target.value.trim();
+                    console.log(objConsultaSimple.capaSelected);
+                    logicaSelectCapa(objConsultaSimple, "subCapa");
+                });
             },
 
             onOpen: function () {
@@ -52,7 +58,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
                 const selServicios = document.getElementById("selServicios");
                 selServicios.value = 0;
                 var panel = this.getPanel();
-                ajustarTamanioWidget(panel, panel.position.width, 400)
+                ajustarTamanioWidget(panel, panel.position.width, 420)
 
             },
             bindEvents: function () {
@@ -105,11 +111,6 @@ function consultaCapasSegunTematica(selServicios) {
     selAtributos = document.getElementById("selAtributos");
 
     let urlSel = selServicios.value;
-    // var servicioSeleccionado = selServicios.value;
-    // selCapas.options.length = 0;
-    // selGrupos.options.length = 0;
-    // txtCampos.options.length = 0;
-    // selValores.options.length = 0;
 
     document.getElementById("palabraClave").value = "";
     selAtributos.options.length = 0;
@@ -156,23 +157,10 @@ function consultaCapasSegunTematica(selServicios) {
             function requestSucceeded(response) {
                 if (response.hasOwnProperty("layers")) {
 
-                    var layerInfo = [];
-                    var pad;
-                    pad = dojo.string.pad;
-                    layerInfo = dojo.map(response.layers, function (f) {
-                        // return pad(f.id, 2, " ", true) + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
-                        return pad(f.id, 2, " ", true).trim() + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
-                    });
-                    lasCapas = layerInfo;
-                    var todo = [];
-                    for (var i = 0; i < lasCapas.length.toString(); i++) {
-                        var capa = [];
-                        capa = lasCapas[i].split("/");
-                        todo.push(capa);
-                    }
-
+                    var todo = agruparDataAmostrar(response, objConsultaSimple);
+                    
                     if (todo.length>0) {
-                        insetarCapas(todo, "selCapas");
+                        agregarDataSelectValueLabel(todo, "selCapas");
                     } else {
                         createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, 'Esta temática no contiene capas a mostrar')
                     }
@@ -205,7 +193,8 @@ function consultaCapasSegunTematica(selServicios) {
             atributo: '',
             capaSelected: {},
             palabraClave: '',
-            urlCapa: ''
+            urlCapa: '',
+            nameObjConsulta: "ConsultaSimple"
         }
     }
 }
@@ -317,7 +306,18 @@ function consultaSimple() {
                     var where = '1=1';
                     query.outSpatialReference = EsriMap.spatialReference;
                     query.returnGeometry = true;
-                    query.where = where;
+                    const tipoDato = objConsultaSimple.capaSelected.fields.filter(f => f.name == objConsultaSimple.atributo)[0].type; 
+                    if (tipoDato == "esriFieldTypeInteger" && isNaN(Number(objConsultaSimple.palabraClave))) {
+                        createDialogInformacionGeneral("! Nota !", "El dato ingresado no corresponde con el tipo de dato del atributo, debe ser número")
+                        loadingCS.style.display = 'none';
+                        return;
+                    }//else if (tipoDato == "esriFieldTypeString" && !isNaN(Number(objConsultaSimple.palabraClave))) {
+                    //     createDialogInformacionGeneral("! Nota !", "El dato ingresado no corresponde con el tipo de dato del atributo, debe alfanumerico")
+                    //     return
+                    // }
+                    const igualOlike = tipoDato == "esriFieldTypeInteger"?"=":"LIKE"
+                    const conOsinComilla = tipoDato == "esriFieldTypeInteger"?"":"'"
+                    query.where = `"${objConsultaSimple.atributo}" ${igualOlike} ${conOsinComilla}${objConsultaSimple.palabraClave}${tipoDato == "esriFieldTypeInteger"?'':"%"}${conOsinComilla}`;
                     // query.outFields = [objConsultaSimple.atributo + ", OBJECTID"];
                     query.outFields = ["*"];
                     queryTask.execute(query, requestSucceeded, errorRequest);
@@ -327,7 +327,8 @@ function consultaSimple() {
                         const { features, geometryType, fields, spatialReference } = response;
                         //console.log(response)
                         // return
-                        const featuresSelected = filtroFeatures(features)
+                        const featuresSelected = features;
+                        // const featuresSelected = filtroFeatures(features)
                         response.features = featuresSelected
                         if (featuresSelected.length < 1) {
                             createDialogInformacionGeneral(consts.notas.consultaSimple[2].titulo, consts.notas.consultaSimple[2].body);
@@ -437,7 +438,12 @@ const filtroFeatures = (features) => {
     const featuresFiltrados = [];
     const { atributo, palabraClave } = objConsultaSimple;
     features.forEach(feature => {
-        if (feature.attributes[atributo]?.toLocaleUpperCase().includes(palabraClave.toUpperCase())) featuresFiltrados.push(feature)
+        if (!isNaN(feature.attributes[atributo])) {
+            if (feature.attributes[atributo] == palabraClave) featuresFiltrados.push(feature)
+        }else{
+            if (feature.attributes[atributo].includes(palabraClave)) featuresFiltrados.push(feature)
+        }
+        
     });
     return featuresFiltrados
 }
@@ -446,10 +452,11 @@ const filtroFeatures = (features) => {
 
 
 function limpiar() {
-    document.getElementById("palabraClave").value = "";
     document.getElementById("selServicios").value = 0
-    document.getElementById("selCapas").value = "Seleccione..."
-    document.getElementById("selAtributos").value = 0;
+    document.getElementById("palabraClave").value = "";
+    agregarDataSelectValueLabel([],"selCapas")
+    agregarDataSelectValueLabel([],"subCapa")
+    agregarDataSelectValueLabel([],"selAtributos")
     cerrarWidgetResultados();
     objConsultaSimple = {
         atributo: '',
@@ -708,7 +715,7 @@ function configureDropDownListIngresarCampos(txtCampos) {
                 query.outFields = [field];
                 ////console.log(field);
                 query.where = "1=1";
-                query.returnGeometry = false;
+                query.returnGeometry = true;
                 queryTask.execute(query, monstrarConsulta);
 
                 function monstrarConsulta(featureSet) {

@@ -1,9 +1,7 @@
-var loadingCA, selCapas, EsriMap;
-var objetoGrupos = [];
-var objetoCapas = [];
-var objetoCampos = [];
-var aplicacion = null;
-var objConsultaAvanzada = {
+
+let loadingCA, selCapas, EsriMap, objetoGrupos = [], objetoCapas = [], objetoCampos = [], aplicacion = null;
+let tipoDato = '';
+let objConsultaAvanzada = {
   nameObjConsulta: "ConsultaAvanzada"
 }
 define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"],
@@ -37,14 +35,16 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
         query("#selAtributosCA").on("change", async function (evt) {
           // undoManager.undo();
           objConsultaAvanzada.campoAtributo = evt.target.value !== "0" ? evt.target.value : '';
-          formarExpresion(objConsultaAvanzada.campoAtributo)
+          formarExpresion(objConsultaAvanzada.campoAtributo, "atributo")
           loadingCA.style.display = 'flex';
+          objConsultaAvanzada.returnGeometry = false;
+          agregarDataSelectValueLabel([], "selValoresCA"); // limpia el campo select
           ejecutarQueryAndQueryTask(objConsultaAvanzada, appGlobal.succeededRequest, appGlobal.errorRequest)
         });
 
         query("#selValoresCA").on("change", async function (evt) {
           objConsultaAvanzada.campoValores = evt.target.value !== "0" ? evt.target.value.trim() : '';
-          formarExpresion(`'${objConsultaAvanzada.campoValores}'`)
+          formarExpresion(`${objConsultaAvanzada.campoValores}`, "valor")
           //console.log(objConsultaAvanzada)
         });
 
@@ -56,7 +56,15 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
           objConsultaAvanzada.where = objConsultaAvanzada.campoExpresion;
           ejecutarQueryAndQueryTask(objConsultaAvanzada, appGlobal.succeededFinalyRequest, appGlobal.errorRequest)
         });
-
+        query("#selCapasCA").on("change", async function (evt) {
+          // undoManager.undo();
+          objConsultaAvanzada.capaSelected = evt.target.value.trim();
+          console.log(objConsultaAvanzada.capaSelected);
+          agregarDataSelectValueLabel([], "selValoresCA"); // limpia el campo select
+          document.getElementById("expresion").value = "";
+          agregarDataSelectValueLabel([], "selAtributosCA"); // limpia el campo select
+          logicaSelectCapa(objConsultaAvanzada, "subCapaCA");
+        });
         /* html = "";
 
 
@@ -78,7 +86,11 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
       succeededRequest: function(response) {
         //console.log(response)
         objConsultaAvanzada.queryAtributtes = response;
-        agregarDataSelect(response.features, "selValoresCA", objConsultaAvanzada.campoAtributo, objConsultaAvanzada.campoAtributo)
+        if (response.features.length > 0) {
+          agregarDataSelect(response.features, "selValoresCA", objConsultaAvanzada.campoAtributo, objConsultaAvanzada.campoAtributo)          
+        } else {
+          createDialogInformacionGeneral("! Info !"," Esta consulta no tiene valores a mostrar ")
+        }
         loadingCA.style.display = 'none';
       },
 
@@ -112,14 +124,15 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
     
       errorRequest: function(error){
         console.error(error)
-        createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, consts.notas.consultaSimple[0].body)
+        createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, error.message=='Failed to execute query.'
+          ?"Consulta mal parametrizada":consts.notas.consultaSimple[0].body)
         loadingCA.style.display = 'none';
       },
 
       onOpen: function () {
         appGlobal = this;
         var panel = this.getPanel();
-        ajustarTamanioWidget(panel, 600, 400)
+        ajustarTamanioWidget(panel, 600, 500)
       },
 
       onClose: function () {
@@ -132,9 +145,10 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
       limpiar: function() {
         document.getElementById("selServiciosCA").value = 0
         document.getElementById("selCapasCA").value = "Seleccione..."
-        document.getElementById("selAtributosCA").options.length = 0;
-        document.getElementById("selValoresCA").options.length = 0
         document.getElementById("expresion").value = ""
+        agregarDataSelectValueLabel([],"selCapasCA")
+        agregarDataSelectValueLabel([],"selAtributosCA")
+        agregarDataSelectValueLabel([],"selValoresCA")
         objConsultaAvanzada = {
           nameObjConsulta: "ConsultaAvanzada"
         }
@@ -208,26 +222,17 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
             function requestSucceeded(response) {
                 if (response.hasOwnProperty("layers")) {
 
-                    var layerInfo = [];
-                    var pad;
-                    pad = dojo.string.pad;
-                    layerInfo = dojo.map(response.layers, function (f) {
-                        // return pad(f.id, 2, " ", true) + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
-                        return pad(f.id, 2, " ", true).trim() + "/" + pad(f.name, 8, " ", true).trim() + "/" + pad(f.subLayerIds, 25, " ", true).trim();
-                    });
-                    lasCapas = layerInfo;
-                    var todo = [];
-                    for (var i = 0; i < lasCapas.length.toString(); i++) {
-                        var capa = [];
-                        capa = lasCapas[i].split("/");
-                        if(capa[2] == "null" )todo.push(capa);
-                    }
-
-                    if (todo.length>0) {
-                        insetarCapas(todo, "selCapasCA");
-                    } else {
-                        createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, 'Esta temática no contiene capas a mostrar')
-                    }
+                  var todo = agruparDataAmostrar(response, objConsultaAvanzada);
+                    
+                  if (todo.length>0) {
+                      agregarDataSelectValueLabel(todo, "selCapasCA");
+                      agregarDataSelectValueLabel([], "selValoresCA"); // limpia el campo select
+                      document.getElementById("expresion").value = "";
+                      agregarDataSelectValueLabel([], "selAtributosCA"); // limpia el campo select
+                      agregarDataSelectValueLabel([], "subCapaCA"); // limpia el campo select
+                  } else {
+                      createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, 'Esta temática no contiene capas a mostrar')
+                  }
                 }
                 loadingCA.style.display = 'none';
             }
@@ -571,15 +576,46 @@ function obtenerValoresCapa(campo, url) {
 function borrarTextAreaConsulta() {
   var textConsulta = document.getElementById("expresion");
   textConsulta.value = "";
+  cerrarWidgetResultados();
+  tipoDato = '';
+  agregarDataSelectValueLabel([], "selValoresCA"); // limpia el campo select
+  document.getElementById("selAtributosCA").options.selectedIndex = 0; // selecciona la opcion 0 (Seleccione...)
 }
 
-function formarExpresion(texto) {
-  var textConsulta = document.getElementById("expresion");
+function formarExpresion(texto, dato) {
+  let textConsulta = document.getElementById("expresion");
+  const operators = ["LIKE","AND","OR","NOT","IS","NULL","=","<>",">","<",">=","<=","%","<="]
+  const tiposSinComilla = ['esriFieldTypeDouble', 'esriFieldTypeInteger']
+  // let conOsinComilla = textConsulta.value.includes("=")?"":operators.find(e => e == texto)?"":"'"
+  let conOsinComilla = "";
+
+
+  if (dato == "atributo" && tipoDato == '') {
+    tipoDato = (dato == "atributo")? objConsultaAvanzada.capaSelected.fields.filter(f => f.name == texto)[0].type : '';
+  }
+  console.log("tipoDato => ", tipoDato);
+
+  if (dato == "valor" && !tiposSinComilla.filter(t => t == tipoDato)[0]) {
+    conOsinComilla = "'"
+  }
+
+  
   textConsulta.value === ""
   ? textConsulta.value = texto
-  : textConsulta.value += " " + texto;
+  : textConsulta.value += " " + conOsinComilla + texto + conOsinComilla;
   objConsultaAvanzada.campoExpresion = textConsulta.value;
-  //console.log(objConsultaAvanzada)
+  console.log(`
+  ////////////////////
+    texto: ${texto}
+    dato: ${dato}
+    textConsulta: ${textConsulta.value}
+    tipoDato: ${tipoDato}
+    conOsinComilla: ${conOsinComilla}
+    ////////////////////
+    `)
+  if (dato == "valor" && tipoDato != '') {
+    tipoDato = ""
+  }
   /* if (texto == "LIKE") {
     textConsulta.value += " " + texto;
   } else if (texto == "AND") {

@@ -1,10 +1,10 @@
 <div id="divEdicionCartografica" style="height: 100%;">
 
-        <div class="filalabelBtn">
+        <div id="filalabelBtn" class="filalabelBtn">
                 <label class="labels" for="IdDelProyecto ">Id del proyecto </label>
                 <button id="btnAceptar" type="button" class="btn btn-outline-success btn-sm mt-3" >Consultar proyecto</button>
         </div>
-        <div class="input-group ">
+        <div id="input-group" class="input-group">
                 <input type="text" name="IdDelProyecto" id="IdDelProyecto" data-toggle="tooltip" data-placement="top" class="form-control ">
         </div>
 
@@ -97,14 +97,29 @@
                 <button id="btnGuardarNodos" type="button" class="btn btn-outline-success btn-sm mt-3" >Guardar </button>
         </div>
 
-
-
         <!-- <div id="Atributos">
                 <label class="labels" for="IdDelProyecto ">Atributos</label>
 
         </div> -->
-        <div>
+        <div id="regresarDiv">
                 <button id="regresar" style="display: none;" type="button" class="btn btn-outline-success btn-sm mt-3" >Regresar</button>
+        </div>
+
+        <!-- Modal confirmacion -->
+        <div id="ModalConfirmacion" style="display: none;">
+                <p id="msgConfirmacion">Porfavor confirmar la edición de las geometrias.</p>
+                <div id="divBtnsModal">
+                        <button id="aceptarModal"  type="button" class="btn btn-outline-success btn-sm mt-3" >Aceptar</button>
+                        <button id="cancelarModal"  type="button" class="btn btn-outline-success btn-sm mt-3" >Cancelar</button>
+                </div>
+        </div>
+        <!-- Modal confirmacion eliminacion geometria-->
+        <div id="ModalConfirmacionDelete" style="display: none;">
+                <p id="msgConfirmacion">Porfavor confirmar la eliminación de la geometria.</p>
+                <div id="divBtnsModal">
+                        <button id="aceptarModalEliminar"  type="button" class="btn btn-outline-success btn-sm mt-3" >Aceptar</button>
+                        <button id="cancelarModalEliminar"  type="button" class="btn btn-outline-success btn-sm mt-3" >Cancelar</button>
+                </div>
         </div>
 
         <div id="loader_2" class="justify-content-center loader2">
@@ -112,8 +127,6 @@
                         <span class="sr-only">Loading...</span>
                 </div>
         </div>
-       
-        
       
       <!-- Modal -->
       <!-- <div class="modal fade" id="myModal" tabindex="999999" aria-labelledby="exampleModalLabel" aria-hidden="true">

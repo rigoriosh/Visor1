@@ -101,6 +101,7 @@ var ie = (function() {
       window.path + 'servicios/servicios.js',
       window.path + 'utils/utilSAE.js',
       window.path + 'utils/dataStorage.js',
+      window.path + 'API/api.js',
       // window.apiUrl + 'dojox/layout/resources/ResizeHandle.css',
       //window.path + 'libs/caja-html-sanitizer-minified.js'
       //window.path + 'libs/moment/twix.js',

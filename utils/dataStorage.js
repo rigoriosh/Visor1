@@ -22,7 +22,7 @@ var consts = {
             },
             {
                 titulo: 'Atensión',
-                body: 'Recuerda que todos los campos debes estar diligenciados.'
+                body: 'Recuerda que todos los campos deben estar diligenciados.'
             },
             {
                 titulo: '!Hola',
@@ -44,8 +44,15 @@ var consts = {
         consultaSimple: 'consultaSimple',
         consultaAvanzada: 'consultaAvanzada',
         edicionCartografica: 'edicionCartografica',
+    },
+    edicionCartografica: "edicionCartografica",
+    GEOMETRIAS:{
+        PUNTO:"point",
+        LINEA:"polyline",
+        POLIGONO:"polygon",
+        line:'line'
     }
-
-
+    
+    
 }
 //console.log("dataStorage", dataStorage);
