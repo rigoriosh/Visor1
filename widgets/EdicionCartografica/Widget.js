@@ -352,7 +352,6 @@ define([
             myThis.a_contQuerys = myThis.a_contQuerys + 1;
           }
         } else {
-          myThis.renderDivs({idHerramientas:'flex'});
           // let atributes = [];
           // response.features.forEach(f => atributes.push(f.attributes))
           // atributes.map(a => a.FECHA_CAPT = new Date(a.FECHA_CAPT).toLocaleDateString())
@@ -376,6 +375,7 @@ define([
         }
         loader2(false)
         console.log(response);
+        myThis.renderDivs({idHerramientas:'flex'});
 
       },
       errorRequest: function (error) {
