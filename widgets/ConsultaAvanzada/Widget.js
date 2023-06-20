@@ -1,8 +1,11 @@
 
-let loadingCA, selCapas, EsriMap, objetoGrupos = [], objetoCapas = [], objetoCampos = [], aplicacion = null;
+let loadingCA, selCapasCA, objetoGrupos = [], objetoCapas = [], objetoCampos = [], aplicacion = null;
 let tipoDato = '';
 let objConsultaAvanzada = {
   nameObjConsulta: "ConsultaAvanzada"
+}
+if (!EsriMap) {
+  var EsriMap;
 }
 define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"],
   function (declare, BaseWidget, query) {
@@ -51,6 +54,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
         query("#btnConsultar").on("click", async function (evt) {
           //console.log("btnConsultar")
           //console.log(objConsultaAvanzada)
+          loader2(true, "loadingCA")
           objConsultaAvanzada.returnGeometry = true;
           objConsultaAvanzada.campoExpresion = document.getElementById("expresion").value;
           objConsultaAvanzada.where = objConsultaAvanzada.campoExpresion;
@@ -91,7 +95,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
         } else {
           createDialogInformacionGeneral("! Info !"," Esta consulta no tiene valores a mostrar ")
         }
-        loadingCA.style.display = 'none';
+        loader2(false, "loadingCA")
       },
 
       succeededFinalyRequest: function(response){
@@ -120,13 +124,16 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
 
           });
         }
+        loader2(false, "loadingCA")
+
       },
     
       errorRequest: function(error){
         console.error(error)
         createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, error.message=='Failed to execute query.'
           ?"Consulta mal parametrizada":consts.notas.consultaSimple[0].body)
-        loadingCA.style.display = 'none';
+          loadingCA.style.display = 'none';
+          loader2(false, "loadingCA")
       },
 
       onOpen: function () {
@@ -239,7 +246,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
 
         });
     } else {
-        selCapas.options.length = 0;
+        selCapasCA.options.length = 0;
         obj = {
             atributo: '',
             capaSelected: {},

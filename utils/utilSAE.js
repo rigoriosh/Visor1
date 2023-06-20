@@ -573,8 +573,8 @@ function consultaAtributosSegunCapa(selCapas, selServicios, selAtributos, objCon
     console.log("consultaAtributosSegunCapa");
     if(EsriMap.lastfeatureLayerDrawed)EsriMap.removeLayer(EsriMap.lastfeatureLayerDrawed)
     let capaSeleccionado = selCapas.value.trim();
-    agregarDataSelectValueLabel([], "selValoresCA"); // limpia el campo select
-    document.getElementById("expresion").value = "";
+    agregarDataSelectValueLabel([], objConsulta.nameObjConsulta==="ConsultaSimple"?selAtributos:"selValoresCA"); // limpia el campo select
+    document.getElementById(objConsulta.nameObjConsulta==="ConsultaSimple"?"palabraClave":"expresion").value = "";
     // document.getElementById("palabraClave").value = "";
     if (capaSeleccionado !== 'Seleccione...') {
         require([
@@ -771,12 +771,93 @@ const randomId = () => {
     const id = Math.round(Number(new Date()) * Math.random())
     return id;
 }
-const calcularLongitud = (geometry) => {
-    return 1;
+const gradosARadianes = (grados) => {
+  return grados * Math.PI / 180;
+};
+const calcularLongitud = (lat1, lon1, lat2, lon2) => {
+    // Convertir todas las coordenadas a radianes
+  lat1 = gradosARadianes(lat1);
+  lon1 = gradosARadianes(lon1);
+  lat2 = gradosARadianes(lat2);
+  lon2 = gradosARadianes(lon2);
+  // Aplicar fórmula
+  const RADIO_TIERRA_EN_KILOMETROS = 6371;
+  let diferenciaEntreLongitudes = (lon2 - lon1);
+  let diferenciaEntreLatitudes = (lat2 - lat1);
+  let a = Math.pow(Math.sin(diferenciaEntreLatitudes / 2.0), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(diferenciaEntreLongitudes / 2.0), 2);
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const absoluteValue = Math.abs(RADIO_TIERRA_EN_KILOMETROS * c);
+  return absoluteValue;
 }
-const calcularAreaPoligono = (geometry) => {
-    return 1;
+const calcularAreaPoligono = (evtObj, {dataWidget, widgetTarget}) => {
+    // calula el area de solo una geometria o poligono
+    require(["esri/tasks/AreasAndLengthsParameters", "esri/tasks/GeometryService",],
+        function (AreasAndLengthsParameters, GeometryService) {
+
+            let geometryService = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+            geometryService.on("areas-and-lengths-complete", function (resp) {
+                areaLong = resp;
+                console.log({resp});
+                console.log({evtObj});
+                dataWidget.areaLong = resp
+                abrirWidgetResultados(dataWidget, widgetTarget)
+            });
+
+            let geometry = evtObj.geometry;
+
+            if (geometry) {
+                let areasAndLengthParams = new AreasAndLengthsParameters();
+                areasAndLengthParams.areaUnit = GeometryService.UNIT_SQUARE_METERS;
+                areasAndLengthParams.calculationType = "geodesic";
+                geometryService.simplify([geometry], function(simplifiedGeometries) {
+                    areasAndLengthParams.polygons = simplifiedGeometries;
+                    geometryService.areasAndLengths(areasAndLengthParams);
+                });
+            }
+
+        })
 }
+
+const getAreaPoligon = (poligonos, formarJsonToPersistir) => {
+    //    este metodo a diferencial del anterior, calcula areas de varios poligonos
+    require(["esri/tasks/AreasAndLengthsParameters", "esri/tasks/GeometryService",],
+        function (AreasAndLengthsParameters, GeometryService) {
+        
+            let fixPoligons = [];
+            let geometryService = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+            geometryService.on("areas-and-lengths-complete", function ({result, target}) {
+                console.log({result, target});
+                fixPoligons.push(
+                    {
+                        geometry: poligonos[fixPoligons.length].geometry,
+                        attributes:{
+                            ...poligonos[fixPoligons.length].attributes,
+                            AREA_M2: result.areas[0]
+                        }
+                    }
+                );
+                if (fixPoligons.length === poligonos.length) {
+                    formarJsonToPersistir([], [], fixPoligons);
+                }
+            });
+
+            poligonos.forEach(({geometry, attributes}) => {
+                console.log({geometry, attributes});
+                let areasAndLengthParams = new AreasAndLengthsParameters();
+                areasAndLengthParams.areaUnit = GeometryService.UNIT_SQUARE_METERS;
+                areasAndLengthParams.calculationType = "geodesic";
+                geometryService.simplify([geometry], function(simplifiedGeometries) {
+                    areasAndLengthParams.polygons = simplifiedGeometries;
+                    geometryService.areasAndLengths(areasAndLengthParams);
+                });
+
+            });
+
+        })
+
+
+  };
+
 
 const fechaActual = ()=> new Date().toLocaleDateString().split('/').join('-');
 

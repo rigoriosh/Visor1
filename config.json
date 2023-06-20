@@ -177,6 +177,7 @@
             {
                 "uri": "widgets/AttributeTable/Widget",
                 "version": "2.25",
+                "visible":false,
                 "position": {
                     "right": 20,
                     "bottom": -80,
@@ -276,6 +277,7 @@
                 "uri": "widgets/AddAtributes/Widget",
                 "name": "Adicionar Atributos",
                 "version": "1.0",
+                "visible":true,
                 "position": {
                     "right": 20,
                     "top": 270,

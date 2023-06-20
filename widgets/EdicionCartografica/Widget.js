@@ -92,12 +92,15 @@ define([
           
           let inputIdProject = document.getElementById("IdDelProyecto").value.trim();
           if (inputIdProject) {
+            objEdicionCartografica.geometriesSeleccionados = [];
+            objEdicionCartografica.graficosSeleccionados = [];
             objEdicionCartografica.ID_PROYECT = inputIdProject;
             console.log(inputIdProject);
-            loader2(true)
             myThis.renderDivs({idHerramientas:'none'});
+            // myThis.renderDivs({idHerramientas:'flex'});
             myThis.a_contQuerys = 1;
             EsriMap.graphics.clear(); // limpia todos los grapghics presentes en el visor
+            loader2(true)
             myThis.queryPointsLinesPoligons(inputIdProject);
             // realiza consulta al servicio segun idproject
             // pinta los features
@@ -128,6 +131,7 @@ define([
           // objEdicionCartografica.flatToSelectDeselect = true;
         });
         query("#iconoExportarGeometrias").on("click", async function (evt) {
+          myThis.initToolbar();
           myThis.renderDivs({exportar:'flex', regresar:'flex'});
           document.getElementById("selectGeometrias").checked = false;
           objEdicionCartografica.seleccionarGeometry = true;
@@ -147,7 +151,7 @@ define([
           dibujo?dibujo.deactivate():""
           ocultarMostrarTootilp(true)
           objEdicionCartografica.flatCheckExportGeomet=false;
-          ctxMenuForGraphics.destroy();
+          ctxMenuForGraphics.destroy?ctxMenuForGraphics.destroy():"";
           document.getElementById("selectGeometriasExportar").checked = false;
           myThis._deleteGeomtryesSelected();
         });
@@ -265,34 +269,35 @@ define([
         console.log(geometrias);
         // for para recorrer los geometrias, segun tipo de geometria formar json para actualizar
         let puntos=[], lineas=[], poligonos=[];
-        geometrias.forEach(geometria => {
+        geometrias.forEach(async geometria => {
           console.log(geometria.geometry.paths?"Línea":geometria.geometry.rings?"Poligono":"Punto");            
-          if (geometria.geometry.x) {
+          if (geometria.geometry.x) {//puntos
             puntos.push(
               {
                 geometry: geometria.geometry,
                 attributes: geometria.attributes
               }
             )
-          } else if (geometria.geometry.paths) {
+          } else if (geometria.geometry.paths) { // lineas
+            const {geometry, attributes} =  geometria
             lineas.push(
               {
-                geometry: geometria.geometry,
-                attributes: geometria.attributes
+                geometry,
+                attributes: {
+                  ...attributes,
+                  LONGITUD: calcularLongitud(geometry.paths[0][0][0],geometry.paths[0][0][1],geometry.paths[0][1][0],geometry.paths[0][1][1])
+                }
               }
             )
-          }else if(geometria.geometry.rings){
-            poligonos.push(
-              {
-                geometry: geometria.geometry,
-                attributes: geometria.attributes
-              }
-            )
+          }else if(geometria.geometry.rings){ // poligonos
+            const {geometry, attributes} =  geometria
+            poligonos.push( { geometry, attributes })
           }else{
             console.log("para otros tipos de geometrias");
           }
-          console.log(`puntos: ${{puntos}}, lineas:${{lineas}}, poligonos${{poligonos}}`);
         });
+        getAreaPoligon(poligonos, myThis.formarJsonToPersistir)
+        console.log(`puntos: ${{puntos}}, lineas:${{lineas}}, poligonos${{poligonos}}`);
         myThis.formarJsonToPersistir(puntos, lineas, poligonos); // separados los envia a persitir
         /* setTimeout(() => {
             loader2(false)
@@ -306,14 +311,14 @@ define([
           document.getElementById("filalabelBtn").style.display = 'none';
           document.getElementById("input-group").style.display = 'none';
           document.getElementById("regresarDiv").style.display = 'none';
-          document.getElementById("guardar").style.display = 'none';    
+          // document.getElementById("guardar").style.display = 'none';    
           document.getElementById("ModalConfirmacion").style.display = 'block';    
         }else{
           document.getElementById("ModalConfirmacion").style.display = 'none';    
+          document.getElementById("guardar").style.display = 'none';    
           document.getElementById("filalabelBtn").style.display = 'flex';
           document.getElementById("input-group").style.display = 'flex';
           document.getElementById("regresarDiv").style.display = 'flex';
-          document.getElementById("guardar").style.display = 'flex';
         }
       },
       renderFrontToDeleteGeometry: function (valorBool) {
@@ -394,10 +399,32 @@ define([
           document.getElementById("editar").style.display = editar;
           document.getElementById("regresar").style.display = regresar;
       },
-      formarJsonToPersistir: function (puntos, lineas, poligonos){
+      formarJsonToPersistir: async function (puntos, lineas, poligonos){
         // se utiliza al momento de modificar alguna geometria
         try {
-          urlPostEditPuntosLineasPoligonos.forEach(async (url, i) => {
+
+          if (puntos.length > 0) {
+            const data = {
+              features: puntos
+            }
+            const resp = await postData(urlPostEditPuntosLineasPoligonos[0], data);
+            console.log(resp);
+          }
+          if (lineas.length > 0) {
+            const data = {
+              features: lineas
+            }
+            const resp = await postData(urlPostEditPuntosLineasPoligonos[1], data);
+            console.log(resp);
+          }
+          if (poligonos.length > 0) {
+            const data = {
+              features: poligonos
+            }
+            const resp = await postData(urlPostEditPuntosLineasPoligonos[2], data);
+            console.log(resp);
+          }
+          /* urlPostEditPuntosLineasPoligonos.forEach(async (url, i) => {
             // const url = urlPostEditPuntosLineasPoligonos[0];
             const data = {
               features: i==0?puntos:i==1?lineas:poligonos
@@ -406,7 +433,7 @@ define([
             const resp = await postData(url, data);
             console.log(resp);
             
-          });
+          }); */
           myThis.renderizarFront(false);
           createDialogInformacionGeneral("! Correcto !","Las geometrías han sido actualizadas");
           EsriMap.graphics.clear(); // limpia todos los grapghics presentes en el visor
@@ -440,7 +467,9 @@ define([
                     ID_INICIO: tpgf.attributes.ID_INICIO,
                     ID_FINAL: tpgf.attributes.ID_FINAL,
                     DESCRIPCIO: tpgf.attributes.DESCRIPCIO,
-                    AREA_M2: calcularAreaPoligono(tpgf),
+                    // AREA_M2: calcularAreaPoligono(tpgf),
+                    AREA_M2: tpgf.attributes.AREA_M2,
+
                   },
                   geometry: tpgf.geometry,
                 }
@@ -489,21 +518,56 @@ define([
         });
       },
       addGraphic: function (evt) {
-       
+        loader2(true)
         const symbol = generarSymbol(evt.geometry.type);
-        abrirWidgetResultados({
-          data: {
-              panel: {
-                  width: 350,
-                  height: 430
+        const panel ={ width: 350, height: 430 }
+        const tipoResultado = consts.consultas.edicionCartografica;
+        const objConsulta = objEdicionCartografica
+        if(evt.geometry.type == consts.GEOMETRIAS.POLIGONO) {
+          calcularAreaPoligono(evt, {
+            dataWidget: {
+              data: {
+                  panel
+              },
+              tipoResultado,
+              objConsulta,
+              evt,
+              symbol
+    
+            },
+            widgetTarget: consts.widgetAddAtributes
+          })
+        } else if(evt.geometry.type == consts.GEOMETRIAS.LINEA){
+          console.log(evt.geometry.paths[0][0][0], evt.geometry.paths[0][0][1], evt.geometry.paths[0][1][0], evt.geometry.paths[0][1][1]);
+          const myOBJ = {
+            data: { panel },
+            tipoResultado,
+            objConsulta,
+            areaLong:{
+              result:{
+                lengths:[
+                  calcularLongitud(evt.geometry.paths[0][0][0], evt.geometry.paths[0][0][1], evt.geometry.paths[0][1][0], evt.geometry.paths[0][1][1])
+                ],
+                areas:[0]
               }
-          },
-          tipoResultado: consts.consultas.edicionCartografica,
-          objConsulta:objEdicionCartografica,
-          evt,
-          symbol
+            },
+            evt,
+            symbol
+  
+          }
+          console.log(myOBJ);
+          abrirWidgetResultados(myOBJ, consts.widgetAddAtributes);
+        }else {
+          abrirWidgetResultados({
+            data: { panel },
+            tipoResultado,
+            objConsulta,
+            evt,
+            symbol
+  
+          }, consts.widgetAddAtributes);
+        }
 
-        }, consts.widgetAddAtributes);
         
       },
       createMapMenu: function () {
@@ -878,8 +942,9 @@ define([
           objEdicionCartografica.geometriesSeleccionados=[]
           objEdicionCartografica.graficosSeleccionados=[]
         } catch (error) {
-            createDialogInformacionGeneral("Error", "Demaciados gráficos en el visor estan generando conflito, favor recargar el visor")
-        }
+            //createDialogInformacionGeneral("Error", "Demaciados gráficos en el visor estan generando conflito, favor recargar el visor")
+            console.error({error});
+          }
       },
       _deleteGeometryByService: async function (selected) {              
         try {

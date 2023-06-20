@@ -1,15 +1,22 @@
-var urlSel = "no tengo nada";
-var capaUrl = "";
-var todosGrupos = [];
-var fieldsCapa = [];
-var appGlobal, loadingCS;
-var theLayer;
-var resultadosMandar
-var extentInicial;
-var selAtributos;
-var selCapas, EsriMap;
-var objConsultaSimple = {
+let urlSel = "no tengo nada";
+let capaUrl = "";
+let todosGrupos = [];
+let fieldsCapa = [];
+let loadingCS;
+// let theLayer;
+let resultadosMandar
+// let extentInicial;
+let selAtributos;
+let selCapas;
+let objConsultaSimple = {
     nameObjConsulta: "ConsultaSimple"
+}
+// debugger
+// if (!EsriMap) {
+    var EsriMap;
+// }
+if (!appGlobal) {
+    var appGlobal
 }
 define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"],
     function (declare, BaseWidget, query) {
@@ -40,6 +47,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget', "dojo/query", "dojo/domReady!"]
                 query("#selAtributos").on("change", async function (evt) {
                     // undoManager.undo();
                     objConsultaSimple.atributo = evt.target.value !== "0" ? evt.target.value : '';
+                    // document.getElementById("palabraClave").value=objConsultaSimple.atributo;
                 });
                 query("#palabraClave").on("change", async function (evt) {
                     // undoManager.undo();

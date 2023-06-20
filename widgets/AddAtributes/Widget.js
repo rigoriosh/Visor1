@@ -2,7 +2,7 @@
 // See http://js.arcgis.com/3.15/esri/copyright.txt and http://www.arcgis.com/apps/webappbuilder/copyright.txt for details.
 
 //>>built
-var widgetAddAtributes = {}, mythis, urlToPersistir_AddAtributes="";
+var widgetAddAtributes = {}, thisAddAtributes, urlToPersistir_AddAtributes="";
 
 define(["dojo/_base/declare", "jimu/BaseWidget", "dojo/query", "esri/InfoTemplate",
 "esri/graphic", "esri/geometry/geometryEngine","esri/SpatialReference", "esri/geometry/Point",
@@ -16,18 +16,18 @@ function (declare, BaseWidget, query, InfoTemplate, Graphic, geometryEngine, Spa
         baseClass: "jimu-widget-AddAtributes",
         
         startup: function() {
-          mythis = this;
+          thisAddAtributes = this;
           //console.log("AddAtributes");
           this.inherited(arguments);
           // this.mapIdNoderrh.innerHTML = 'map id is:' + this.map.id;
 
           query("#agregarGeometria").on("click", async function (evt) {
             //pendiente validar los campos ingresados en el form de atributos
-            if (mythis._validarAtributos()) {
+            if (thisAddAtributes._validarAtributos()) {
               loader2(true)
               
               console.log("alistar geometrias para persistir")
-              mythis.formarJsonToPersistir_addAtributes();
+              thisAddAtributes.formarJsonToPersistir_addAtributes();
             };
           });
           query("#btnUnirGeometrias").on("click", async function (evt) {
@@ -51,11 +51,11 @@ function (declare, BaseWidget, query, InfoTemplate, Graphic, geometryEngine, Spa
               objEdicionCartografica.attibutesSelected.tipo=3;
               objEdicionCartografica.attibutesSelected.uuid=generateUUID();              
               EsriMap.graphics.add(new Graphic(polygon, symbol, objEdicionCartografica.attibutesSelected, infoTemplate));
-              mythis._deleteGeomtryesSelected();
+              thisAddAtributes._deleteGeomtryesSelected();
               cerrarWidgetResultados(consts.widgetAddAtributesPanel, false);
               loader2(false)
               createDialogInformacionGeneral("! Información", "Geomtrías unidas, recuerda guardar las geometrías, para mantener los cambios");
-              myThis._renderFrontToQueryProyect()
+              thisAddAtributes._renderFrontToQueryProyect()
               objEdicionCartografica.seleccionarGeometry = false;
               document.getElementsByClassName("esriPopup").item(0).style.display="block"
             } else {
@@ -120,6 +120,7 @@ function (declare, BaseWidget, query, InfoTemplate, Graphic, geometryEngine, Spa
             objEdicionCartografica.seleccionarGeometry = true;
             objEdicionCartografica.flatToSelectDeselect = true;
           }
+          loader2(false)
         },
         pasoDespuesDeCapturarAtributos: function () {
           console.log(widgetAddAtributes);
@@ -178,8 +179,8 @@ function (declare, BaseWidget, query, InfoTemplate, Graphic, geometryEngine, Spa
            && (ID_PREDIO && ACOMPANANTE && OBSERVACIONES && FECHA_CAPTURA && FUNCIONARIO_SAE && FIRMA)) {
             return {ID_PUNTO, ID_PREDIO, ACOMPANANTE, OBSERVACIONES, FECHA_CAPTURA, FUNCIONARIO_SAE, FIRMA,
               DESCRIPCION_PUNTO, ID_INICIO, ID_FINAL, DESCRIPCION_POLIGONO,
-              LONGITUD:calcularLongitud(widgetAddAtributes.data.evt.geometry),
-              AREA_M2:calcularAreaPoligono(widgetAddAtributes.data.evt.geometry)
+              LONGITUD: widgetAddAtributes.data.areaLong?widgetAddAtributes.data.areaLong.result.lengths[0]:0,
+              AREA_M2: widgetAddAtributes.data.areaLong?widgetAddAtributes.data.areaLong.result.areas[0]:0
              }
           } else {
             createDialogInformacionGeneral("Nota","Todos los atributos son requeridos");
@@ -276,10 +277,10 @@ function (declare, BaseWidget, query, InfoTemplate, Graphic, geometryEngine, Spa
             console.log(resp);
             if (resp) {
             // if (1) {
-              mythis.pasoDespuesDeCapturarAtributos(); // pinta grafic con sus atributos
+              thisAddAtributes.pasoDespuesDeCapturarAtributos(); // pinta grafic con sus atributos
               createDialogInformacionGeneral("!Felicitaciones¡",`La geometría fue creada, recuerda guardar para ver, editar o eliminar, la geometria creada`);
               // EsriMap.graphics.clear(); // limpia todos los grapghics presentes en el visor
-              mythis._renderFrontToQueryProyect();
+              thisAddAtributes._renderFrontToQueryProyect();
               cerrarWidgetResultados(consts.widgetAddAtributesPanel, false)
             } else {
               createDialogInformacionGeneral("!Atención¡","No se logró crear la geometría, intentalo luego o comunicate con tecnología");
