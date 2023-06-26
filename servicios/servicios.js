@@ -81,3 +81,6 @@ const urlTiposBienInmueble = "http://localhost:3000/baseAvaluos"; //pruebas loca
 const endPoints = {
     departamentos: "https://mapassig.icbf.gov.co:6443/arcgis/rest/services/ICBF/Sistema_Nacional/MapServer/0"
 }
+
+const servicioSNRalfanumerico = "http://localhost:61025/api/ArchivoExcel/?columnName="
+const servicioSNRgeometrias = "http://localhost:53906/api/Gestor/?municipio=";

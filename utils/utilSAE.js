@@ -386,7 +386,7 @@ const buildInfoTemplate = (titulo, attributes) => {
             }
          */
         let content = ``;
-        Object.keys(attributes).forEach(k => content += `${k}: ${attributes[k]} <br>`)
+        Object.keys(attributes).forEach(k => content += `<div class="divIT"><p class="fieldIT">${k}:</p> <p class="ITdata">${attributes[k]}</p></div>`)
         let json = {title:titulo, content}
         // ,content:"State Name: ${STATE_NAME}<br>Population: ${POP2001}"}
         it = new InfoTemplate(json);

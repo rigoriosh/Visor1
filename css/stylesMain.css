@@ -24,10 +24,12 @@ p{
     position: absolute;
     background-color: #0000001c;
     width: 100%;
-    height: 100vh;
+    /* height: 100vh; */
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
 }
 
 .loader2{
@@ -361,4 +363,44 @@ select{
     display: flex;
     justify-content: space-around;
     padding-bottom: 21px;
+}
+
+.claro .dgrid {
+    height: 100% !important;
+}
+
+.esri-feature-table-column-header-title {
+    font-size: 10px;
+}
+
+.esri-feature-table .dgrid-row .dgrid-cell {
+    /* rigo */
+    overflow: scroll;
+    font-size: 10px;
+    height: 20px !important;
+}
+
+.dgrid-cell.dgrid-cell-padding.dgrid-column-22 div{
+    height: 30px !important;
+    overflow-y: scroll !important;
+}
+
+
+.fieldIT{
+    font-size: 10px;
+    font-weight: bold;
+    padding-right: 5px;
+    width: 30%;
+}
+
+.ITdata{
+    font-size: 10px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+.divIT{
+    display: flex;
+    border-bottom: 3px solid #0c0c0c30;
+    align-items: center;
 }

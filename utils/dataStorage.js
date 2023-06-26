@@ -9,6 +9,7 @@ var consts = {
     consulAvaluoMasivo: "consulAvaluoMasivo",
     consulAvaluoUnica: "consulAvaluoUnica",
     consulCatastro: "consulCatastro",
+    consulNotariadoRegistro: "consulNotariadoRegistro",
     unirGeometrias: "unirGeometrias",
     widgetMyResultados: "widgets_MyWidgetResultados_Widget_41",
     widgetMyResultadosPanel: "widgets_MyWidgetResultados_Widget_41_panel",

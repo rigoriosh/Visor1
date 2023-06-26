@@ -64,3 +64,103 @@ const postDeleteGeomtry = async (url = "", data = {}) => {
         console.error(error);
     }
   }
+
+
+const getDataGeograficaNotariadoRegistro = async(miMunicipio)  => {
+  try {
+    const url = `${servicioSNRgeometrias}${miMunicipio}`
+    const response = await fetch(url, {
+      method:'GET',
+      // mode: "no-cors",
+      // body: dataToSend
+    } );
+  console.log(response);
+  if (response.status == 400) return response
+  const resp = await response.json(); // parses JSON response into native JavaScript objects 
+  console.log({resp});
+  return resp
+  } catch (error) {
+    console.error({error});
+  }
+}
+const getDataNotariadoRegistro = async(columnName, columnValue, fileName)  => {
+  
+  try {
+    const response = await fetch(`${servicioSNRalfanumerico}${columnName}&columnValue=${columnValue}&fileName=${fileName}`, {
+      method:'GET',
+      // mode: "no-cors",
+      // body: dataToSend
+    } );
+  console.log(response);
+  if (response.status == 400) return response
+  const resp = await response.json(); // parses JSON response into native JavaScript objects 
+  console.log({resp});
+  return resp
+  } catch (error) {
+    console.error({error});
+  }
+  /* try {
+    let formData = new FormData();
+    // formData.append('features', JSON.stringify(data.features));
+    formData.append('gdbVersion', '');
+    formData.append('rollbackOnFailure', true);
+    formData.append('timeReferenceUnknownClient', false);
+    // Default options are marked with *
+    const response = await fetch("http://localhost:61025/api/ArchivoExcel/?columnName=FMI&columnValue=037-5884&fileName=BASE_REGISTRO_SNR", {
+      method: "GET", // *GET, POST, PUT, DELETE, etc.
+      mode: "no-cors", // no-cors, *cors, same-origin
+      //   cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "omit", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      //   redirect: "follow", // manual, *follow, error
+      referrerPolicy: "strict-origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      // body: formData, // body data type must match "Content-Type" header
+      //   body: JSON.stringify(data), // body data type must match "Content-Type" header
+    });
+    // const resp = await response.json(); // parses JSON response into native JavaScript objects        
+    // return response; // parses JSON response into native JavaScript objects        
+    return {
+      "FMI": "037-5884",
+      "NOMBRE COMPLETO DEL PROPIETARIO": "GUERRA ARTURO",
+      "CLASE DE DOCUMENTO CC CE NIT": "NA",
+      "NUMERO DE IDENTIFICACION DATO TRADICION": "NA",
+      "NUMERO DE ANOTACION DATO TRADICION": "1",
+      "ESPECIFICACIÓN DE TÍTULO TRASLATICIO DE DOMINIO (COMPRAVENTA, PERMUTA)": "COMPRAVENTA",
+      "NOMBRE ULTIMO PROPIETARIO INSCRITO ANTES DEL REGISTRO DE LA": "SOCIEDAD \"GUERRA MU\\OZ LTDA CIVIL\"",
+      "CLASE DE DOCUMENTO": "NA",
+      "NUMERO DE IDENTIFICACION": "NA",
+      "EL ULTIMO PROPIETARIO ES PERSONA JURIDICA SI/NO": "SI",
+      "DATOS DE TRADICION": "JURIDICA",
+      "ACTIVO SOCIAL": "SI",
+      "REGISTRA PROPIEDAD HORIZONTAL": "NO",
+      "CIRCULO REGISTRAL": "YARUMAL",
+      "DIRECCION QUE REGISTRA EL FMI": "FINCA EL REMOLINO",
+      "CIUDAD": "VALDIVIA",
+      "DEPARTAMENTO": "ANTIOQUIA",
+      "ESTADO DEL FOLIO ACTIVO O CERRADO": "ACTIVO",
+      "TIPO DE PREDIO": "RURAL",
+      "IDENTIFICA CABIDA Y LINDEROS": "SI",
+      "NOTARIA DE LA ESCRITURA PUBLICA": "VALDIVIA",
+      "NUMERO DE ESCRITURA PUBLICA DE CABIDA Y LINDEROS": "125",
+      "DESCRIPCION CABIDA Y LINDEROS": "UNA FINCA RURAL DENOMINADA REMOLINO, SITUADA EN EL MUNICIPIO DE VALDIVIA, EN EL PUNTO DEPUERTO VALDIVIA, CON UNA CABIDA APROXIMADA DE SEISCIENTOS CINCUENTA Y SEIS (656) HECT. Y QUELINDA: POR EL FRENTE CON EL RIO CAUCA; POR EL COSTADO IZQUIERDO CON LA QUEBRADA TAPIAS, ESTAARRIBA HASTA SU NACIMIENTO LINDANDO CON PROPIEDAD DE RAFAEL VILLA; DE ESTE NACIMIENTO POR LACORDILLERA A BUSCARL EL NACIMIENTO DE LA QUEBRADA IRSE; ESTA ABAJO HASTA SU DESEMBOQUE EN ELRIO CAUCA PUNTO DE PARTIDA.\nEN ENCABEZADO MATRICULA BASE (T. 1. FL. 63 # 61). -ESTE INMUEBLE QUEDACON UN AREA DE 602.4951 HECTAREAS Y SUS LINDEROS ACTUALIZADOS CONSTAN EN LA ESCRITURA NRO.125 DEL 09-12-2020 DE LA NOTARIA DE VALDIVIA."
+  }
+} catch (error) {
+    console.error(error);
+} */
+  /* try {
+    const response = await fetch("http://localhost:61025/api/ArchivoExcel/?columnName=FMI&columnValue=037-5884&fileName=BASE_REGISTRO_SNR", {
+      method:'GET',
+      // mode: "no-cors",
+      // body: dataToSend
+    } );
+  console.log(response);
+  const resp = await response.json(); // parses JSON response into native JavaScript objects 
+  console.log({resp});
+  return response
+  } catch (error) {
+    console.error({error});
+  } */
+}
