@@ -15,10 +15,21 @@ const insertProjecGeometry = async(dataToSend, url) => {
 const postData = async (url = "", data = {}) => {
     try {
         let formData = new FormData();
-        formData.append('features', JSON.stringify(data.features));
-        formData.append('gdbVersion', '');
-        formData.append('rollbackOnFailure', true);
-        formData.append('timeReferenceUnknownClient', false);
+        formData.append('json', 
+        {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": { "type": "Point", "coordinates": [102.0, 0.5] },
+              "properties": { "prop0": "value0" }
+            }
+          ]
+        }
+        );
+        // formData.append('gdbVersion', '');
+        // formData.append('rollbackOnFailure', true);
+        // formData.append('timeReferenceUnknownClient', false);
         // Default options are marked with *
         const response = await fetch(url, {
           method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -26,7 +37,8 @@ const postData = async (url = "", data = {}) => {
         //   cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
           credentials: "omit", // include, *same-origin, omit
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/octet-stream",
+            // "Content-Type": "application/json",
             // 'Content-Type': 'application/x-www-form-urlencoded',
           },
         //   redirect: "follow", // manual, *follow, error
@@ -38,6 +50,7 @@ const postData = async (url = "", data = {}) => {
         return response; // parses JSON response into native JavaScript objects        
     } catch (error) {
         console.error(error);
+        return error;
     }
   }
 
@@ -62,6 +75,7 @@ const postDeleteGeomtry = async (url = "", data = {}) => {
         return response; // parses JSON response into native JavaScript objects        
     } catch (error) {
         console.error(error);
+        return error;
     }
   }
 
@@ -81,6 +95,7 @@ const getDataGeograficaNotariadoRegistro = async(miMunicipio)  => {
   return resp
   } catch (error) {
     console.error({error});
+    return error;
   }
 }
 const getDataNotariadoRegistro = async(columnName, columnValue, fileName)  => {
@@ -98,6 +113,7 @@ const getDataNotariadoRegistro = async(columnName, columnValue, fileName)  => {
   return resp
   } catch (error) {
     console.error({error});
+    return error;
   }
   /* try {
     let formData = new FormData();
@@ -163,4 +179,54 @@ const getDataNotariadoRegistro = async(columnName, columnValue, fileName)  => {
   } catch (error) {
     console.error({error});
   } */
+}
+
+const getDataByFmi = async(Fmi)  => {
+  try {
+    const url = `${UrlGetByFmi}${Fmi}`
+    const response = await fetch(url, {
+      method:'GET',
+      // mode: "no-cors",
+      // body: dataToSend
+    } );
+    console.log(response);
+    if (response.status == 404) return response
+    const resp = await response.json(); // parses JSON response into native JavaScript objects 
+    console.log({resp});
+    return resp
+    /* var myHeaders = new Headers();
+    myHeaders.append("Usuario", "mcortes");
+    myHeaders.append("Clave", "Saesas2023@");
+    myHeaders.append("Cookie", "cookiesession1=678A3E42A866C0A6B9FE4B7AF09F0439");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      // redirect: 'follow',
+      mode: "no-cors", // no-cors, *cors, same-origin
+    };
+
+    const response = await fetch(url, requestOptions);
+    console.log(response);
+
+    const resp = await response.json(); // parses JSON response into native JavaScript objects 
+    console.log({resp});
+    return resp */
+
+    /* fetch(url, requestOptions)
+      .then(response => {
+        console.log(response);
+        response.text()
+      })
+      .then(result => {
+        console.log(result)
+        return result
+      })
+      .catch(error => console.log('error', error)); */
+      
+  } catch (error) {
+    console.error({error});
+    // return error
+    return GetByFmi
+  }
 }

@@ -3,7 +3,9 @@ const Municipio_generalizado = "https://mapassig.icbf.gov.co:6443/arcgis/rest/se
 // SERVICIO_TABLA_CONTENIDO = "http://190.85.164.56:90/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public";
 // SERVICIO_TABLA_CONTENIDO = "http://190.255.42.26:90/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public";
 // SERVICIO_TABLA_CONTENIDO = "https://sig.icbf.gov.co/Icbf.SIG.Service/AdministradorServicios.svc";
-SERVICIO_TABLA_CONTENIDO = "http://localhost:3000/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public";
+// SERVICIO_TABLA_CONTENIDO = "http://localhost:3000/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public";
+SERVICIO_TABLA_CONTENIDO = "http://172.17.3.143:8090/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public";
+
 // const SERVICIO_SHAPEFILE = "http://172.17.3.142:6080/arcgis/rest/services/ICBF/exportarSHAPE/GPServer/exportarSHAPE";
 const SERVICIO_SHAPEFILE = "https://mapassig.icbf.gov.co:6443/arcgis/rest/services/ICBF/exportarSHAPE/GPServer/exportarSHAPE";
 const urlGetPuntosLineasPoligonos =[
@@ -84,3 +86,5 @@ const endPoints = {
 
 const servicioSNRalfanumerico = "http://localhost:61025/api/ArchivoExcel/?columnName="
 const servicioSNRgeometrias = "http://localhost:53906/api/Gestor/?municipio=";
+
+const UrlGetByFmi = "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByFmi/";

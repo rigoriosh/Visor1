@@ -1,5 +1,9 @@
 <div id="divConsultaSAE" style="height: 100%;margin-top: 10px;">
-
+    <div id="loadingSAE" class="loader" style="display: none;">
+		<span id="status"></span>
+		<!-- <img src="../../images/loadingCapa.gif" alt=""> -->
+		<img src="./images/loadingCapa.gif" alt="">
+	</div>
     <div class="form-group">
         <label class="labels" for="Departamento">Departamento</label>
         <select name="Departamento " id="sDepartSAE" class="form-control form-control-sm"></select>
@@ -9,12 +13,12 @@
         <select name="Municipio " id="sMunicipioSAE" class="form-control form-control-sm"></select>
     </div>
     <div class="form-group" id="formFinal" style="display: none;">
-        <div style="display: flex; flex-direction: column; margin-top: 10px;" class="input-group">
+        <!-- <div style="display: flex; flex-direction: column; margin-top: 10px;" class="input-group">
             <label class="labels" for="FMI_SAE">Ficha matricula inmobiliaria </label>
             <input type="text" data-toggle="tooltip" id="IdFMI_SAE" title="Ficha matrícula inmobiliaria" 
                 data-placement="top" class="form-control" placeholder="Ficha matrícula inmobiliaria" 
                 aria-label="IdFMI_SAE" aria-describedby="IdFMI_SAE" style="width: 100%;">
-            <!-- <input type="text" name="FMI_SAE" id="IdFMI_SAE"> -->
+            <input type="text" name="FMI_SAE" id="IdFMI_SAE">
             <p id="FMI_SAE_validate" class="campoRequerido" style="display: none;">Campo requerido</p>
         </div>
         <div style="display: flex; flex-direction: column; margin-top: 10px;" class="input-group">
@@ -22,12 +26,27 @@
             <input type="text" data-toggle="tooltip" id="IdNoMatrix" title="No Matrix" data-placement="top"
              class="form-control" placeholder="No Matrix" aria-label="IdNoMatrix" aria-describedby="IdNoMatrix"
              style="width: 100%;">
-            <!-- <input type="text" name="NoMatrix" id="IdNoMatrix"> -->
+            <input type="text" name="NoMatrix" id="IdNoMatrix">
             <p id="NoMatrix_validate" class="campoRequerido" style="display: none;">Campo requerido</p>
         </div>
-        <div id="divBtnConsultaMasiva" style="display: none; flex-direction: row; margin-top: 10px;">
-            <input id="btnConsultaMasiva" type="button" value="Ejecutar" style="display: block;" 
-            class="btn btn-outline-success btn-sm">
+         -->
+        
+        <p class="titulo">Seleccione una opción</p>
+        <form class="form-check ml-3rem" >
+            <input class="form-check-input" type="radio" name="tipo_attach" id="IdFMI-SAE" placeholder="50N-20407622">Ficha matricula inmobiliaria FMI<br>
+            <br>
+            <input class="form-check-input"  type="radio" name="tipo_attach" id="Id_No_MATRIX">No_MATRIX<br>
+            <br>
+        </form>
+        <label class="labels" for="numero">Número</label>
+        <div class="input-group ">
+            <input type="text" name="numero" id="numero-SAE" data-toggle="tooltip" title="Número" data-placement="top" class="form-control ">
+        </div>
+        <div id="divBtnConsultaMasiva" style="display: none; flex-direction: row; justify-content: space-around; margin-top: 10px;">
+            <input id="btnEjecutar-SAE" type="button" value="Ejecutar" style="display: block;" 
+                class="btn btn-outline-success btn-sm">
+            <input id="btnLimpiar-SAE" type="button" value="Limpiar" style="display: block;" 
+                class="btn btn-outline-success btn-sm">
         </div>
     </div>
 <!-- 

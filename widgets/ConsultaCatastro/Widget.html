@@ -1,4 +1,9 @@
 <div id="divConsultaCatastro" style="height: 100%;">
+    <div id="loadingCC" class="loader" style="display: none;">
+        <span id="status"></span>
+        <!-- <img src="../../images/loadingCapa.gif" alt=""> -->
+        <img src="./images/loadingCapa.gif" alt="">
+    </div>
     <!-- <div class="form-group" style="display: flex; flex-direction: column;">
         <label class="labels" for="numeroPredial">Numero predial</label>
         <input  class="form-control" type="text" name="numeroPredial" id="IdnumeroPredial">
@@ -13,19 +18,22 @@
         <input  class="form-control" type="text" name="chip" id="Idchip">
     </div> -->
     <p class="titulo">Seleccione una opción</p>
-    <form class="form-check ml-3rem" >
-        <input class="form-check-input" type="radio" name="tipo_attach" id="IdFMI">Ficha matricula inmobiliaria<br>
+    <form class="form-check ml-3rem">
+        <input class="form-check-input" type="radio" name="tipo_attach" id="IdFmi">Ficha matricula inmobiliaria<br>
         <br>
-        <input class="form-check-input"  type="radio" name="tipo_attach" id="IdnumeroPredial">Número predial<br>
+        <input class="form-check-input" type="radio" name="tipo_attach" id="IdNPN">Número predial<br>
         <br>
-        <input class="form-check-input"  type="radio" name="tipo_attach" id="IdChip">CHIP<br>
+        <input class="form-check-input" type="radio" name="tipo_attach" id="IdChip">CHIP<br>
         <br>
     </form>
     <label class="labels" for="numero">Número</label>
     <div class="input-group ">
-        <input type="text" name="numero" id="numero" data-toggle="tooltip" title="Número" data-placement="top" class="form-control ">
+        <input type="text" name="valorColumna" id="idValorColumna" data-toggle="tooltip" title="Número" data-placement="top" class="form-control ">
     </div>
 
     <button id="btnConsultaCatastro" type="button" class="btn btn-outline-success btn-sm mt-3">Ejecutar</button>
-    
+
+    <!--<div id="divJson" class="boxhelpBlue">
+        <p id="pJson"></p>
+    </div>-->
 </div>

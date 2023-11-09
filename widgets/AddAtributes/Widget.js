@@ -122,7 +122,7 @@ function (declare, BaseWidget, query, InfoTemplate, Graphic, geometryEngine, Spa
           }
           loader2(false)
         },
-        pasoDespuesDeCapturarAtributos: function () {
+        pasoDespuesDeCapturarAtributos: function () { // agrega el grafico al mapa
           console.log(widgetAddAtributes);
           const {evt, symbol} = widgetAddAtributes.data;
           const { infoTemplate, attr} = this._formarInfoTeample(this._validarAtributos());

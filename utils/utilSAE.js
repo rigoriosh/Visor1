@@ -12,7 +12,9 @@ function showLoader(idPage) { //metodo que se encarga de mostrar el icono de loa
 
 function loader2(activar, load="loader_2") {
     const loader = document.getElementById(load);
-    loader.style.display = activar?"flex":"none";
+    if (loader) {
+        loader.style.display = activar?"flex":"none";
+    }
 }
 
 function ejecutarConsulta(url) { //metodo que genera consulta y retorna info en json
@@ -65,6 +67,10 @@ const agregarDataSelect2 = (data, selec) => {
         select.options[select.options.length] = new Option(d, d)
     });
 };
+
+const seleccionarUnaOpcionDelSelect = (select, value = 0) => { // por defecto primera opción
+    document.getElementById(select).value = value;
+}
 
 const agregarDataSelectValueLabel = (data, selec) => {
     const select = document.getElementById(selec);
@@ -349,6 +355,7 @@ const pintarPolygons = (EsriMap, response, symbol={}) => {
             let poligono = new Polygon(polygonJson);
             let newGeometry = new Graphic(poligono, simbolo, feature.attributes, INFO_T);            
             EsriMap.graphics.add(newGeometry);
+            EsriMap.setExtent(feature.geometry.getExtent())
         })
     });
 }

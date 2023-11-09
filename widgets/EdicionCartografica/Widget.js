@@ -228,6 +228,10 @@ define([
         query("#cancelarModalEliminar").on("click", async function (evt) {
           myThis.renderFrontToDeleteGeometry(false);
         });
+        query("#btnExportCApaShape").on("click", async function (evt) {
+          console.log("check");
+          myThis._starLogicExportToShape();
+        });
         query(".x").on("click", async function (evt) {
           console.log("check");
         });
@@ -967,7 +971,93 @@ define([
         objEdicionCartografica.graficosSeleccionados = objEdicionCartografica.graficosSeleccionados.filter(e => e.attributes.DESCRIPCION !== selected.attributes.DESCRIPCION)
         loader2(false)
         createDialogInformacionGeneral("! Correcto !", `La geometría ${selected.attributes.OBJECTID} ha sido eliminada`);
-      },    
+      },
+      _starLogicExportToShape: function () {
+        debugger
+        console.log("_starLogicExportToShape");
+        const {graphics} = EsriMap.getLayer(EsriMap.graphicsLayerIds[EsriMap.graphicsLayerIds.length -1])
+        graphics.forEach(({geometry, attributes}) => {
+          const newSymbol = generarSymbol(geometry.type);
+          const infoTemplate = new InfoTemplate(`Información geometría`);
+          var graphic = new Graphic(geometry, newSymbol, attributes, infoTemplate);
+          EsriMap.graphics.add(graphic);
+        });
+        myThis.preparToExportShape()
+      },
+      preparToExportShape: function () {
+        console.log("export shape");
+        console.log("",);
+        // const myGraphics = new Graphic(geometry?, symbol?, attributes?, infoTemplate?)
+        const layer = EsriMap.getLayer(EsriMap.graphicsLayerIds[EsriMap.graphicsLayerIds.length -1]);
+        if (!layer) {
+          createDialogInformacionGeneral("!Nota","Antes de descargar el shape de esta capa, primero se debe pintar en el mapa.");
+          return
+        }else if(layer.graphics.length < 1){
+          createDialogInformacionGeneral("!Nota","Esta capa no cumple con la parametría para ser exportada a formato shape.");
+          return
+        }
+        console.log(layer);
+        console.log(11111111111111);
+        
+        debugger
+        loader2(true)
+
+        var featureSet = new FeatureSet();
+        let geometryToDownload = [];
+        // const graficos = layer.graphics;
+        const graficos = EsriMap.graphics.graphics;
+        const totalGeometries = 100;  
+        console.log("layer.graphics", layer.graphics);
+        console.log("EsriMap.graphics.graphics", EsriMap.graphics.graphics);
+        for (let index = 0; index < (graficos.length < totalGeometries ? graficos.length : totalGeometries); index++) {
+        // for (let index = (graficos.length - 1); index >  (graficos.length - totalGeometries); index--) {
+          if(graficos[index].geometry.paths?.length > 0 || graficos[index].geometry.rings?.length > 0 || graficos[index].geometry?.type === "point"
+          || graficos[index].geometry?.type === "polygon"){
+            geometryToDownload.push(graficos[index])          
+          }
+        }
+        console.log("geometryToDownload", geometryToDownload);
+        // featureSet.features = [layer.graphics[0]];
+        // featureSet.displayFieldName = layer._titleForLegend;
+        // featureSet.geometryType = layer.geometryType;
+        // featureSet.spatialReference = layer.spatialReference;
+        // featureSet.fields = layer.fields;
+        featureSet.features = geometryToDownload;
+        // featureSet.exceededTransferLimit = false;
+        console.log("featureSet", featureSet);
+        exportarShape(featureSet, "loader_2");
+
+        /* loader2(true)
+        var query = new Query();
+        query.where = "1=1"; // Obtener todos los registros
+        query.outFields = ["*"];
+        query.returnGeometry = true;
+      
+        // Crear una instancia de QueryTask y ejecutar la consulta
+        var queryTask = new QueryTask(layer.url);
+        queryTask.execute(query)
+          .then(function (result) {
+            // Convertir el resultado a GeoJSON
+            // var geoJson = arcgisToGeoJSONUtils.arcgisToGeoJSON(result);
+            // var geoJson = geometryJsonUtils.fromJson(result);
+            var geoJson = arcgisToGeoJSON(result);
+        
+            // Convertir GeoJSON a una cadena JSON
+            var geoJsonString = JSON.stringify(geoJson);
+        
+            // Descargar el GeoJSON como un archivo
+            var blob = new Blob([geoJsonString], { type: "application/json" });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.style.display = "none";
+            a.href = url;
+            a.download = "layer_geojson.json"; // Nombre del archivo GeoJSON
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            loader2(false)
+          }); */
+      }
       
       
     })

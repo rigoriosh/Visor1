@@ -390,17 +390,23 @@ select{
     font-size: 10px;
     font-weight: bold;
     padding-right: 5px;
-    width: 30%;
+    width: 50%;
+    overflow: auto;
+    background-color: #8080802b;
 }
 
 .ITdata{
     font-size: 10px;
     display: flex;
     width: 100%;
-    justify-content: center;
+    /* justify-content: center; */
+    overflow: auto;
+    padding-left: 5px;
+    background-color: #8080802b;
 }
 .divIT{
     display: flex;
     border-bottom: 3px solid #0c0c0c30;
     align-items: center;
+    height: 30px;
 }

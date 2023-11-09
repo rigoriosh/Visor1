@@ -14,7 +14,7 @@ var storeConsultaAvaluos = {
 var wm, appGlobal = "";
 
 var divConsultaMasiva, divConsultaUnica, divLoading, divTipInmu, btnConsultaMasiva, 
-divMunicipio, tw;
+divMunicipio, tw, EsriMap;
 
 
 define(["dojo/_base/declare", "jimu/BaseWidget", 'jimu/WidgetManager',
@@ -35,6 +35,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             this.inherited(arguments);
             tw = this;
             appGlobal = this;
+            EsriMap = this.map
             // this.mapIdNode.innerHTML = 'map id:' + this.map.id;
             //console.log('startup');
             

@@ -114,20 +114,9 @@
                 }
             },
             {
-                "uri": "widgets/MyWidgetResultados/Widget",
-                "name": "Tabla Resultados",
-                "version": "2.5",
                 "position": {
-                    "right": 20,
-                    "top": 170,
-                    "relativeTo": "map"
-                },
-                "id": "widgets_MyWidgetResultados_Widget_41"
-            },
-            {
-                "position": {
-                    "right": 20,
-                    "top": 220,
+                    "right": 19,
+                    "top": 164,
                     "relativeTo": "map",
                     "height": 520,
                     "width": 400
@@ -277,10 +266,10 @@
                 "uri": "widgets/AddAtributes/Widget",
                 "name": "Adicionar Atributos",
                 "version": "1.0",
-                "visible":true,
+                "visible":true,                
                 "position": {
                     "right": 20,
-                    "top": 270,
+                    "top": 570,
                     "relativeTo": "map"
                 },
                 "id": "widgets_AddAtributes_Widget_43"
@@ -632,6 +621,20 @@
                     "uri": "widgets/Indicadores/Widget",
                     "index": 6,
                     "id": "widgets_Indicadores_Widget_41"
+                  },
+                  {
+                      "uri": "widgets/MyWidgetResultados/Widget",
+                      "name": "Tabla Resultados",
+                      "closeable": true,
+                      "index": 7,
+                      "version": "2.5",
+                      "position": {
+                          "right": 20,
+                          "top": 170,
+                          "relativeTo": "map"
+                      },
+                      "id": "widgets_MyWidgetResultados_Widget_41",
+                      "visible": true
                   }
                 ],
                 "index": 6,
@@ -874,6 +877,10 @@
             },
             {
                 "urlPrefix":"http://190.85.164.56:6080/arcgis/rest/info",
+                "proxyUrl":"/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix":"http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByFmi/400-6358",
                 "proxyUrl":"/proxy/proxy.ashx"
             }
             

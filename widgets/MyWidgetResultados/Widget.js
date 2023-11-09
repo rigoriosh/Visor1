@@ -81,6 +81,14 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                             divResulConsultaMultiple.style.display = "display";
                             // dom.byId("divExportar").style.display = "none";
                             break;
+                        case consts.consulSAE:
+                            //console.log(consts.consulAvaluoMasivo);
+                            cargarTablaResultados(widgetResultados);
+                            divResulConsultaUnica.style.display = "none";
+                            divResulConsultaCatastro.style.display = "none";
+                            divResulConsultaMultiple.style.display = "display";
+                            // dom.byId("divExportar").style.display = "none";
+                            break;
                         case consts.consulAvaluoUnica:
                             //console.log(consts.consulAvaluoUnica);
                             divResulConsultaCatastro.style.display = "none";
@@ -263,7 +271,7 @@ function cargarTablaResultados(widget) {
             var myFeatureLayer, fieldInfos;
             const {featureCollection, tipoResultado, loading} = widget.data
             if (tipoResultado === consts.consultas.consultaSimple || tipoResultado === consts.consultas.consultaAvanzada
-                || tipoResultado === consts.consulNotariadoRegistro) {
+                || tipoResultado === consts.consulNotariadoRegistro || tipoResultado === consts.consulSAE) {
                 myFeatureLayer = new FeatureLayer(featureCollection, {
                     showLabels: true
                   });
@@ -477,11 +485,11 @@ function cargarTablaResultados(widget) {
                             selectedRegisterFromTable.features = finalFeature;
                             if(features.features.length > 0) EsriMap.setExtent(objConsultaSimple.featuresSelected.filter(e => e.attributes.OBJECTID == features.features[0].attributes.OBJECTID)[0].geometry.getExtent())
                         */
-                        } else if(tipoResultado === consts.consulNotariadoRegistro){
+                        } else if(tipoResultado === consts.consulNotariadoRegistro || tipoResultado === consts.consulSAE){
 
-                            const rs = widget.data.responseQueryGeografica.features[0].geometry.spatialReference;
+                            // const rs = widget.data.responseQueryGeografica.features[0].geometry.spatialReference;
                             const f = widget.data.responseQueryGeografica.features;
-                            let myPolygon = {
+                            /* let myPolygon = {
                                 "geometry":{
                                     "rings":widget.data.responseQueryGeografica.features[0].geometry.rings,
                                     "spatialReference":rs,
@@ -498,14 +506,14 @@ function cargarTablaResultados(widget) {
                                     "type":"esriSFS",
                                     "style":"esriSFSSolid"
                                 }
-                            };
+                            }; */
                             // const it = buildInfoTemplate("Información Punto", f[0].attributes)
                             // pintarGeometry(EsriMap, myPolygon, symbol, f[0].attributes, it)
                             pintarPolygons(EsriMap, widget.data.responseQueryGeografica)
                             // let graphic = new Graphic(myPolygon, symbol);
                             // objetoMapa.graphics.add(graphic);
 
-                            EsriMap.setExtent(f[0].geometry.getExtent())
+                            // EsriMap.setExtent(f[0].geometry.getExtent())
                             
                             /* if (features.geometryType == "esriGeometryPoint") {
                                 tipoGeometria = "Punto";
