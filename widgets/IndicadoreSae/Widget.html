@@ -1,0 +1,68 @@
+<div id="divConsultaWidgetIndicadores" style="height: 100%; margin-top: 15px;">
+    <form id="idForm">
+        <div class="form-group" id="divSeleccioneIndicador">
+            <label for="seleccioneIndicador">Seleccione indicador</label>
+            <select class="form-control form-control-sm" id="seleccioneIndicador">
+            </select>
+        </div>
+        <div class="form-group" id="divSeleccioneTematica">
+            <label for="seleccioneTematica">Seleccione una temática</label>
+            <select class="form-control form-control-sm" id="seleccioneTematica">
+            </select>
+        </div>
+        <div class="form-group" id="divEntidadEspacial">
+            <label for="entidadEspacial">Entidad espacial</label>
+            <select class="form-control form-control-sm" id="entidadEspacial">
+            </select>
+        </div>
+        <div class="form-group" id="divDepartamento">
+            <label for="departamento">Departamento</label>
+            <select class="form-control form-control-sm" id="departamento">
+            </select>
+        </div>
+        <div class="form-group" id="divTematica">
+            <label for="tematica">Temática</label>
+            <select class="form-control form-control-sm" id="tematica">
+            </select>
+        </div>
+        <div class="form-group" id="divEstadoOcupacion">
+            <label for="ocupacion">Estado ocupación</label>
+            <select class="form-control form-control-sm" id="estadoOcupacion">
+            </select>
+        </div>
+        <div class="form-group" id="divClasifActivo">
+            <label for="clasifActivo">Clasificación Activo</label>
+            <select class="form-control form-control-sm" id="clasifActivo">
+            </select>
+        </div>
+        <div class="form-group" id="divAnio">
+            <label for="anio">Año</label>
+            <select class="form-control form-control-sm" id="anio">
+            </select>
+        </div>
+        <button id="ejecutar" type="button" class="btn btn-outline-success btn-sm">Ejecutar</button>
+
+        <div id="divInformacion" class="boxhelpBlue">
+            <p> <strong>Nota: </strong>Una vez visualise el mapa, pulse click para ver más información de la entidad geográfica selecionada.</p>
+        </div>
+
+
+    </form>
+    <div id="mainIndicadores" style="width: 600px;height:400px; display: none;"></div>
+
+    <div class="trResultadoSae" id="tabResultado">
+        <label id='lblNombreIndiciador' class="labelTitleNew">Nombre del Indicador</label>
+        <div id="reportTotalsChartDiv" style='display:block; clear:none; z-index:999; width:100%; height:100%;'></div>
+        <div id='reportTotalsLegendDiv'></div>
+
+        <div id='divRetornar'>
+            <button id="btnRetornar" type="button" class="btn btn-outline-success btn-sm">Retornar</button>
+        </div>
+    </div>
+
+    <div id="legendWrapper"></div>
+    <div id="fieldWrapper">
+<!--        Currently selected attribute:-->
+    </div>
+
+</div>

@@ -475,6 +475,12 @@ const abrirWidgetResultados = (data, idWiget=consts.widgetMyResultados) => {
     appGlobal.openWidgetById(widgetId);
 }
 
+const abrirTablaResultadosSae = (data, idWiget = "widgets_TablaResultadoSae_Widget_63") => {
+    var widget = appGlobal.appConfig.getConfigElementById(idWiget);
+    var widgetId = widget.id;
+    widget.data = data;
+    appGlobal.openWidgetById(widgetId);
+}
 function cerrarWidgetResultados(widgetACerrar=consts.widgetMyResultadosPanel, clearGraphics=true) {
     require(["jimu/PanelManager"],
         function (PanelManager) {
@@ -681,7 +687,6 @@ const crearfeatureSet = (features) => {
             featureSet.features = graphics;
         })
     return featureSet;
-
 }
 
 const  generateUUID = () => {

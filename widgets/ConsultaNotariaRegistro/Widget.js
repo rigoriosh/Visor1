@@ -4,7 +4,6 @@
 //>>built
 var thisNotariadoRegistro;
 
-
 define(["dojo/_base/declare", "jimu/BaseWidget", "dojo/query"],
 function (declare, BaseWidget, query) {
      return declare([BaseWidget], {
@@ -120,6 +119,7 @@ function (declare, BaseWidget, query) {
                       fields
                     },
                 },
+
                 urlGeografica: widgetConsNotariadoRegistro.urlGeografica,
                 responseQueryGeografica: resp,
                 dataAlfanumerica: widgetConsNotariadoRegistro.dataAlfanumerica,

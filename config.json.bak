@@ -1,0 +1,925 @@
+{
+    "theme": {
+        "name": "LaunchpadTheme",
+        "styles": [
+            "default",
+            "style2",
+            "style3"
+        ],
+        "version": "2.25",
+        "sharedTheme": {
+            "useHeader": false,
+            "useLogo": false,
+            "isPortalSupport": false
+        },
+        "customStyles": {
+            "mainBackgroundColor": ""
+        }
+    },
+    "portalUrl": "https://desarollociaf.maps.arcgis.com",
+    "appId": "",
+    "authorizedCrossOriginDomains": [],
+    "title": "GEOPORTALSAE",
+    "subtitle": "",
+    "keepAppState": true,
+    "logo": "images/app-logo.png",
+    "geometryService": "https://utility.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer",
+    "links": [],
+    "widgetOnScreen": {
+      "widgets": [
+        {
+          "uri": "themes/LaunchpadTheme/widgets/AnchorBarController/Widget",
+          "position": {
+            "bottom": 10,
+            "height": 40,
+            "relativeTo": "map",
+            "zIndex": 0
+          },
+          "version": "2.25",
+          "id": "themes_LaunchpadTheme_widgets_AnchorBarController_Widget_20",
+          "name": "AnchorBarController"
+        },
+        {
+          "uri": "themes/LaunchpadTheme/widgets/Header/Widget",
+          "position": {
+            "left": 15,
+            "top": 17,
+            "width": 670,
+            "height": 46,
+            "relativeTo": "map"
+          },
+          "version": "2.25",
+          "id": "themes_LaunchpadTheme_widgets_Header_Widget_21",
+          "name": "Header"
+        },
+        {
+          "uri": "widgets/Search/Widget",
+          "position": {
+            "left": 377,
+            "top": 25,
+            "width": 300,
+            "zIndex": 1,
+            "relativeTo": "map"
+          },
+          "version": "2.25",
+          "id": "widgets_Search_Widget_22",
+          "name": "Search",
+          "config": {
+            "allPlaceholder": "",
+            "showInfoWindowOnSelect": true,
+            "sources": []
+          },
+          "visible": false
+        },
+        {
+          "uri": "widgets/OverviewMap/Widget",
+          "position": {
+            "right": 20,
+            "top": 20,
+            "relativeTo": "map"
+          },
+          "version": "2.25",
+          "id": "widgets_OverviewMap_Widget_23",
+          "name": "Vista general"
+        },
+        {
+          "uri": "widgets/FullScreen/Widget",
+          "position": {
+            "right": 20,
+            "top": 70,
+            "relativeTo": "map"
+          },
+          "version": "2.25",
+          "id": "widgets_FullScreen_Widget_35",
+          "name": "Vista Total"
+        },
+        {
+          "position": {
+            "right": 20,
+            "top": 120,
+            "relativeTo": "map"
+          },
+          "placeholderIndex": 1,
+          "id": "_31",
+          "name": "Mapas Base",
+          "label": "Mapas base",
+          "version": "2.25",
+          "closeable": true,
+          "uri": "widgets/BasemapGallery/Widget",
+          "config": {
+            "basemapGallery": {
+              "mode": 1,
+              "basemaps": []
+            }
+          }
+        },
+        {
+          "uri": "widgets/MyWidgetResultados/Widget",
+          "name": "Tabla Resultados",
+          "version": "2.5",
+          "position": {
+            "right": 20,
+            "top": 170,
+            "relativeTo": "map"
+          },
+          "id": "widgets_MyWidgetResultados_Widget_41"
+        },
+        {
+          "uri": "widgets/TablaResultadoSae/Widget",
+          "name": "TablaResultadosSae",
+          "label": "Tabla Resultados Sae",
+          "version": "2.5",
+          "position": {
+            "right": 20,
+            "top": 170,
+            "relativeTo": "map"
+          },
+          "id": "widgets_TablaResultadoSae_Widget_63",
+          "url": ""
+        },
+        {
+          "position": {
+            "right": 20,
+            "top": 220,
+            "relativeTo": "map",
+            "height": 520,
+            "width": 400
+          },
+          "placeholderIndex": 1,
+          "id": "widgets_TablaContenido_Widget_35",
+          "version": "2.5",
+          "closeable": true,
+          "uri": "widgets/TablaContenido/Widget",
+          "name": "TablaContenido",
+          "label": "Tabla de Contenido",
+          "openAtStart": false
+        },
+        {
+          "uri": "widgets/ZoomSlider/Widget",
+          "position": {
+            "left": 25,
+            "top": 95,
+            "relativeTo": "map"
+          },
+          "version": "2.25",
+          "id": "widgets_ZoomSlider_Widget_24",
+          "name": "ZoomSlider"
+        },
+        {
+          "uri": "widgets/HomeButton/Widget",
+          "position": {
+            "left": 25,
+            "top": 175,
+            "relativeTo": "map"
+          },
+          "id": "widgets_HomeButton_Widget_25",
+          "name": "HomeButton",
+          "version": "2.25"
+        },
+        {
+          "uri": "widgets/MyLocation/Widget",
+          "position": {
+            "left": 25,
+            "top": 215,
+            "relativeTo": "map"
+          },
+          "version": "2.25",
+          "id": "widgets_MyLocation_Widget_26",
+          "name": "MyLocation"
+        },
+        {
+          "uri": "widgets/AttributeTable/Widget",
+          "version": "2.25",
+          "visible": false,
+          "position": {
+            "right": 20,
+            "bottom": -80,
+            "relativeTo": "map"
+          },
+          "closeable": true,
+          "id": "widgets_AttributeTable_Widget_27",
+          "name": "AttributeTable"
+        },
+        {
+          "uri": "widgets/Coordinate/Widget",
+          "position": {
+            "left": 20,
+            "bottom": 60,
+            "relativeTo": "map"
+          },
+          "id": "widgets_Coordinate_Widget_28",
+          "name": "Coordinate",
+          "version": "2.25",
+          "config": {
+            "spatialReferences": [
+              {
+                "wkid": "4326",
+                "label": "GCS_WGS_1984",
+                "outputUnit": "DEGREE_MINUTE_SECONDS",
+                "transformationWkid": "",
+                "transformationLabel": "Transformation name",
+                "transformForward": false,
+                "options": {
+                  "sameSRWithMap": false,
+                  "isGeographicCS": true,
+                  "isGeographicUnit": true,
+                  "isProjectedCS": false,
+                  "isProjectUnit": false,
+                  "spheroidCS": 4326,
+                  "defaultUnit": "Degree",
+                  "unitRate": 1
+                }
+              }
+            ],
+            "decimalPlaces": 3,
+            "addSeparator": true,
+            "displayOrderLonLat": true
+          }
+        },
+        {
+          "uri": "widgets/Scalebar/Widget",
+          "position": {
+            "left": 27,
+            "bottom": 25,
+            "relativeTo": "map"
+          },
+          "version": "2.25",
+          "id": "widgets_Scalebar_Widget_29",
+          "name": "Scalebar"
+        },
+        {
+          "uri": "widgets/Splash/Widget",
+          "visible": false,
+          "position": {
+            "relativeTo": "browser"
+          },
+          "version": "2.25",
+          "id": "widgets_Splash_Widget_30",
+          "name": "Splash"
+        },
+        {
+          "position": {
+            "right": 20,
+            "top": 150,
+            "relativeTo": "map"
+          },
+          "placeholderIndex": 1,
+          "id": "_32"
+        },
+        {
+          "position": {
+            "right": 20,
+            "top": 200,
+            "relativeTo": "map"
+          },
+          "placeholderIndex": 2,
+          "id": "_33"
+        },
+        {
+          "uri": "widgets/ExtentNavigate/Widget",
+          "position": {
+            "top": 255,
+            "left": 25,
+            "relativeTo": "map"
+          },
+          "version": "2.25",
+          "id": "widgets_ExtentNavigate_Widget_34",
+          "name": "ExtentNavigate"
+        },
+        {
+          "uri": "widgets/AddAtributes/Widget",
+          "name": "Adicionar Atributos",
+          "version": "1.0",
+          "visible": true,
+          "position": {
+            "right": 20,
+            "top": 270,
+            "relativeTo": "map"
+          },
+          "id": "widgets_AddAtributes_Widget_43"
+        }
+      ],
+        "panel": {
+            "uri": "jimu/OnScreenWidgetPanel",
+            "position": {
+                "relativeTo": "map"
+            }
+        }
+    },
+    "map": {
+        "3D": false,
+        "2D": true,
+        "position": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+        },
+        "itemId": "6e03e8c26aad4b9c92a87c1063ddb0e3",
+        "mapOptions": {
+            "extent": {
+                "xmin": -1.0483491303365761E7,
+                "ymin": -1008561.433303752,
+                "xmax": -5757848.46666428,
+                "ymax": 1936404.3924667356,
+                "spatialReference": {
+                    "wkid": 102100,
+                    "lateswkid":4326
+                }
+            }
+        },
+        "id": "map",
+        "portalUrl": "https://desarollociaf.maps.arcgis.com/",
+        "appProxy": {
+            "mapItemId": "6e03e8c26aad4b9c92a87c1063ddb0e3",
+            "proxyItems": []
+        }
+    },
+    "widgetPool": {
+        "panel": {
+            "uri": "themes/LaunchpadTheme/panels/LaunchpadPanel/Panel",
+            "position": {
+                "relativeTo": "map"
+            }
+        },
+        "widgets": [
+            {
+                "uri": "widgets/Legend/Widget",
+                "version": "2.25",
+                "id": "widgets_Legend_Widget_18",
+                "name": "Legend",
+                "index": 2,
+                "label": "Leyenda",
+                "config": {
+                    "legend": {
+                        "arrangement": 0,
+                        "autoUpdate": true,
+                        "respectCurrentMapScale": true
+                    },
+                    "layerState": {},
+                    "syncWithWebmap": false,
+                    "showLegendForBasemap": false
+                }
+            },
+            {
+                "uri": "widgets/LayerList/Widget",
+                "version": "2.25",
+                "id": "widgets_LayerList_Widget_19",
+                "name": "LayerList",
+                "index": 3,
+                "label": "Lista de Capas",
+                "config": {
+                    "showTitle": true,
+                    "showBasemap": false,
+                    "showLegend": true,
+                    "expandAllLayersByDefault": false,
+                    "contextMenu": {
+                        "ZoomTo": true,
+                        "Transparency": true,
+                        "SetVisibilityRange": true,
+                        "EnableOrDisablePopup": true,
+                        "ControlLabels": true,
+                        "MoveupOrMovedown": true,
+                        "OpenAttributeTable": true,
+                        "DescriptionOrShowItemDetailsOrDownload": true
+                    },
+                    "layerOptions": {}
+                }
+            },
+            {
+                "name": "AddData",
+                "label": "Añadir datos",
+                "version": "2.25",
+                "uri": "widgets/AddData/Widget",
+                "config": {
+                    "numPerPage": 30,
+                    "scopeOptions": {
+                        "MyContent": {
+                            "allow": true,
+                            "label": null
+                        },
+                        "MyOrganization": {
+                            "allow": true,
+                            "label": null
+                        },
+                        "Curated": {
+                            "allow": true,
+                            "label": null,
+                            "filter": null
+                        },
+                        "ArcGISOnline": {
+                            "allow": true,
+                            "label": null
+                        },
+                        "defaultScope": "MyOrganization"
+                    },
+                    "addFromUrl": {
+                        "allow": true
+                    },
+                    "addFromFile": {
+                        "allow": true,
+                        "maxRecordCount": 1000
+                    }
+                },
+                "index": 4,
+                "id": "widgets_AddData_Widget_38"
+            },
+            {
+                "name": "Print",
+                "label": "Salida Gráfica",
+                "version": "2.25",
+                "uri": "widgets/Print/Widget",
+                "config": {
+                    "serviceURL": "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+                    "defaultTitle": "GEOPORTALSAE",
+                    "defaultAuthor": "GEOPORTALSAE",
+                    "defaultCopyright": "",
+                    "defaultFormat": "PDF",
+                    "defaultLayout": "MAP_ONLY",
+                    "copyrightEditable": true
+                },
+                "index": 5,
+                "id": "widgets_Print_Widget_39"
+            },
+            {
+                "name": "EdicionCartografica",
+                "label": "Edición Cartográfica",
+                "version": "2.5",                
+                "uri": "widgets/EdicionCartografica/Widget",
+                "index": 8,
+                "id": "widgets_EdicionCartografica_Widget_44",
+                "config": {
+                    "defaultLayout": "MAP_ONLY"
+                }
+              }
+        ],
+        "groups": [
+            {
+                "label": "Herramientas de Aplicación",
+                "widgets": [
+                    {
+                        "name": "Select",
+                        "label": "Selección Espacial",
+                        "version": "2.5",
+                        "uri": "widgets/Select/Widget",
+                        "index": 7,
+                        "id": "widgets_Select_Widget_47",
+                        "config": "configs/Select/config_Identificar.json"
+                       },
+                    {
+                        "name": "Measurement",
+                        "label": "Medir",
+                        "version": "2.25",
+                        "uri": "widgets/Measurement/Widget",
+                        "config": {
+                            "measurement": {
+                                "defaultAreaUnit": "esriSquareMeters",
+                                "defaultLengthUnit": "esriMeters"
+                            },
+                            "showArea": true,
+                            "showDistance": true,
+                            "showLocation": true,
+                            "defaultAreaUnit": "esriSquareMiles",
+                            "defaultLengthUnit": "esriMiles",
+                            "isOperationalLayer": false
+                        },
+                        "index": 5,
+                        "id": "widgets_Measurement_Widget_37"
+                    },
+                    {
+                        "name": "Draw",
+                        "label": "Dibujar",
+                        "version": "2.25",
+                        "uri": "widgets/Draw/Widget",
+                        "config": {
+                            "locationUnits": [
+                                {
+                                    "unit": "DEGREES",
+                                    "abbr": "dd",
+                                    "format": "YN XE"
+                                },
+                                {
+                                    "unit": "DEGREE-MINUTE-SECOND",
+                                    "abbr": "dms",
+                                    "format": "A°B'C\"N X°Y'Z\"E"
+                                }
+                            ],
+                            "distanceUnits": [
+                                {
+                                    "unit": "KILOMETERS",
+                                    "abbr": "km"
+                                },
+                                {
+                                    "unit": "MILES",
+                                    "abbr": "mi"
+                                },
+                                {
+                                    "unit": "METERS",
+                                    "abbr": "m"
+                                },
+                                {
+                                    "unit": "FEET",
+                                    "abbr": "ft"
+                                },
+                                {
+                                    "unit": "YARDS",
+                                    "abbr": "yd"
+                                },
+                                {
+                                    "unit": "NAUTICAL_MILES",
+                                    "abbr": "nm"
+                                }
+                            ],
+                            "areaUnits": [
+                                {
+                                    "unit": "SQUARE_KILOMETERS",
+                                    "abbr": "sq km"
+                                },
+                                {
+                                    "unit": "SQUARE_MILES",
+                                    "abbr": "sq mi"
+                                },
+                                {
+                                    "unit": "ACRES",
+                                    "abbr": "ac"
+                                },
+                                {
+                                    "unit": "HECTARES",
+                                    "abbr": "ha"
+                                },
+                                {
+                                    "unit": "SQUARE_METERS",
+                                    "abbr": "sq m"
+                                },
+                                {
+                                    "unit": "SQUARE_FEET",
+                                    "abbr": "sq ft"
+                                },
+                                {
+                                    "unit": "SQUARE_YARDS",
+                                    "abbr": "sq yd"
+                                }
+                            ],
+                            "isOperationalLayer": false
+                        },
+                        "index": 4,
+                        "id": "widgets_Draw_Widget_36"
+                    },
+                    {
+                      "name": "UbicarPorCoordenadas",
+                      "version": "2.25",
+                      "IsController": false,
+                      "uri": "widgets/UbicarPorCoordenadas/Widget",
+                      "index": 6,
+                      "id": "widgets_UbicarPorCoordenadas_Widget_48"
+                    }
+                ],
+                "index": 6,
+                "id": "_40",
+                "visible": true,
+                "panel": {
+                    "uri": "themes/LaunchpadTheme/panels/LaunchpadPanel/Panel",
+                    "position": {
+                        "relativeTo": "map"
+                    }
+                },
+                "groupPopupTitle": "Configure",
+                "icon":"./jimu.js/images/UnionGeometria.png"
+            },
+            {
+                "label": "Consultas",
+                "widgets": [
+
+                  {
+                    "name": "ConsultaSimple",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/ConsultaSimple/Widget",
+                    "index": 6,
+                    "id": "widgets_ConsultaSimple_Widget_39"
+                  },		  
+                  {
+                    "name": "ConsultaAvanzada",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/ConsultaAvanzada/Widget",
+                    "index": 4,
+                    "id": "widgets_ConsultaAvanzada_Widget_36"
+                  },		  
+                  {
+                    "name": "ConsultaAvaluos",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/ConsultaAvaluos/Widget",
+                    "index": 5,
+                    "id": "widgets_ConsultaAvaluos_Widget_37"
+                  },		  
+                  {
+                    "name": "ConsultaCatastro",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/ConsultaCatastro/Widget",
+                    "index": 5,
+                    "id": "widgets_ConsultaCatastro_Widget_38"
+                  },		  
+                  {
+                    "name": "ConsultaNotariaRegistro",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/ConsultaNotariaRegistro/Widget",
+                    "index": 5,
+                    "id": "widgets_ConsultaNotariaRegistro_Widget_39"
+                  },		  
+                  {
+                    "name": "ConsultaSAE",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/ConsultaSAE/Widget",
+                    "index": 5,
+                    "id": "widgets_ConsultaSAE_Widget_40"
+                  },
+                  {
+                    "name": "Indicadores",
+                    "version": "2.5",
+                    "IsController": false,
+                    "uri": "widgets/IndicadoreSae/Widget",
+                    "index": 6,
+                    "id": "widgets_IndicadoreSae_Widget_41"
+                  }
+                ],
+                "index": 6,
+                "id": "_41",
+                "visible": true,
+                "panel": {
+                  "uri": "themes/LaunchpadTheme/panels/LaunchpadPanel/Panel",
+                  "position": {
+                    "relativeTo": "map"
+                  }
+                },
+                "icon":"./jimu.js/images/Consultas.png"
+
+            }
+        ]
+    },
+    "mobileLayout": {
+        "widgetOnScreen": {
+            "widgets": [
+                {
+                    "uri": "themes/LaunchpadTheme/widgets/AnchorBarController/Widget",
+                    "position": {
+                        "bottom": 0,
+                        "height": 40,
+                        "width": "100%",
+                        "zIndex": 0,
+                        "relativeTo": "map"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "themes/LaunchpadTheme/widgets/Header/Widget",
+                    "position": {
+                        "left": 0,
+                        "right": 0,
+                        "top": 0,
+                        "height": 46,
+                        "relativeTo": "map"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "widgets/Search/Widget",
+                    "position": {
+                        "left": 10,
+                        "top": 10,
+                        "right": 10,
+                        "zIndex": 0,
+                        "relativeTo": "map"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "widgets/OverviewMap/Widget",
+                    "position": {
+                        "right": 20,
+                        "top": 20,
+                        "relativeTo": "map"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "widgets/ZoomSlider/Widget",
+                    "position": {
+                        "right": 10,
+                        "bottom": 160,
+                        "relativeTo": "map"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "widgets/HomeButton/Widget",
+                    "position": {
+                        "right": 10,
+                        "bottom": 75,
+                        "relativeTo": "map"
+                    }
+                },
+                {
+                    "uri": "widgets/MyLocation/Widget",
+                    "inPanel": false,
+                    "position": {
+                        "right": 10,
+                        "bottom": 115,
+                        "relativeTo": "map"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "widgets/AttributeTable/Widget",
+                    "version": "2.25",
+                    "position": {
+                        "left": 10,
+                        "bottom": 60,
+                        "relativeTo": "map"
+                    },
+                    "closeable": true
+                },
+                {
+                    "uri": "widgets/Coordinate/Widget",
+                    "position": {
+                        "left": 20,
+                        "bottom": 60,
+                        "relativeTo": "map"
+                    }
+                },
+                {
+                    "uri": "widgets/Scalebar/Widget",
+                    "position": {
+                        "left": 50,
+                        "bottom": 70,
+                        "relativeTo": "map"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "widgets/Splash/Widget",
+                    "visible": false,
+                    "position": {
+                        "relativeTo": "browser"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "position": {
+                        "left": 10,
+                        "bottom": 195,
+                        "relativeTo": "map"
+                    }
+                },
+                {
+                    "position": {
+                        "left": 10,
+                        "bottom": 155,
+                        "relativeTo": "map"
+                    }
+                },
+                {
+                    "position": {
+                        "left": 10,
+                        "bottom": 115,
+                        "relativeTo": "map"
+                    }
+                },
+                {
+                    "uri": "widgets/ExtentNavigate/Widget",
+                    "visible": false,
+                    "position": {
+                        "right": 10,
+                        "bottom": 238,
+                        "relativeTo": "map"
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "widgets/FullScreen/Widget",
+                    "visible": false,
+                    "position": {
+                        "right": 70,
+                        "top": 20
+                    },
+                    "version": "2.25"
+                },
+                {
+                    "uri": "widgets/TablaContenido/Widget",
+                    "position": {
+                        "left": 5,
+                        "top": 125
+                    }
+                }
+            ]
+        },
+        "map": {
+            "position": {
+                "left": 0,
+                "top": 0,
+                "right": 0,
+                "bottom": 0
+            }
+        },
+        "widgetPool": {
+            "panel": {
+                "uri": "themes/LaunchpadTheme/panels/LaunchpadPanel/Panel"
+            }
+        }
+    },
+    "loadingPage": {
+        "backgroundColor": "#508dca",
+        "backgroundImage": {
+            "visible": false
+        },
+        "loadingGif": {
+            "visible": true,
+            "uri": "configs/loading/images/predefined_loading_1.gif",
+            "width": 58,
+            "height": 29
+        }
+    },
+    "wabVersion": "2.25",
+    "_buildInfo": {
+        "widgetManifestsMerged": true
+    },
+    "isWebTier": false,
+    "httpProxy": {
+        "useProxy": true,
+        "alwaysUseProxy": false,
+        "url": "/proxy/proxy.ashx",
+        "rules": [
+            {
+<<<<<<< HEAD
+                "urlPrefix": "http://190.255.42.26:90/ADMINSERV/AdminGeoApplication/AdminGeoWebServices/getTablaContenidoJsTree/public",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "http://190.255.42.26:6080/arcgis/rest/services/QUINDIO_III/CartografiaBasica/MapServer/75?f=json",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "http://190.255.42.26:6080/arcgis/rest/services/QUINDIO_III/Industria_Y_Comercio/MapServer/0",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "http://190.255.42.26:6080/arcgis/rest/services/QUINDIO_III/OrdenamientoTerritorial/MapServer/10",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "https://190.85.164.56:6080/arcgis/rest/services/QUINDIO_III/Riesgo_Edicion/FeatureServer/1",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "https://190.85.164.56:6080/arcgis/rest/services/QUINDIO_III/Riesgo_Edicion/FeatureServer/2",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "https://190.85.164.56:6080/arcgis/rest/services/QUINDIO_III/Riesgo_Edicion/FeatureServer/0",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "https://190.85.164.56:6080/arcgis/rest/services/QUINDIO_III/Riesgo_Edicion/FeatureServer/4",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "http://190.85.164.56:6080/arcgis/rest/info",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "https://sae.igac.gov.co/arcgis/rest/info?f=json",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "https://geo.upme.gov.co/server/rest/services/ICEE/ICEE_2018_dpto/MapServer/0",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer/0",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+			 {
+                "urlPrefix": "https://geo.upme.gov.co/server/rest/services/ICEE/ICEE_2018_dpto/MapServer/0",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer/0",
+                "proxyUrl": "/proxy/proxy.ashx"
+            },
+            {
+                "urlPrefix": "http://localhost:59613/ConsultaR1R2.svc",
+                "proxyUrl": "/proxy/proxy.ashx"
+            }
+
+        ]
+    },
+    "dataSource": {
+        "dataSources": {},
+        "settings": {}
+    },
+    "appItemId": "9407033060cc427ab821d523ff0d2609"
+}

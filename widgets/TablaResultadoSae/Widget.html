@@ -1,0 +1,38 @@
+<div class="claro esri" data-dojo-type="dijit/layout/BorderContainer"
+	 data-dojo-props="design:'headline'"
+	 style="width:100%; height:100%;">
+
+	<div id="loadingResultadoSae" class="loader" style="display: none;">
+		<span id="status"></span>
+		<img src="./images/loadingCapa.gif" alt="" style="height: 50px;">
+	</div>
+
+	<div id="loadingFeatureTableSae">
+	</div>
+
+	<div id="divTablaResultadoSae" data-dojo-type="dijit/layout/ContentPane"
+		 data-dojo-props="region:'bottom', splitter:true" style="height:100%">
+
+		<div id="myTableNodeSae"></div>
+
+	</div>
+
+	<!--<div id="divResultadoSaeJson" data-dojo-type="dijit/layout/ContentPane"
+		 data-dojo-props="region:'bottom', splitter:true" style="height:100%">
+
+		<div id="myTableSaeJson"></div>
+
+	</div>-->
+
+	<div id="divResultadoSaeJson" data-dojo-type="dijit/layout/ContentPane"
+		 data-dojo-props="region:'bottom', splitter:true" style="height:100%">
+
+		<table class="table table-bordered table-striped" id="idTableJson">
+			<!--<table class="table table-fixed table-condensed" id="idTableJson"></table>-->
+		</table>
+	</div>
+
+	<div class="container">
+	</div>
+
+</div>

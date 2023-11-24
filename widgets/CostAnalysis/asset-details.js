@@ -8,7 +8,6 @@ define("dojo/_base/declare dojo/_base/html jimu/BaseWidget dojo/Evented dijit/_W
         templateString: L, baseClass: "jimu-widget-cost-analysis-asset-details",
         _layerDetailsNode: {}, _layerIndexes: [], _openGroups: {}, postCreate: function () {
             this.inherited(arguments); this._layerDetailsNode = {}; this._openGroups = {}; this.listData = []; this._layerIndexes = []; B.forEach(this.config.layerSettings, h.hitch(this, function (a) {
-                console.log(11111111111111);
                 if (a.editable && this.map.getLayer(a.id)) {
                     this._openGroups[a.id] = []; this._layerDetailsNode[a.id] = e.create("div"); var b = { title: this.map.getLayer(a.id).name, content: this._layerDetailsNode[a.id], icon: "", actionIcon: "", isOpen: !1, isHidden: !0 }; this.listData.push(b);
                     this._layerIndexes.push(a.id)
@@ -17,14 +16,13 @@ define("dojo/_base/declare dojo/_base/html jimu/BaseWidget dojo/Evented dijit/_W
         }, startup: function () {
             this.inherited(arguments); this._initItemList(); this._initCostEquationEditor(); this.own(m(document.body, "click", h.hitch(this, function (a) { this.isPartOfPopup(a.target || a.srcElement) || this._closePopupDialog() }))); this.own(m(this.okButton, "click", h.hitch(this, function () { this.emit("onOkButtonClicked") }))); this.own(m(this.okButton, "keydown", h.hitch(this, function (a) { if (a.keyCode === q.ENTER || a.keyCode === q.SPACE) x.stop(a), this.emit("onOkButtonClicked") })));
             this.own(m(this.additionalCostBtn, "click", h.hitch(this, function () { this.emit("showAdditionalCost") }))); this.own(m(this.additionalCostBtn, "keydown", h.hitch(this, function (a) { if (a.keyCode === q.ENTER || a.keyCode === q.SPACE) x.stop(a), this.emit("showAdditionalCost") })))
-        }, reset: function () {console.log(22222222222222); for (var a in this._openGroups) this._openGroups[a] = [] }, _initItemList: function () {
+        }, reset: function () {for (var a in this._openGroups) this._openGroups[a] = [] }, _initItemList: function () {
             this.itemList = new O({
                 itemList: this.listData, showArrow: !0, togglePanels: !0, openMultiple: !0, setAutoHeight: !0, highlighter: !0, highlighterColor: this.config.selectedThemeColor,
                 widgetDomNode: this.widgetDomNode, nls: this.nls
             }, e.create("div", {}, this.listNode)); this.own(m(this.itemList, "onActionButtonClicked", h.hitch(this, function (b) { this.emit("actionClicked", b) }))); this.own(m(this.itemList, "onTitleClicked", h.hitch(this, function (b) { this.emit("titleClicked", b) }))); this.own(m(this.itemList, "onLoad", h.hitch(this, function () { this.emit("onLoad") }))); this.itemList.startup(); var a = this._createTooltipDialogContent(); this.assetDetailsDialog = new M({ "class": this.baseClass, content: a, style: "width : 180px" })
         },
         _createTooltipDialogContent: function () {
-            console.log(666666666666);
             var a = e.create("div", {}, null); var b = e.create("div", { style: "height : 20px; margin: 0px" }, a); b = e.create("div", { "class": "esriCTDialogIcon esriCTClose", title: this.nls.workBench.closeDialog, tabindex: "0", role: "button", "aria-label": this.nls.workBench.closeDialog }, b); this.own(m(b, "click", h.hitch(this, this._closePopupDialog))); this.own(m(b, "keydown", h.hitch(this, function (c) { if (c.keyCode === q.ENTER || c.keyCode === q.SPACE || c.keyCode === q.ESCAPE) x.stop(c), this._closePopupDialog() })));
             b = e.create("div", { "class": "esriCTRowContainer", title: this.nls.workBench.zoomToAsset, tabindex: "0", role: "button", "aria-label": this.nls.workBench.zoomToAsset }, a); var d = e.create("div", { "class": "esriCTRowContainer", title: this.nls.workBench.deleteAsset, tabindex: "0", role: "button", "aria-label": this.nls.workBench.deleteAsset }, a); e.create("div", { "class": "esriCTDialogIcon esriCTZoom" }, b); e.create("div", { "class": "esriCTTooltipDialogLabel esriCTEllipsis", innerHTML: this.nls.workBench.zoomToAsset }, b); this.own(m(b,
                 "click", h.hitch(this, function (c) { x.stop(c); this._zoomToAsset(); this._support508ToPopupDialog(); A.focus(c.currentTarget) }))); this.own(m(b, "keydown", h.hitch(this, function (c) { if (c.keyCode === q.ENTER || c.keyCode === q.SPACE) x.stop(c), this._zoomToAsset(), this._support508ToPopupDialog(), A.focus(c.currentTarget); c.keyCode === q.ESCAPE && (x.stop(c), this._closePopupDialog()) }))); e.create("div", { "class": "esriCTDialogIcon esriCTDelete" }, d); e.create("div", { "class": "esriCTTooltipDialogLabel", innerHTML: this.nls.workBench.deleteAsset },
@@ -42,7 +40,6 @@ define("dojo/_base/declare dojo/_base/html jimu/BaseWidget dojo/Evented dijit/_W
                 })); this._closePopupDialog()
             }
         }, _rowClick: function (a) {
-            console.log(55555555555);
             a.stopPropagation(); a.preventDefault(); r(".esriCTRowSelected", this.assetDetailsNode).removeClass("esriCTRowSelected"); l.add(a.currentTarget, "esriCTRowSelected"); this.selectedRowInfo = {}; this.selectedRowInfo.templateName = f.get(a.currentTarget, "templateName"); this.selectedRowInfo.region = f.get(a.currentTarget, "region"); this.selectedRowInfo.scenario = f.get(a.currentTarget, "scenario");
             this.selectedRowInfo.layerId = f.get(a.currentTarget, "layerId"); this.selectedRowInfo.objectId = f.get(a.currentTarget, "objectId"); this._openPopupDialog(this.assetDetailsDialog, a)
         }, _createExpandCollapseButton: function (a, b, d, c) {

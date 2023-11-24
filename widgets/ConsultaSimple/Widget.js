@@ -3,18 +3,13 @@ let capaUrl = "";
 let todosGrupos = [];
 let fieldsCapa = [];
 let loadingCS;
-// let theLayer;
 let resultadosMandar
-// let extentInicial;
 let selAtributos;
 let selCapas;
 let objConsultaSimple = {
     nameObjConsulta: "ConsultaSimple"
 }
-// debugger
-// if (!EsriMap) {
-    var EsriMap;
-// }
+var EsriMap;
 if (!appGlobal) {
     var appGlobal
 }

@@ -26,11 +26,14 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
 
                 setearMapa(this);
                 let thisMyWidResul = this;
+
                 query("#btnExportar").on("click", async function (evt) {
                     //console.log("exporto the wollow");
                     //console.log(selectedRegisterFromTable.features);
                     //console.log(selectedRegisterFromTable.rows);
-                    console.log(thisMyWidResul);
+                    if (consts.debug) {                                            
+                        console.log({thisMyWidResul});
+                    }
                     var featureSet = new FeatureSet();
                     featureSet.features = EsriMap.graphics.graphics;
                     const load = widgetResultados.data.tipoResultado == consts.consultas.consultaAvanzada
@@ -66,7 +69,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 let divResulConsultaCatastro = dom.byId("divResulConsultaCatastro");
                 if (widgetResultados.data) {
                     switch (widgetResultados.data.tipoResultado) {
-                        case (consts.consulAvaluoMasivo):
+                        case consts.consulAvaluoMasivo:
                             //console.log(consts.consulAvaluoMasivo);
                             cargarTablaResultados(widgetResultados);
                             divResulConsultaUnica.style.display = "none";
@@ -274,9 +277,10 @@ function cargarTablaResultados(widget) {
                 || tipoResultado === consts.consulNotariadoRegistro || tipoResultado === consts.consulSAE) {
                 myFeatureLayer = new FeatureLayer(featureCollection, {
                     showLabels: true
-                  });
-                fieldInfos = featureCollection.layerDefinition.fields
+                });
+                //console.log(featureCollection);
 
+                fieldInfos = featureCollection.layerDefinition.fields
                 /* fieldInfos = [
                     {
                         name: 'OBJECTID', 
@@ -315,7 +319,7 @@ function cargarTablaResultados(widget) {
                     showLabels:true
                 });
                 fieldInfos = [
-                    {    
+                    {
                         name: 'OBJECTID_12', 
                         alias: 'id', 
                         editable: false //disable editing on this field 
@@ -390,7 +394,7 @@ function cargarTablaResultados(widget) {
                 myTable.on("row-select", function (evt) {
                     myTable.getFeatureDataById(myTable.selectedRowIds).then(function (features) {
                         var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0, 0, 0, 2]), 3), new Color([0, 0, 0, 1]));
-                        if (tipoResultado === consts.consultas.consultaAvanzada ) {
+                        if (tipoResultado === consts.consultas.consultaAvanzada) {
                            //console.log(widget) 
                            
                             var query = new Query();
@@ -462,7 +466,7 @@ function cargarTablaResultados(widget) {
                                 // var stateExtent = graphicsUtils.graphicsExtent(features);
                                 // EsriMap.setExtent(stateExtent.expand(1.5));
                             }));
-                            /* 
+                        /* 
                             // widget.data.featureCollection.featureSet.features.forEach(f => {
                             widget.data.featuresSelected.forEach(f => {
                                 myTable.selectedRowIds.forEach(objectid => {

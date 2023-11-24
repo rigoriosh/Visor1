@@ -15,22 +15,10 @@ const insertProjecGeometry = async(dataToSend, url) => {
 const postData = async (url = "", data = {}) => {
     try {
         let formData = new FormData();
-        formData.append('json', 
-        {
-          "type": "FeatureCollection",
-          "features": [
-            {
-              "type": "Feature",
-              "geometry": { "type": "Point", "coordinates": [102.0, 0.5] },
-              "properties": { "prop0": "value0" }
-            }
-          ]
-        }
-        );
-        // formData.append('gdbVersion', '');
-        // formData.append('rollbackOnFailure', true);
-        // formData.append('timeReferenceUnknownClient', false);
-        // Default options are marked with *
+        formData.append('features', JSON.stringify(data.features));
+        formData.append('gdbVersion', '');
+        formData.append('rollbackOnFailure', true);
+        formData.append('timeReferenceUnknownClient', false);
         const response = await fetch(url, {
           method: "POST", // *GET, POST, PUT, DELETE, etc.
           mode: "no-cors", // no-cors, *cors, same-origin
@@ -353,7 +341,6 @@ const getDataByFmi = async(Fmi)  => {
       
   } catch (error) {
     console.error({error});
-    // return error
-    return GetByFmi
+    return error
   }
 }
