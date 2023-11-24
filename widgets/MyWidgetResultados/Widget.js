@@ -308,14 +308,14 @@ function cargarTablaResultados(widget) {
                 myFeatureLayer = new FeatureLayer(widget.data.data.urlDparts, {
                     // mode: FeatureLayer.MODE_ONDEMAND,
                     // outFields: "*",
-                    outFields: ["DEPARTAMEN","COD_DEPART","REGION","Poblado"],
+                    outFields: ["DEPARTAMEN","COD_DEPART","REGION","Poblado", "Tamano", "Area_M", "OBSERVACIO"],
                     definitionExpression: "1=1",
                     visible: true,
                     id: "capaResultadoCA",
                     showLabels:true
                 });
                 fieldInfos = [
-                    {
+                    {    
                         name: 'OBJECTID_12', 
                         alias: 'id', 
                         editable: false //disable editing on this field 
@@ -337,7 +337,20 @@ function cargarTablaResultados(widget) {
                     {
                         name: 'Poblado', 
                         alias: 'Poblado'
+                    },
+                    {
+                        name: 'Tamano', 
+                        alias: 'Tamaño'
+                    },
+                    {
+                        name: 'Area_M', 
+                        alias: 'Área'
+                    },
+                    {
+                        name: 'OBSERVACIO', 
+                        alias: 'Observación'
                     }
+                    
                 ]
             }
 

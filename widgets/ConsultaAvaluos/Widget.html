@@ -1,5 +1,9 @@
 <div id="divConsultaAvaluos" style="height: 100%;margin-top: 10px;">
-
+    <div id="loadingAval" class="loader" style="display: none;">
+        <span id="status"></span>
+        <!-- <img src="../../images/loadingCapa.gif" alt=""> -->
+        <img src="./images/loadingCapa.gif" alt="">
+    </div>
     <div style="display: flex; flex-direction: column;" class="form-group">
         <label class="labels" for="selectConsulta">Seleccione la consulta</label>
         <select id="selectConsulta" name="selectConsulta" class="form-control form-control-sm">
@@ -23,24 +27,24 @@
             <label class="labels" for="TipInmu">Tipo de Bien Inmueble</label>
             <select name="TipInmu " id="sTipInmu" onchange="cambioSTipInmu(this)" class="form-control form-control-sm " data-dojo-type="dijit/form/Select"></select>
         </div>
-        <input id="btnConsultaMasiva" type="button" value="Ejecutar" style="width: 24%;" class="btn btn-outline-success btn-sm mt-3">
+        <input id="btnConsultaMasiva" type="button" value="Ejecutar" style="width: 24%;" class="btn btn-outline-success btn-sm mt-1">
     </div>
 
     <div id="divConsultaUnica" style="display: none; flex-direction: column;">
         <p class="titulo">Consulta única</p>
 
         <form class="form-check ml-3rem" >
-            <input class="form-check-input" type="radio" name="tipo_attach" id="folioMatricula" value="folioMatricula">Número de folio matrícula<br>
+            <input class="form-check-input" type="radio" name="tipo_attach" id="folioMatricula" value="FOLIO DE MATRICULA">Número de folio matrícula<br>
             <br>
-            <input class="form-check-input"  type="radio" name="tipo_attach" id="ingresarGeograficas" value="ingresarGeograficas">Número predial<br>
+            <input class="form-check-input"  type="radio" name="tipo_attach" id="ingresarGeograficas" value="NUMERO AVALÚO">Número predial<br>
             <br>
         </form>
 
         <!-- <label class="labels" for="Departamento">Número de folio matrícula</label>
         <input type="text" name="folioMatricula" id="folioNumMatricula"> -->
-        <label class="labels" for="numero">Número</label>
+        <label class="labels" for="idNumero">Número</label>
         <div class="input-group ">
-            <input type="text" name="numero" id="numero" data-toggle="tooltip" title="Número" data-placement="top" class="form-control br-ml">
+            <input type="text" name="idNumero" id="idNumero" data-toggle="tooltip" title="Número" data-placement="top" class="form-control br-ml">
         </div>
         <h3 id="warningConsUnica" class="warning">Recuerda ingresar un número de folio matrícula o un número predial</h3>
         <button id="btnConsultaUnica" type="button" class="btn btn-outline-success btn-sm mt-3" style="width: 24%;">Ejecutar</button>

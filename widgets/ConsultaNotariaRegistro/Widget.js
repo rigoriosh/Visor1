@@ -2,42 +2,52 @@
 // See http://js.arcgis.com/3.15/esri/copyright.txt and http://www.arcgis.com/apps/webappbuilder/copyright.txt for details.
 
 //>>built
-var appGlobal;
+var thisNotariadoRegistro;
+
 
 define(["dojo/_base/declare", "jimu/BaseWidget", "dojo/query"],
 function (declare, BaseWidget, query) {
      return declare([BaseWidget], {
         baseClass: "jimu-widget-NotariaRegistro",
-        widgetConsNotariadoRegistro:{},
+        
         startup: function() {
             this.inherited(arguments);
-            appGlobal = this;
-            //console.log(appGlobal);
+            thisNotariadoRegistro = this;
+            thisNotariadoRegistro.widgetConsNotariadoRegistro = {
+                fichaMatriInmob:'',
+                numeroNotariadoRegistro: ''
+            };
+            //console.log(thisNotariadoRegistro);
             EsriMap = this.map
             query("#IdFMI").on("change", async function (evt) {
                 const value = evt.target.value;
-                appGlobal.widgetConsNotariadoRegistro = {
-                    ...appGlobal.widgetConsNotariadoRegistro,
-                    fichaMatriInmob: value,
-                    numeroPredial: ''
+                thisNotariadoRegistro.widgetConsNotariadoRegistro = {
+                    ...thisNotariadoRegistro.widgetConsNotariadoRegistro,
+                    fichaMatriInmob: value
                 }
-                //console.log(appGlobal.widgetConsNotariadoRegistro);
             });
-            query("#IdnumeroPredial").on("change", async function (evt) {
+            query("#IdnumeroNotariadoRegistro").on("change", async function (evt) {
                 const value = evt.target.value;
-                appGlobal.widgetConsNotariadoRegistro = {
-                    ...appGlobal.widgetConsNotariadoRegistro,
-                    numeroPredial: value,
-                    fichaMatriInmob: '',
+                thisNotariadoRegistro.widgetConsNotariadoRegistro = {
+                    ...thisNotariadoRegistro.widgetConsNotariadoRegistro,
+                    numeroNotariadoRegistro: value
                 }
-                //console.log(appGlobal.widgetConsNotariadoRegistro);
             });
             query("#btnConsultaNotariadoRegistro").on("click", async function (evt) {
-                console.log(appGlobal.widgetConsNotariadoRegistro);
-                const columnValue = document.getElementById("numero").value;
-                const columnName = appGlobal.widgetConsNotariadoRegistro.fichaMatriInmob === 'on' ? "FMI" : "NUMERO DE ESCRITURA PUBLICA DE CABIDA Y LINDEROS";
+                let {widgetConsNotariadoRegistro} = thisNotariadoRegistro;
+                const columnValue = document.getElementById("IdnumeroNotariadoRegistro").value;
+                const columnName = widgetConsNotariadoRegistro.fichaMatriInmob === 'on' ? "FMI" : "NUMERO DE ESCRITURA PUBLICA DE CABIDA Y LINDEROS";
+                if (consts.debug) {                    
+                    console.log(thisNotariadoRegistro.widgetConsNotariadoRegistro);
+                    console.log(widgetConsNotariadoRegistro.fichaMatriInmob);
+                    console.log(widgetConsNotariadoRegistro.numeroNotariadoRegistro);
+                }
                 const fileName = "BASE_REGISTRO_SNR";
-                appGlobal._consultaAlfanumerica(columnName, columnValue, fileName);
+                if (widgetConsNotariadoRegistro.fichaMatriInmob == '' || widgetConsNotariadoRegistro.numeroNotariadoRegistro == '') {
+                    createDialogInformacionGeneral("Info","Recuerda completar todos los campos...")
+                } else {                    
+                    thisNotariadoRegistro._consultaAlfanumerica(columnName, columnValue, fileName);
+                }
             });
 
         },
@@ -48,40 +58,54 @@ function (declare, BaseWidget, query) {
 
         },
         _consultaAlfanumerica: async function(columnName, columnValue, fileName){            
-            const dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
-            console.log(dataAlfanumerica);
             loader2(true, "loadingNR")
-            if (dataAlfanumerica.status == 400){
+            let {widgetConsNotariadoRegistro} = thisNotariadoRegistro;
+            const dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
+            if (consts.debug) {                    
+                console.log({dataAlfanumerica});
+            }
+            loader2(false, "loadingNR")
+            if (dataAlfanumerica.status === 400){
                 createDialogInformacionGeneral("Info","No se encontró información para esta consulta")
-                loader2(false, "loadingNR")
+                return
+            }else if(dataAlfanumerica.message === "Failed to fetch" || dataAlfanumerica.message === "Unexpected end of input"){
+                createDialogInformacionGeneral("Info","Inconvenientes de conexión con los servidores, intentalo mas tarde o comunícate con el administrador")
+                // loader2(false, "loadingCC")
                 return
             }
-            appGlobal.widgetConsNotariadoRegistro.dataAlfanumerica = dataAlfanumerica;
+            loader2(true, "loadingNR")
+            widgetConsNotariadoRegistro.dataAlfanumerica = dataAlfanumerica;
             const miMunicipio = dataAlfanumerica.CIUDAD
             const urlGeografica = await getDataGeograficaNotariadoRegistro(miMunicipio);
-            console.log(urlGeografica);
-            if (urlGeografica.status == 400){
+            if (consts.debug) {                    
+                console.log({urlGeografica});
+            }
+            loader2(false, "loadingNR")
+            if (urlGeografica.status === 400){
                 createDialogInformacionGeneral("Info","No se encontró información geográfica para esta consulta")
-                loader2(false, "loadingNR")
+                loader2(false, "loadingCC")
                 return
             }
-            appGlobal.widgetConsNotariadoRegistro.urlGeografica = urlGeografica.URL;
+            widgetConsNotariadoRegistro.urlGeografica = urlGeografica.URL;
             const objConsultaNR = {
                 urlCapa:urlGeografica.URL,
                 where: `FMI='${columnValue}'`
             }
-            ejecutarQueryAndQueryTask(objConsultaNR, appGlobal._succeededRequest, appGlobal._errorRequest);
+            ejecutarQueryAndQueryTask(objConsultaNR, thisNotariadoRegistro._succeededRequest, thisNotariadoRegistro._errorRequest);
 
             
         },
         _succeededRequest: function (resp) {
-            console.log(resp);  
+            if (consts.debug) {                    
+                console.log({resp});  
+            }
+            let {widgetConsNotariadoRegistro} = thisNotariadoRegistro;
             let fields = [/* {name: 'OBJECTID', type: 'esriFieldTypeOID', alias: 'OBJECTID'} */];
-            Object.keys(appGlobal.widgetConsNotariadoRegistro.dataAlfanumerica).forEach(e => fields.push(
+            Object.keys(widgetConsNotariadoRegistro.dataAlfanumerica).forEach(e => fields.push(
                 { name: e, type: 'esriFieldTypeString', alias: e, length: 250 })
             );
-            resp.features[0].attributes = appGlobal.widgetConsNotariadoRegistro.dataAlfanumerica
-            appGlobal._SendResultados({
+            resp.features[0].attributes = widgetConsNotariadoRegistro.dataAlfanumerica
+            _SendResultados({
                 tipoResultado: consts.consulNotariadoRegistro,
                 data:{
                     panel:{
@@ -96,9 +120,9 @@ function (declare, BaseWidget, query) {
                       fields
                     },
                 },
-                urlGeografica: appGlobal.widgetConsNotariadoRegistro.urlGeografica,
+                urlGeografica: widgetConsNotariadoRegistro.urlGeografica,
                 responseQueryGeografica: resp,
-                dataAlfanumerica: appGlobal.widgetConsNotariadoRegistro.dataAlfanumerica,
+                dataAlfanumerica: widgetConsNotariadoRegistro.dataAlfanumerica,
                 loading: "loadingNR"
             })
             loader2(false, "loadingNR")
@@ -109,10 +133,10 @@ function (declare, BaseWidget, query) {
                 loader2(false, "loadingNR")
         },
         _SendResultados: function(data){
-            var widget = appGlobal.appConfig.getConfigElementById(consts.widgetMyResultados);
+            var widget = thisNotariadoRegistro.appConfig.getConfigElementById(consts.widgetMyResultados);
             var widgetId = widget.id;
             widget.data = data;
-            appGlobal.openWidgetById(widgetId);
+            thisNotariadoRegistro.openWidgetById(widgetId);
         },
     })
 });

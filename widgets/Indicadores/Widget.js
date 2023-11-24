@@ -22,7 +22,6 @@ function (declare, BaseWidget, query) {
 
         query("#seleccioneTematica").on("change", async function (evt) {
             var datoSelected = this.options[this.selectedIndex].value;
-            console.log(datoSelected);
             if (datoSelected !== 0) {
               tw.store = {
                 ...tw.store,
@@ -34,11 +33,13 @@ function (declare, BaseWidget, query) {
                 seleccioneTematica: ''
               }
             }
-            console.log(tw.store);
+            if (consts.debug) {                    
+              console.log(datoSelected);
+              console.log(tw.store);
+            }
         });
         query("#entidadEspacial").on("change", async function (evt) {
           var datoSelected = this.options[this.selectedIndex].value;
-          console.log(datoSelected);
           if (datoSelected !== 0) {
             tw.store = {
               ...tw.store,
@@ -50,11 +51,13 @@ function (declare, BaseWidget, query) {
               entidadEspacial: ''
             }
           }
-          console.log(tw.store);
+          if (consts.debug) {                    
+            console.log({datoSelected});
+            console.log(tw.store);
+          }
         });
         query("#departamento").on("change", async function (evt) {
           var datoSelected = this.options[this.selectedIndex].value;
-          console.log(datoSelected);
           if (datoSelected !== 0) {
             tw.store = {
               ...tw.store,
@@ -66,11 +69,13 @@ function (declare, BaseWidget, query) {
               entidadEspacial: ''
             }
           }
-          console.log(tw.store);
+          if (consts.debug) {                    
+            console.log({datoSelected});
+            console.log(tw.store);
+          }
         });
         query("#tematica").on("change", async function (evt) {
           var datoSelected = this.options[this.selectedIndex].value;
-          console.log(datoSelected);
           if (datoSelected !== 0) {
             tw.store = {
               ...tw.store,
@@ -82,11 +87,13 @@ function (declare, BaseWidget, query) {
               tematica: ''
             }
           }
-          console.log(tw.store);
+          if (consts.debug) {                    
+            console.log({datoSelected});
+            console.log(tw.store);
+          }
         });  
         query("#anio").on("change", async function (evt) {
-          var datoSelected = this.options[this.selectedIndex].value;
-          console.log(datoSelected);
+          var datoSelected = this.options[this.selectedIndex].value;          
           if (datoSelected !== 0) {
             tw.store = {
               ...tw.store,
@@ -98,7 +105,10 @@ function (declare, BaseWidget, query) {
               anio: ''
             }
           }
-          console.log(tw.store);
+          if (consts.debug) {                    
+            console.log({datoSelected});
+            console.log(tw.store);
+          }
         });
         query("#ejecutar").on("click", async function (evt) {
           console.log(tw.store);
@@ -115,11 +125,13 @@ function (declare, BaseWidget, query) {
 
         },
         onOpen: function () {
-          console.log(55555);
-          // var panel = this.getPanel();
-          // ajustarTamanioWidget(panel, 700, 500)
+          if (consts.debug) {                    
+            console.log(55555);            
+          }
+          var panel = this.getPanel();
+          ajustarTamanioWidget(panel, 700, 500)
 
-          /* option = {
+          option = {
             xAxis: {
               data: ['A', 'B', 'C', 'D', 'E']
             },
@@ -159,7 +171,7 @@ function (declare, BaseWidget, query) {
                 }
               }
             ]
-          }; */
+          };
          /*  option = {
             tooltip: {
               trigger: 'item',
@@ -803,7 +815,7 @@ function (declare, BaseWidget, query) {
               }
             ]
           }; */
-          // renderGrafico(option, 'mainIndicadores', 650, 400);
+          renderGrafico(option, 'mainIndicadores', 650, 400);
           
         },
         getTematicas: function(){
@@ -831,7 +843,9 @@ function (declare, BaseWidget, query) {
         validarForm: function(){
           let validacion = true;
           tw.store.fieldsForm.forEach(e => {
-            console.log(tw.store[e])
+            if (consts.debug) {                    
+              console.log(tw.store[e])
+            }
             if (Number(tw.store[e]) === 0 || tw.store[e] === undefined) {
               validacion = false
             } 

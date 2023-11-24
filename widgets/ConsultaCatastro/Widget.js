@@ -2,7 +2,7 @@
 // See http://js.arcgis.com/3.15/esri/copyright.txt and http://www.arcgis.com/apps/webappbuilder/copyright.txt for details.
 
 //>>built
-var appGlobal;
+var thisConsultaCatastro;
 
 define(["dojo/_base/declare", "jimu/BaseWidget", "dojo/query"],
 function (declare, BaseWidget, query) {
@@ -11,33 +11,34 @@ function (declare, BaseWidget, query) {
         widgetConsCatastro:{},
         startup: function() {
             this.inherited(arguments);
-            appGlobal = this;
-            //console.log(appGlobal);
+            thisConsultaCatastro = this;
+            //console.log(thisConsultaCatastro);
             EsriMap = this.map
             query("#IdFmi").on("change", async function (evt) {
                 const value = evt.target.value;
-                appGlobal.widgetConsCatastro = {
-                    ...appGlobal.widgetConsCatastro,
+                thisConsultaCatastro.widgetConsCatastro = {
+                    ...thisConsultaCatastro.widgetConsCatastro,
                     fichaMatriculaInmob: value,
                     numeroPredial: '',
                     nomColumna: "FMI"
                 }
-                //console.log(appGlobal.widgetConsCatastro);
+                if (consts.debug) {
+                    console.log(thisConsultaCatastro.widgetConsCatastro);
+                }
             });
             query("#IdNPN").on("change", async function (evt) {
                 const value = evt.target.value;
-                appGlobal.widgetConsCatastro = {
-                    ...appGlobal.widgetConsCatastro,
+                thisConsultaCatastro.widgetConsCatastro = {
+                    ...thisConsultaCatastro.widgetConsCatastro,
                     numeroPredial: value,
                     fichaMatriculaInmob: '',
                     nomColumna: "NPN"
                 }
             });
-                //console.log(appGlobal.widgetConsCatastro);
             query("#IdChip").on("change", async function (evt) {
                 const value = evt.target.value;
-                appGlobal.widgetConsCatastro = {
-                    ...appGlobal.widgetConsCatastro,
+                thisConsultaCatastro.widgetConsCatastro = {
+                    ...thisConsultaCatastro.widgetConsCatastro,
                     numeroPredial: value,
                     fichaMatriculaInmob: '',
                     nomColumna: "CHIP"
@@ -45,26 +46,29 @@ function (declare, BaseWidget, query) {
             });
             query("#idValorColumna").on("change", async function (evt) {
                 const value = evt.target.value;
-                appGlobal.widgetConsCatastro = {
-                    ...appGlobal.widgetConsCatastro,
+                thisConsultaCatastro.widgetConsCatastro = {
+                    ...thisConsultaCatastro.widgetConsCatastro,
                     valorColumna: value,
                 }
             });
 
             query("#btnConsultaCatastro").on("click", async function (evt) {
-                // console.log(appGlobal.widgetConsCatastro);
                 //const columnValue = document.getElementById("numero").value;
                 //const columnValue = document.getElementById("idValorColumna").value;
+                
+                if (consts.debug) {                    
+                    console.log(thisConsultaCatastro.widgetConsCatastro);
+                    console.log("fichaMatriculaInmob");
+                    console.log(thisConsultaCatastro.widgetConsCatastro.fichaMatriculaInmob);
+                    console.log(thisConsultaCatastro.widgetConsCatastro);
+                }
 
-                //console.log("fichaMatriculaInmob");
-                //console.log(appGlobal.widgetConsCatastro.fichaMatriculaInmob);
+                const columnName = thisConsultaCatastro.widgetConsCatastro.nomColumna;
+                const columnValue = thisConsultaCatastro.widgetConsCatastro.valorColumna;
 
-                const columnName = appGlobal.widgetConsCatastro.nomColumna;
-                const columnValue = appGlobal.widgetConsCatastro.valorColumna;
-
-                //const columnName = appGlobal.widgetConsCatastro.fichaMatriculaInmob === 'on' ? "FMI" : "NPN";
-                const fileName = "BASE_REGISTRO_R1R2";
-                appGlobal._consultaAlfanumerica(columnName, columnValue, fileName);
+                //const columnName = thisConsultaCatastro.widgetConsCatastro.fichaMatriculaInmob === 'on' ? "FMI" : "NPN";
+                // const fileName = "BASE_REGISTRO_R1R2";
+                thisConsultaCatastro._consultaAlfanumerica(columnName, columnValue, fileName);
             });
 
         },
@@ -81,42 +85,58 @@ function (declare, BaseWidget, query) {
              document.getElementById("IdChip").checked = false;
          },
         _consultaAlfanumerica: async function(columnName, columnValue, fileName){            
-            const dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
-            // console.log(dataAlfanumerica);
             loader2(true, "loadingCC")
-            if (dataAlfanumerica.status == 400){
+            const dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
+            if (consts.debug) {                    
+                console.log({dataAlfanumerica});
+            }
+            // const resp = await dataAlfanumerica.json();            
+            loader2(false, "loadingCC")            
+            if (dataAlfanumerica.status === 400){
                 createDialogInformacionGeneral("Info","No se encontró información para esta consulta")
-                loader2(false, "loadingCC")
+                return
+            }else if(dataAlfanumerica.message === "Failed to fetch" || dataAlfanumerica.message === "Unexpected end of input"){
+                createDialogInformacionGeneral("Info","Inconvenientes de conexión con los servidores, intentalo mas tarde o comunícate con el administrador")
+                // loader2(false, "loadingCC")
                 return
             }
-            appGlobal.widgetConsCatastro.dataAlfanumerica = dataAlfanumerica;
+            loader2(true, "loadingCC")
+            thisConsultaCatastro.widgetConsCatastro.dataAlfanumerica = dataAlfanumerica;
             //const miMunicipio = dataAlfanumerica.CIUDAD
             const miMunicipio = dataAlfanumerica.MPIO_NOM
             const urlGeografica = await getDataGeograficaNotariadoRegistro(miMunicipio);
-            // console.log(urlGeografica);
-            if (urlGeografica.status == 400){
+            if (consts.debug) {                    
+                console.log({urlGeografica});
+            }
+            loader2(false, "loadingCC") 
+            if (urlGeografica.status === 400){
                 createDialogInformacionGeneral("Info","No se encontró información geográfica para esta consulta")
-                loader2(false, "loadingCC")
                 return
             }
-            appGlobal.widgetConsCatastro.urlGeografica = urlGeografica.URL;
-            const objConsultaNR = {
+            thisConsultaCatastro.widgetConsCatastro.urlGeografica = urlGeografica.URL;
+            const objConsulta = {
                 urlCapa:urlGeografica.URL,
-                where: `FMI='${columnValue}'`
-                // where: `${columnName}='${columnValue}'`
+                where: `FMI='${dataAlfanumerica.FMI}'`
             }
-            ejecutarQueryAndQueryTask(objConsultaNR, appGlobal._succeededRequest, appGlobal._errorRequest); //ArcGis
+            ejecutarQueryAndQueryTask(objConsulta, thisConsultaCatastro._succeededRequest, thisConsultaCatastro._errorRequest); //ArcGis
 
             
         },
         _succeededRequest: function (resp) { // ArcGis
-            // console.log(resp);  
+            if (consts.debug) {                    
+                console.log({resp});  
+            }
             let fields = [/* {name: 'OBJECTID', type: 'esriFieldTypeOID', alias: 'OBJECTID'} */];
-            Object.keys(appGlobal.widgetConsCatastro.dataAlfanumerica).forEach(e => fields.push(
+            if (resp.features.length == 0) {
+                createDialogInformacionGeneral("Info","No se encontró información geográfica para esta consulta")
+                loader2(false, "loadingCC")
+                return
+            }
+            Object.keys(thisConsultaCatastro.widgetConsCatastro.dataAlfanumerica).forEach(e => fields.push(
                 { name: e, type: 'esriFieldTypeString', alias: e, length: 250 })
             );
-            resp.features[0].attributes = appGlobal.widgetConsCatastro.dataAlfanumerica
-            appGlobal._SendResultados({
+            resp.features[0].attributes = thisConsultaCatastro.widgetConsCatastro.dataAlfanumerica
+            thisConsultaCatastro._SendResultados({
                 tipoResultado: consts.consulNotariadoRegistro,
                 data:{
                     panel:{
@@ -132,9 +152,9 @@ function (declare, BaseWidget, query) {
                     },
                 },
 
-                urlGeografica: appGlobal.widgetConsCatastro.urlGeografica,
+                urlGeografica: thisConsultaCatastro.widgetConsCatastro.urlGeografica,
                 responseQueryGeografica: resp,
-                dataAlfanumerica: appGlobal.widgetConsCatastro.dataAlfanumerica,
+                dataAlfanumerica: thisConsultaCatastro.widgetConsCatastro.dataAlfanumerica,
                 loading: "loadingCC"
             })
             loader2(false, "loadingCC")
@@ -145,10 +165,10 @@ function (declare, BaseWidget, query) {
                 loader2(false, "loadingCC")
         },
         _SendResultados: function(data){
-            var widget = appGlobal.appConfig.getConfigElementById(consts.widgetMyResultados);
+            var widget = thisConsultaCatastro.appConfig.getConfigElementById(consts.widgetMyResultados);
             var widgetId = widget.id;
             widget.data = data;
-            appGlobal.openWidgetById(widgetId);
+            thisConsultaCatastro.openWidgetById(widgetId);
         },
     })
 });

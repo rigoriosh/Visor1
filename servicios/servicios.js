@@ -84,7 +84,11 @@ const endPoints = {
     departamentos: "https://mapassig.icbf.gov.co:6443/arcgis/rest/services/ICBF/Sistema_Nacional/MapServer/0"
 }
 
-const servicioSNRalfanumerico = "http://localhost:61025/api/ArchivoExcel/?columnName="
-const servicioSNRgeometrias = "http://localhost:53906/api/Gestor/?municipio=";
+const fileName = "BASE_REGISTRO_R1R2";
+const fileNameBaseAvaluos = "BASE_AVALUOS";
+const servicioSNRalfanumerico = "https://sae.igac.gov.co/alfanumericosae/Sae.SIG.RestFileExcel/api/ArchivoExcel/?columnName="
+// const servicioSNRalfanumerico = "http://localhost:61025/api/ArchivoExcel/?columnName="
+const servicioSNRgeometrias = "https://sae.igac.gov.co/alfanumericosae/Sae.SIG.RestGestor/api/Gestor/";
+// const servicioSNRgeometrias = "http://localhost:53906/api/Gestor/?municipio=";
 
 const UrlGetByFmi = "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByFmi/";
