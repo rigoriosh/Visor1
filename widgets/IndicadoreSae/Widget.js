@@ -8,6 +8,7 @@ var tw;
 var configWidget;
 var idIndicadorActivo = "-1";
 var idxIndicadorActivo = "-1";
+var tipoRecaudoSelected = "";
 var fullUrlActiva = "";
 var idCapaActiva = "";
 var nomInd = "";
@@ -131,7 +132,19 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
         return declare([BaseWidget], {
             baseClass: "jimu-widget-IndicadoreSae",
             store: {
-                fieldsForm: ["seleccioneIndicador", "seleccioneTematica", "entidadEspacial", "departamento", "tematica", "anio"]
+                fieldsForm: ["seleccioneIndicador", "seleccioneTematica", "entidadEspacial", "departamento", "tematica", "anio", "selectTipoRecaudo"]
+            },
+
+            _codTest: function () {
+                console.log("_codTest");
+                const FL = pintarFeatureLayer("https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/3", "limiteDepartamental", this.map);
+                setTimeout(() => {
+                    console.log({ FL });
+                    pintarPolygons(tw.map, {
+                        features: FL.graphics,
+                        geometryType: FL.geometryType
+                    })
+                }, 2000);
             },
 
             postCreate: function () {
@@ -251,6 +264,23 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                     }
                     console.log(tw.store);
                 });
+                query("#selectTipoRecaudo").on("change", async function (evt) {
+                    console.log(">>> on click tipoRecaudo ");
+                    var datoSelected = this.options[this.selectedIndex].value;
+                    //idxIndicadorActivo = this.options[this.selectedIndex];
+                    // idxIndicadorActivo = this.options.selectedIndex - 1;
+                    console.log(">>> tipoRecaudo " + datoSelected);
+                    tipoRecaudoSelected="";
+                    if (datoSelected != 0) {
+                        tipoRecaudoSelected = datoSelected;
+                        // consulta alfanumerica
+                        // consulta geometrías
+                        // pintar Coropletico nacional o departamental
+                        // genero grafico de barras
+                        
+                    }
+                    // tw.seleccionarIndicador();
+                });
                 query("#ejecutar").on("click", async function (evt) {
                     tw.ejecutar();
                 });
@@ -262,6 +292,8 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
             onOpen: function () {
                 console.log(">>> onOpen...");
                 this.limpiar();
+//                this._codTest(); // ok
+
                 //var meta = document.createElement("meta");
                 //meta.textContent = 'charset="UTF-8"'>
                 //document.head.appendChild(meta);
@@ -276,12 +308,13 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 const dataEntidadEspacial = configWidget.Data.EntidadEspacial;
                 const dataEstadoOcupacion = configWidget.Data.EstadoOcupacion;
                 const dataClasifActivo = configWidget.Data.ClasificacionActivo;
+                const dataTipoRecaudo = configWidget.Data.Indicadores;;
 
                 cargarIndicadores(dataIndicadores, "seleccioneIndicador");
                 agregarDataSelect(dataEntidadEspacial, "entidadEspacial", "valor", "clave");
                 agregarDataSelect(dataEstadoOcupacion, "estadoOcupacion", "valor", "clave");
                 agregarDataSelect(dataClasifActivo, "clasifActivo", "valor", "clave");
-
+                cargarIndicadores(dataTipoRecaudo, "seleccioneIndicador");
             },
 
             ejecutar: function () {
@@ -296,6 +329,10 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                     //console.log(">>> esVisible.. " + tw.esVisible("#clasifActivo"));
                     tw.displayMsgAlerta(alertaTitulo, alertaContenido);
                     return;
+                }
+                if (selectTipoRecaudo.options.selectedIndex < 1 &&  entidadEspacial.options.selectedIndex < 1) {
+                    tw.displayMsgAlerta(alertaTitulo, alertaContenido);
+                    return                    
                 }
                 if (tw.esVisible("#departamento")) {
                     aplicaPorDpto = true;
@@ -313,6 +350,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                             tw.displayMsgAlerta(alertaTitulo, alertaContenido);
                         }
                     }
+                    loader2(true, "loadingIndicadores");
                 }
                 else {
                     tw.displayMsgAlerta(alertaTitulo, alertaContenido);
@@ -349,11 +387,19 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 if (seleccioneIndicador.options.selectedIndex != 0) {
                     console.log(">>> seleccionarIndicador.. (idx) " + idxIndicadorActivo);
                     // document.getElementById("lblNombreIndiciador").innerHTML = nomInd;
+                    var secData, idSelect = "", divToShow = "";
+                    if (idIndicadorActivo ==  8) {
+                        secData = configWidget.Data.Indicadores[idxIndicadorActivo].Sectorizacion;
+                        idSelect = "selectTipoRecaudo"       
+                        divToShow = "divTipoRecaudo";
+                    }else{
+                        secData = configWidget.Data.Indicadores[idxIndicadorActivo].Sectorizacion;
+                        idSelect = "tematica"
+                        divToShow = "divTematica";
+                    }
+                    agregarDataSelectValueLabel(secData, idSelect);
 
-                    var secData = configWidget.Data.Indicadores[idxIndicadorActivo].Sectorizacion;
-                    agregarDataSelectValueLabel(secData, "tematica");
-
-                    $('#divTematica').show();
+                    $(`#${divToShow}`).show();
 
                 } else {
                     tw.displayMsgAlerta("", "Debe seleccionar un indicador");
@@ -367,9 +413,15 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 }
 
             },
-            cargarDepartamentos: function () {
+            cargarDepartamentos: async function () {
                 console.log(">>> cargarDepartamentos.. ");
-                agregarDataSelectValueLabel(configWidget.Data.Departamentos, "departamento");
+                // TODO: Consultar departamentos.
+                let depart = await ejecutarConsulta(OG_Rancheria_Microfocalización_ICBF);
+                // dataStorage.departamentos = depart.features;
+                // depart = dataStorage.departamentos;
+                console.log(depart);
+                agregarDataSelect(depart.features, "departamento","DEPARTAMEN","COD_DEPART");
+                // agregarDataSelectValueLabel(configWidget.Data.Departamentos, "departamento");
                 $('#divDepartamento').show();
             },
 
@@ -396,6 +448,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 tw.removerCapa(); //tmp
                 idCapaActiva = idCapaActivaAnt; //tmp
                 tw.prenderCapa(fullUrlActiva, idCapaActiva);
+                prenderLimiteDptal(); // ok
             },
 
             //procesarPorMunicipio: async function () {
@@ -415,13 +468,14 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
 
                 //console.log(">>> resultJsonSae.. " + resultJsonSae[0].Mpio); // ok
                 tw.acumularSegunPrmts(resultJsonSae);
+
             },
             acumularSegunPrmts: function (datos) {
                 console.log(">>> acumularSegunPrmts.. ");
-
+                console.log({datos});
                 var idTematica = tw.getPrmtValue("tematica");
                 var datos = configWidget.Data.rtajson;
-
+                console.log("datos => ", configWidget.Data.rtajson);
                 var propiedadAfiltrar = "";
                 var valorAfiltrar = "";
 
@@ -576,8 +630,12 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         totales = contarPorTematica(filtrado, "Subtipo");
                         if (idIndicadorActivo === "7") { //Valor economico del portafolio
                             totales = acumularValor(filtrado, "Subtipo", "Avcat");
-                        }
-                        tw.mostrarGraficaYTabla(totales, filtrado);
+                        }                        
+                        console.log({filtrado});
+                        coropleticoNacional(filtrado);
+//                        coropleticoFromCollectionNal(filtrado)
+//                        coropleticoDepartamental(filtrado);
+//                        tw.mostrarGraficaYTabla(totales, filtrado);
                     }
                   
                 }
@@ -886,6 +944,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 $('#divInformacion').hide();
                 $('#divEstadoOcupacion').hide();
                 $('#divClasifActivo').hide();
+                $('#divTipoRecaudo').hide();
             },
 
             showing: function () {
@@ -1061,7 +1120,7 @@ function clickCapa(data) {
     tw.mostrarTablaResultados()
     tw.ejecutarConsultaYGraficar();
 
-    //addFielToLayer();
+//    addFielToLayer(); 
 }
 
 function graficarIndicador() {
@@ -1298,7 +1357,7 @@ function escClosesPopup(key) {
 }
 function addFielToLayer() {
     console.log("addFielToLayer >>> ");
-
+    fullUrlActiva = 'https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/3';
     var where = "1=1";
     //var where = tw.getExpresionWhere();
     //where += " AND MPIO = '" + mpioActivo + "'"
@@ -1357,14 +1416,15 @@ function calcularYcolorear(featuresResult) {
             alias: "TOTAL"
         };
 
-        //var newFeatures = featuresResult.fields.push(field);
-        //console.log(featuresResult)
 
-        //for (i = 0; i < featuresResult.features.length; i++) {
-        //    var toPush = {};
-        //    toPush["TOTAL"] = i + 2;
-        //    Object.assign(featuresResult.features[i].attributes, toPush);
-        //}
+        var newFeatures = featuresResult.fields.push(field);
+        console.log(featuresResult)
+
+        for (i = 0; i < featuresResult.features.length; i++) {
+            var toPush = {};
+            toPush["TOTAL"] = getRandomInt();
+            Object.assign(featuresResult.features[i].attributes, toPush);
+        }
 
         console.log(">>> featuresResult: " + featuresResult)
 
@@ -1417,7 +1477,7 @@ function calcularYcolorear(featuresResult) {
         //layerResultados.setRenderer(renderer);
         layerResultados.setRenderer(new SimpleRenderer(symbolSimple));
 
-        tw.map.setBasemap("osm")
+//        tw.map.setBasemap("osm");
         tw.map.addLayer(layerResultados);
         //layerResultados.redraw(); //nada
         //this.layerResultados.on("click", lang.hitch(this, this.clickCapa));
@@ -1454,6 +1514,485 @@ function calcularYcolorear(featuresResult) {
         }
 
     });
+}
+function prenderLimiteDptal() {
+    require([
+        "esri/layers/FeatureLayer",
+
+    ], function (
+        FeatureLayer,
+    ) {
+        console.log(">>> prenderLimiteDptal.. " );
+
+        var idLayer = "lmteDptos";
+        var urlCapa = srvSae.geometriaLmteDepartamental; // SAE
+
+        if (urlCapa.indexOf("/featureserver") > 0 || urlCapa.indexOf("/MapServer") > 0) {
+            var layerDptos = new FeatureLayer(urlCapa, {
+                id: idLayer,
+                mode: FeatureLayer.MODE_SNAPSHOT,
+//                mode: MODE_AUTO,
+                outFields: ["*"],
+            });
+
+            tw.map.addLayer(layerDptos);
+
+/*
+            var dataLayerJson = layerDptos.toJson();
+            console.log('>>>>>>> dataLayerJson', dataLayerJson); // undefined
+
+            var dataLayerGraphics = layerDptos.graphics;
+            console.log('>>>>>>> dataLayerGraphics', dataLayerGraphics); // [] length:0
+*/
+            var miCapaDpto = tw.map.getLayer(idLayer)
+            console.log('>>>>>>>>>> miCapaDpto');
+            console.log(miCapaDpto);
+
+        }
+    })
+}
+function coropleticoNacional(filtrado, url, where) {
+    require([
+        "esri/layers/FeatureLayer",
+        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+        "esri/renderers/SimpleRenderer", "esri/graphic", "esri/InfoTemplate",
+        "esri/Color",
+        "dijit/popup",
+        "esri/geometry/Point",
+        "esri/tasks/query",
+        "dojo/parser",
+        "esri/geometry/projection",
+        "esri/renderers/ClassBreaksRenderer",
+        "esri/SpatialReference",
+        "esri/graphicsUtils"
+
+    ], function (
+        FeatureLayer,
+        SimpleFillSymbol, SimpleLineSymbol,
+        SimpleRenderer, Graphic, InfoTemplate,
+        Color,
+        dijitPopup,
+        Point,
+        Query,
+        parser,
+        projection,
+        ClassBreaksRenderer,
+        SpatialReference,
+        graphicsUtils
+
+
+
+    ) {
+        parser.parse(); //
+
+        console.log(">>> coropleticoNacional.. " + url + " where " + where);
+
+//        var url = 'https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/3';
+        var url = srvSae.geometriaLmteDepartamental; // SAE
+
+
+        var idCapa = "layerNacional";
+        idCapaActiva = idCapa;
+        dptoActivo = "";
+        
+        tw.removerCapa();
+
+//        var where = "DPTO_CCDGO = '25'";
+        var where = "1 = 1";
+        var query = new esri.tasks.Query();
+        var queryTask = new esri.tasks.QueryTask(url);
+
+        query.where = where;
+        query.outFields = ["*"];
+        query.OutSpatialReference = { wkid: 102100 }; //.
+        query.returnGeometry = true;
+        //        queryTask.execute(query, setearTotales, tw.queryTask_Failed);
+
+        queryTask.execute(query).then(function (results) {
+            var features = results.features;
+
+            projection.load().then(function () {
+                for (var i = 0; i < features.length; i++) {
+                    var projectedGeometry = projection.project(features[i].geometry, new SpatialReference({ wkid: 102100, "latestWkid": 4326 }));
+                    features[i].geometry = projectedGeometry;
+                    var projectedExtend = projection.project(features[i]._extent, new SpatialReference({ wkid: 102100, "latestWkid": 4326 }));
+                    features[i]._extent = projectedExtend;
+                };
+            });
+
+
+            console.log('>>>> features ',results.features);
+
+
+            var field = {
+                name: "TOTAL",
+                type: "esriFieldTypeInteger",
+                alias: "TOTAL"
+            };
+            var newFeatures = results.fields.push(field);
+
+            for (i = 0; i < results.features.length; i++) {
+                var toPush = {};
+                var geometryIn = results.features[i].geometry.rings;
+                toPush["TOTAL"] = contarPorPropiedad(filtrado, "Dpto", results.features[i].attributes.DEPARTAMEN);
+//                toPush["TOTAL"] = getRandomInt();
+                Object.assign(results.features[i].attributes, toPush);
+//                results.features[i].geometry.spatialReference = mySpatialRef;
+//                results.features[i].geometry = reprojection(results.features[i].geometry);
+//                results.features[i].geometry.rings = reprojection(geometryIn); //Cannot read properties of undefined (reading 'wkid')
+            }
+
+            let layerDefinition = {
+//                geometryType: results.geometryType,
+                objectIdField: "OBJECTID",
+                geometryType: "esriGeometryPolygon",
+//                spatialReference: tw.map.spatialReference,
+
+                spatialReference: {
+                    "wkid": 102100,
+                    "latestWkid": 4326
+                },
+
+                fields: results.fields,
+
+                name: 'layerNacional',
+                mode: FeatureLayer.MODE_SNAPSHOT
+            };
+            if (consts.debug) {
+                console.log(">>>>>>>>>>>> layerDefinition");
+                console.log(layerDefinition);
+            }
+
+            let featureCollection = {
+                layerDefinition: layerDefinition,
+                featureSet: {
+                    features: results.features,
+//                    features: features.features,
+//                    features: features,
+                    //geometryType: "esriGeometryPolygon",
+                    geometryType: results.geometryType,
+
+                    // spatialReference: tw.map.spatialReference
+
+                    "spatialReference": {
+                        "wkid": 102100,
+                        "latestWkid": 4326
+                    }
+                }
+            };
+            if (consts.debug) {
+                console.log(">>>>>>>>>>>> results.features");
+                console.log(results.features);
+            }
+
+            var symbol = new SimpleFillSymbol();
+            symbol.setColor(new Color([150, 150, 150, 0.5]));
+
+//            var renderer = new esri.renderers.ClassBreaksRenderer(symbol, "TOTAL");
+            var renderer = new ClassBreaksRenderer(symbol, "TOTAL");
+            renderer.addBreak(0, 10, new SimpleFillSymbol().setColor(new Color([56, 168, 0, 0.5])));
+            renderer.addBreak(10, 20, new SimpleFillSymbol().setColor(new Color([139, 209, 0, 0.5])));
+            renderer.addBreak(20, 30, new SimpleFillSymbol().setColor(new Color([255, 255, 0, 0.5])));
+            renderer.addBreak(30, 40, new SimpleFillSymbol().setColor(new Color([255, 128, 0, 0.5])));
+            renderer.addBreak(40, Infinity, new SimpleFillSymbol().setColor(new Color([255, 0, 0, 0.5])));
+
+            var layerDptos = new FeatureLayer(featureCollection, {
+                id: idCapa,
+                visible: true,
+            });
+//            layerDptos.setRenderer(renderer);
+//            let extent = graphicsUtils.graphicsExtent(layerDptos.graphics);
+//            tw.map.setExtent(extent, true); 
+// error:Map: Geometry (wkid: 9377) cannot be converted to spatial reference of the map (wkid: 102100)
+
+            tw.map.addLayer(layerDptos);
+            layerDptos.on("load", function () {
+                layerDptos.setRenderer(renderer);
+            });
+            tw.map.setScale(5000000);
+            setTimeout(() => {
+                tw.map.setScale(18489297)
+                loader2(false, "loadingIndicadores")
+            }, 500);
+//            tw.map.getLayer(idCapa).show();
+//            tw.map.getLayer(idCapa).refresh();
+            
+        });
+
+    })
+}
+
+function coropleticoFromCollectionNal(filtrado, url, where) {
+    require([
+        "esri/layers/FeatureLayer",
+        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+        "esri/renderers/SimpleRenderer", "esri/graphic","esri/InfoTemplate",
+        "esri/Color",
+        "dijit/popup",
+        "esri/geometry/Point",
+        "esri/tasks/query",
+        "dojo/parser",
+        "esri/graphicsUtils",
+        
+        "esri/SpatialReference"
+
+    ], function (
+        FeatureLayer,
+        SimpleFillSymbol, SimpleLineSymbol,
+        SimpleRenderer, Graphic, InfoTemplate,
+        Color,
+        dijitPopup,
+        Point,
+        Query,
+        parser,
+        graphicsUtils,
+        SpatialReference
+
+    ) {
+//        parser.parse(); //
+
+        console.log(">>> coropleticoFromCollectionNal");
+        console.log(tw.map.spatialReference);
+
+        var url = srvSae.geometriaLmteDepartamental; // SAE
+
+        idCapaDtos = "lmteDptos";
+        idCapaActiva = idCapaDtos;
+        tw.removerCapa();
+
+        idCapa = "layerDptal";
+        idCapaActiva = idCapa;
+        dptoActivo = "";
+
+        tw.removerCapa();
+
+        var where = "1 = 1";
+        var query = new esri.tasks.Query();
+        var queryTask = new esri.tasks.QueryTask(url);
+        var mySpatialReference = new SpatialReference({ wkid: 102100 }); 
+
+
+        query.where = where;
+        query.outFields = ["*"];
+        query.returnGeometry = true;
+//        query.OutSpatialReference = { wkid: tw.map.spatialReference }; //.
+//        query.OutSpatialReference = mySpatialReference; //.
+        query.OutSpatialReference = { wkid: 102100 }; //.
+//        query.OutSpatialReference = { wkid: 9377 }; //.
+        queryTask.execute(query).then(function (results) {
+
+            let layerDefinition = {
+                geometryType: results.geometryType,
+                objectIdField: "OBJECTID",
+//                spatialReference: tw.map.spatialReference,
+//                spatialReference: mySpatialReference,
+                spatialReference: { wkid: 102100 },
+//                spatialReference: { wkid: 9377 },
+//                spatialReference: { wkid: 4326 },
+                fields: results.fields,
+                name: 'layerDptal',
+                mode: FeatureLayer.MODE_SNAPSHOT
+            };
+            console.log(">>>>>>>>>>>> " );
+            console.log(layerDefinition);
+
+            let featureCollection = {
+                layerDefinition: layerDefinition,
+                featureSet: {
+                    features: results.features,
+                    //geometryType: "esriGeometryPolygon",
+                    geometryType: results.geometryType,
+//                    spatialReference: tw.map.spatialReference
+//                    spatialReference: mySpatialReference
+                    spatialReference: { wkid: 102100 },
+                }
+            };
+            console.log(results.features);
+
+            var layerResultados = new FeatureLayer(featureCollection, {
+                id: idCapa,
+                visible: true
+            });
+            tw.map.addLayer(layerResultados);
+            let extent = graphicsUtils.graphicsExtent(layerResultados.graphics);
+            tw.map.setExtent(extent, true);
+
+            var miCapa = tw.map.getLayer(idCapa)
+            console.log('>>>>>>>>>> miCapa');
+            console.log(miCapa);
+            tw.map.getLayer(idCapa).show();
+            tw.map.getLayer(idCapa).refresh();
+/*
+    Map: Geometry (wkid: 9377) cannot be converted to spatial reference of the map (wkid: 102100)
+ */
+
+
+        });
+    })
+}
+
+
+function coropleticoDepartamental(filtrado ,url, where) {
+    require([
+        "esri/layers/FeatureLayer",
+        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+        "esri/renderers/SimpleRenderer", "esri/graphic", "esri/InfoTemplate",
+        "esri/Color",
+        "dijit/popup",
+        "esri/geometry/Point",
+        "esri/tasks/query",
+        "dojo/parser",
+
+    ], function (
+        FeatureLayer,
+        SimpleFillSymbol, SimpleLineSymbol,
+        SimpleRenderer, Graphic, InfoTemplate,
+        Color,
+        dijitPopup,
+        Point,
+        Query,
+        parser
+
+    ) {
+        parser.parse(); //
+
+        console.log(">>> coropleticoDepartamental.. " + url + " where " + where);
+
+        var url = 'https://mapassig.icbf.gov.co:6443/arcgis/rest/services/ICBF/Administrativo/MapServer/3';
+
+        idCapa = "layerDptal";
+        idCapaActiva = idCapa;
+        dptoActivo = "";
+
+        tw.removerCapa();
+
+        var where = "DPTO_CCDGO = '25'";
+        var query = new esri.tasks.Query();
+        var queryTask = new esri.tasks.QueryTask(url);
+
+        query.where = where;
+        query.outFields = ["*"];
+        query.returnGeometry = true;
+//        queryTask.execute(query, setearTotales, tw.queryTask_Failed);
+        queryTask.execute(query).then(function (results) {
+
+            var field = {
+                name: "TOTAL",
+                type: "esriFieldTypeInteger",
+                alias: "TOTAL"
+            };
+            var newFeatures = results.fields.push(field);
+
+            for (i = 0; i < results.features.length; i++) {
+                var toPush = {};
+                toPush["TOTAL"] = contarPorPropiedad(filtrado, "Mpio", results.features[i].attributes.DPTO_CNMBR);
+                Object.assign(results.features[i].attributes, toPush);
+            }
+            let layerDefinition = {
+                geometryType: results.geometryType,
+                objectIdField: "OBJECTID",
+                spatialReference: tw.map.spatialReference,
+                fields: results.fields,
+                name: 'layerDpto',
+                mode: FeatureLayer.MODE_SNAPSHOT 
+            };
+            console.log(">>>>>>>>>>>> " + layerDefinition);
+
+            let featureCollection = {
+                layerDefinition: layerDefinition,
+                featureSet: {
+                    features: results.features,
+                    //geometryType: "esriGeometryPolygon",
+                    geometryType: results.geometryType,
+                    spatialReference: tw.map.spatialReference
+                }
+            };
+            console.log(results.features);
+
+            var layerResultados = new FeatureLayer(featureCollection, {
+                id: 'layerDptoNew',
+                visible: true
+            });
+            tw.map.addLayer(layerResultados);
+        });
+
+
+
+/*
+        var idLayer = idCapa.toString();
+        var infoTemplate = new InfoTemplate("${MPIO_CNMBR}", "${*}");
+
+        if (url.indexOf("/featureserver") > 0 || url.indexOf("/MapServer") > 0) {
+            var layerDpto = new FeatureLayer(url, {
+                id: idLayer,
+                mode: FeatureLayer.MODE_SNAPSHOT, //
+                outFields: ["*"],
+                infoTemplate: infoTemplate
+            });
+            //console.log(">>> setDefinitionExpression.. where " + where);
+
+            layerDpto.setDefinitionExpression(where);
+
+            var symbol = new SimpleFillSymbol(
+                SimpleFillSymbol.STYLE_SOLID,
+                new SimpleLineSymbol(
+                    SimpleLineSymbol.STYLE_SOLID,
+                    new Color([255, 255, 255, 0.35]),
+                ),
+                new Color([255, 0, 0, 0.35])
+            );
+
+            layerDpto.setRenderer(new SimpleRenderer(symbol));
+
+            var field = {
+                name: "TOTAL",
+                type: "esriFieldTypeInteger",
+                alias: "TOTAL"
+            };
+
+
+            var newFeatures = layerDpto.fields.push(field);
+            console.log(layerDpto.features)
+
+            for (i = 0; i < layerDpto.features.length; i++) {
+                var toPush = {};
+//                toPush["TOTAL"] = i + 2;
+                toPush["TOTAL"] = contarPorPropiedad(filtrado, "Dpto", layerDpto.features[i].attributes.DPTO_CNMBR);
+                Object.assign(layerDpto.features[i].attributes, toPush);
+            }
+
+            console.log(">>> featuresResult: " + featuresResult)
+
+            appGlobal.map.addLayer(layerDpto);
+
+
+
+            var query = new Query();
+            query.geometry = appGlobal.map.extent;
+            query.returnGeometry = true;
+            query.outFields = ["*"];
+
+
+            layerDpto.queryFeatures(query, function (featureSet) {
+                console.log(featureSet.graphics);
+                if (featureSet.features.length > 0) {
+                    var polygon = featureSet.features[0].geometry;
+                    var polygonExtent = polygon.getExtent();
+
+                    var x = polygonExtent.xmin;
+                    var y = polygonExtent.ymin;
+                    var spRef = polygonExtent.spatialReference;
+
+                    appGlobal.map.setExtent(polygonExtent)
+                    //setSpatialReference(spRef, x, y); // ok
+                } else {
+                    createDialogInformacionGeneral("Info", "No se encontró geometria para predio seleccionado")
+                    return
+                }
+            });
+        }
+*/
+    })
 }
 
 function renderPorColorAnt() {
@@ -1909,7 +2448,6 @@ function renderPorRangos() {
         rendererUniqValue.addValue("ZIPAQUIRÁ", new SimpleFillSymbol().setColor(new Color([128, 0, 128, 0.5])));
         rendererUniqValue.addValue("SOPÓ", new SimpleFillSymbol().setColor(new Color([255, 0, 0, 0.5])));
 
-
         var symbol = new SimpleFillSymbol();
         symbol.setColor(new Color([150, 150, 150, 0.5]));
 
@@ -1940,6 +2478,7 @@ function renderPorRangos() {
         //featureLayer.setRenderer(renderer);
 
         tw.map.addLayer(featureLayer);
+
         featureLayer.on("load", function () {
             //            createRenderer(field);
             //featureLayer.setRenderer(renderer);

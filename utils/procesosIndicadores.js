@@ -1,16 +1,28 @@
 ﻿const srvSae = {
     urlSrvGestorCatastral : "http://localhost:53906/api/Gestor/?municipio=nomMunicipio",
-    getByidMunicipio : "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByidMunicipio/25815?Usuario=cflorez&Clave=Junio2023*+",
+    getByidMunicipio: "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByidMunicipio/25815?Usuario=cflorez&Clave=Junio2023*+",
+    geometriaRegional: "https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/1",
+    geometriaLmteMunicipal: "https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/2", // error 500
+    geometriaLmteDepartamental: "https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/3",
 }
 
 const filtarPorPropiedadValor = (array, propiedad, query) => {
+    console.log(">>> filtarPorPropiedadValor: propiedad:" + propiedad+ ' query' + query);
+
     const q = query.toString().toLowerCase();
     //return array.filter(element => element[propiedad].toString().toLowerCase().includes(query))
     //return array.filter(element => element[propiedad].toString().toLowerCase().includes(q))
-    return array.filter(element => element[propiedad].toString().toLowerCase() === q)
+    return array.filter(element => element[propiedad].toString().toLowerCase() === q);
     //return array.filter(element => element[propiedad].includes(query))
 };
+const contarPorPropiedad = (array, propiedad, query) => {
+    const q = query.toString().toLowerCase();
+    array = array.filter(element => element[propiedad].toString().toLowerCase() === q);
+    console.log("contarPorPropiedad: " + array.length);
+    return array.length;
+};
 const contarPorTematica = (filtrado, propiedad) => {
+    console.log(">>> contarPorTematica: propiedad:" +propiedad);
 
     var contadores = {};
     var totales = configWidget.Data.Totales;
@@ -113,4 +125,44 @@ function setSpatialReference(spRef, coorX, coorY) {
     })
 }
 
+function getRandomInt(min=2, max=66) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+}
+function reprojection(geometry) {
+    require(["esri/SpatialReference", "esri/geometry/projection"], function (SpatialReference, projection) {
+//        console.log('>>>>>>>>>>> reprojection: geometry');
+//        console.log(geometry);
 
+//        const projectionPromise = projection.load();
+
+        // Assuming 'geometry' is the geometry you want to project
+        const outSpatialReference = new SpatialReference({
+            wkid: 102100, // WKID for Web Mercator
+            latestWkid: 4326
+        });
+/*
+        projectionPromise.then(function () {
+            projection.project(geometry, outSpatialReference).then(function (projectedGeometry) {
+                // Use projectedGeometry
+                return projectedGeometry;
+            });
+        })
+*/
+
+
+        projection.load();
+        projection.project(geometry, outSpatialReference).then(function (projectedGeometry) {
+           return projectedGeometry;
+        });
+/*
+        projection.load().then(function () {
+            projection.project(geometry, outSpatialReference).then(function (projectedGeometry) {
+                // Use projectedGeometry
+                return projectedGeometry;
+            });
+        });
+*/
+    });
+}

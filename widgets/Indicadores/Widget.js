@@ -19,7 +19,7 @@ function (declare, BaseWidget, query) {
           // this.mapIdNoderrh.innerHTML = 'map id is:' + this.map.id;
 
           this.getTematicas();
-
+          this._codTest();
         query("#seleccioneTematica").on("change", async function (evt) {
             var datoSelected = this.options[this.selectedIndex].value;
             if (datoSelected !== 0) {
@@ -818,6 +818,17 @@ function (declare, BaseWidget, query) {
           renderGrafico(option, 'mainIndicadores', 650, 400);
           
         },
+        _codTest: function () {
+          console.log("_codTest");
+          const FL = pintarFeatureLayer("https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/3", "limiteDepartamental", this.map);
+          setTimeout(() => {
+            console.log({FL});
+            pintarPolygons(tw.map, {
+              features: FL.graphics,
+              geometryType:  FL.geometryType
+            })
+          }, 2000);
+      },
         getTematicas: function(){
 
           const dataTest = [

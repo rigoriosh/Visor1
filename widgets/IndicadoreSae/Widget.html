@@ -1,4 +1,9 @@
 <div id="divConsultaWidgetIndicadores" style="height: 100%; margin-top: 15px;">
+    <div id="loadingIndicadores" class="loader" style="display: none;">
+        <span id="status"></span>
+        <!-- <img src="../../images/loadingCapa.gif" alt=""> -->
+        <img src="./images/loadingCapa.gif" alt="">
+    </div>
     <form id="idForm">
         <div class="form-group" id="divSeleccioneIndicador">
             <label for="seleccioneIndicador">Seleccione indicador</label>
@@ -18,6 +23,11 @@
         <div class="form-group" id="divDepartamento">
             <label for="departamento">Departamento</label>
             <select class="form-control form-control-sm" id="departamento">
+            </select>
+        </div>
+        <div class="form-group" id="divTipoRecaudo">
+            <label for="tipoRecaudo">Tipo Recaudo</label>
+            <select class="form-control form-control-sm" id="selectTipoRecaudo">
             </select>
         </div>
         <div class="form-group" id="divTematica">

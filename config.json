@@ -564,79 +564,79 @@
             },
             {
                 "label": "Consultas",
-                "widgets": [
+              "widgets": [
 
-                  {
-                    "name": "ConsultaSimple",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/ConsultaSimple/Widget",
-                    "index": 6,
-                    "id": "widgets_ConsultaSimple_Widget_39"
-                  },		  
-                  {
-                    "name": "ConsultaAvanzada",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/ConsultaAvanzada/Widget",
-                    "index": 4,
-                    "id": "widgets_ConsultaAvanzada_Widget_36"
-                  },		  
-                  {
-                    "name": "ConsultaAvaluos",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/ConsultaAvaluos/Widget",
-                    "index": 5,
-                    "id": "widgets_ConsultaAvaluos_Widget_37"
-                  },		  
-                  {
-                    "name": "ConsultaCatastro",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/ConsultaCatastro/Widget",
-                    "index": 5,
-                    "id": "widgets_ConsultaCatastro_Widget_38"
-                  },		  
-                  {
-                    "name": "ConsultaNotariaRegistro",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/ConsultaNotariaRegistro/Widget",
-                    "index": 5,
-                    "id": "widgets_ConsultaNotariaRegistro_Widget_39"
-                  },		  
-                  {
-                    "name": "ConsultaSAE",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/ConsultaSAE/Widget",
-                    "index": 5,
-                    "id": "widgets_ConsultaSAE_Widget_40"
-                  },		  
-                  {
-                    "name": "Indicadores",
-                    "version": "2.5",
-                    "IsController": false,
-                    "uri": "widgets/Indicadores/Widget",
-                    "index": 6,
-                    "id": "widgets_Indicadores_Widget_41"
+                {
+                  "name": "ConsultaSimple",
+                  "version": "2.5",
+                  "IsController": false,
+                  "uri": "widgets/ConsultaSimple/Widget",
+                  "index": 6,
+                  "id": "widgets_ConsultaSimple_Widget_39"
+                },
+                {
+                  "name": "ConsultaAvanzada",
+                  "version": "2.5",
+                  "IsController": false,
+                  "uri": "widgets/ConsultaAvanzada/Widget",
+                  "index": 4,
+                  "id": "widgets_ConsultaAvanzada_Widget_36"
+                },
+                {
+                  "name": "ConsultaAvaluos",
+                  "version": "2.5",
+                  "IsController": false,
+                  "uri": "widgets/ConsultaAvaluos/Widget",
+                  "index": 5,
+                  "id": "widgets_ConsultaAvaluos_Widget_37"
+                },
+                {
+                  "name": "ConsultaCatastro",
+                  "version": "2.5",
+                  "IsController": false,
+                  "uri": "widgets/ConsultaCatastro/Widget",
+                  "index": 5,
+                  "id": "widgets_ConsultaCatastro_Widget_38"
+                },
+                {
+                  "name": "ConsultaNotariaRegistro",
+                  "version": "2.5",
+                  "IsController": false,
+                  "uri": "widgets/ConsultaNotariaRegistro/Widget",
+                  "index": 5,
+                  "id": "widgets_ConsultaNotariaRegistro_Widget_39"
+                },
+                {
+                  "name": "ConsultaSAE",
+                  "version": "2.5",
+                  "IsController": false,
+                  "uri": "widgets/ConsultaSAE/Widget",
+                  "index": 5,
+                  "id": "widgets_ConsultaSAE_Widget_40"
+                },
+                {
+                  "name": "Indicadores",
+                  "version": "2.5",
+                  "IsController": false,
+                  "uri": "widgets/IndicadoreSae/Widget",
+                  "index": 6,
+                  "id": "widgets_IndicadoreSae_Widget_41"
+                },
+                {
+                  "uri": "widgets/MyWidgetResultados/Widget",
+                  "name": "Tabla Resultados",
+                  "closeable": true,
+                  "index": 7,
+                  "version": "2.5",
+                  "position": {
+                    "right": 20,
+                    "top": 170,
+                    "relativeTo": "map"
                   },
-                  {
-                      "uri": "widgets/MyWidgetResultados/Widget",
-                      "name": "Tabla Resultados",
-                      "closeable": true,
-                      "index": 7,
-                      "version": "2.5",
-                      "position": {
-                          "right": 20,
-                          "top": 170,
-                          "relativeTo": "map"
-                      },
-                      "id": "widgets_MyWidgetResultados_Widget_41",
-                      "visible": true
-                  }
-                ],
+                  "id": "widgets_MyWidgetResultados_Widget_41",
+                  "visible": true
+                }
+              ],
                 "index": 6,
                 "id": "_41",
                 "visible": true,
