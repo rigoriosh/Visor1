@@ -86,11 +86,17 @@ function (declare, BaseWidget, query) {
          },
         _consultaAlfanumerica: async function(columnName, columnValue, fileName){            
             loader2(true, "loadingCC")
-            const dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
-            if (consts.debug) {                    
+            let dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
+            if (consts.debug) {                                  
+                console.log({dataAlfanumerica});
+                if(dataAlfanumerica==''){
+                    dataAlfanumerica = JSON.parse(dataPrueba_BASE_REGISTRO_R1R2);
+                    dataAlfanumerica.FMI = "303-47692";
+                }
                 console.log({dataAlfanumerica});
             }
-            // const resp = await dataAlfanumerica.json();            
+            // dataAlfanumerica = JSON.parse(dataAlfanumerica)
+
             loader2(false, "loadingCC")            
             if (dataAlfanumerica.status === 400){
                 createDialogInformacionGeneral("Info","No se encontró información para esta consulta")
@@ -104,8 +110,10 @@ function (declare, BaseWidget, query) {
             thisConsultaCatastro.widgetConsCatastro.dataAlfanumerica = dataAlfanumerica;
             //const miMunicipio = dataAlfanumerica.CIUDAD
             const miMunicipio = dataAlfanumerica.MPIO_NOM
-            const urlGeografica = await getDataGeograficaNotariadoRegistro(miMunicipio);
-            if (consts.debug) {                    
+            let urlGeografica = await getDataGeograficaNotariadoRegistro(`?municipio=${miMunicipio}`);
+            if(consts.debug && urlGeografica.message === 'Unexpected end of input' ){
+                urlGeografica = response_API_gestor;
+            }else if (consts.debug) {
                 console.log({urlGeografica});
             }
             loader2(false, "loadingCC") 

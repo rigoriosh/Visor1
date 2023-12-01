@@ -186,7 +186,10 @@ function (declare, BaseWidget, query) {
         },
         _EjecutarConsulta: async function (numero) {
           loader2(true, "loadingSAE");
-          const resp = await getDataByFmi(numero)
+          let resp = await getDataByFmi(numero)
+          if(resp.message === 'Failed to fetch'){
+            resp = dataPruebaConsultaSAE;   
+        }
           if (consts.debug) {                                
             console.log(this.validaciones);
             console.log(this.storeConsultaSAE);
@@ -206,10 +209,12 @@ function (declare, BaseWidget, query) {
         },
         _getDataGeográfica: async function(numero){
           loader2(true, "loadingSAE")
-          const miMunicipio = thisConsultaSAE.storeConsultaSAE.dataAlfanumerica.Mpio;
-          const urlGeografica = await getDataGeograficaNotariadoRegistro(miMunicipio);
-          if (consts.debug) {                    
-           console.log({urlGeografica});
+          const miMunicipio = thisConsultaSAE.storeConsultaSAE.dataAlfanumerica.MUNICIPIO;
+          let urlGeografica = await getDataGeograficaNotariadoRegistro(`?municipio=${miMunicipio}`);
+          if(consts.debug && urlGeografica.message === 'Unexpected end of input' ){
+            urlGeografica = response_API_gestor;
+          }else if (consts.debug) {
+              console.log({urlGeografica});
           }
           loader2(false, "loadingSAE")
           if (urlGeografica.status == 400 || !urlGeografica.URL){

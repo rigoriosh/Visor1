@@ -11,8 +11,12 @@ var storeConsultaAvaluos = {
     tiposBienInmnuebleSelected:'',
     numero: 0,
     dataAlfanumerica:{},
+    respoGeometriaConsultaMultiple:{
+        features:[]
+    },
     urlGeografica:'',
-    consultaUnica:''
+    consultaUnica:'',
+    consuSelected:''
 }
 
 var wm, appGlobal = "";
@@ -58,6 +62,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                 divConsultaMasiva = document.querySelector("#divConsultaMasiva");
                 tw._getDivs();
                 if (consuSelected === consts.avaluosMultiple) {
+                    storeConsultaAvaluos.consuSelected = consts.consulAvaluoMasivo;
                     divConsultaUnica.style.display = 'none';
                     divTipInmu.style.display = 'none';
                     btnConsultaMasiva.style.display = 'none';
@@ -90,6 +95,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                     tw._loading(false);
             
                 } else if(consuSelected === consts.avaluosUnica){
+                    storeConsultaAvaluos.consuSelected = consts.consulAvaluoUnica;
                     divConsultaMasiva.style.display = 'none'
                     divConsultaUnica.style.display = 'flex';
                 }
@@ -132,28 +138,19 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
 
             query("#btnConsultaMasiva").on("click", async function (evt) {
                 // var xxx = this.options[this.selectedIndex].text;
+                storeConsultaAvaluos.respoGeometriaConsultaMultiple = {
+                    features:[]
+                }
                 if (consts.debug) {
                     console.log(storeConsultaAvaluos.departamento);
                     console.log(storeConsultaAvaluos.municipio);
                     console.log(storeConsultaAvaluos.tiposBienInmnuebleSelected);
                 }
-                cerrarWidgetResultados("widgets_MyWidgetResultados_Widget_41")
-                // tw._abrirWresultados();
-                // tw._fixDataToSendWidResultados(tw.widgetConsAval.urlDparts);
-                tw._fixDataToSendWidResultados({
-                    tipoResultado: consts.consulAvaluoMasivo,
-                    data:{
-                        urlDparts:tw.widgetConsAval.urlDparts,
-                        panel:{
-                            width:1000,
-                            height:300,
-                        }
-                    },
-                    respuestaTest: function(par){
-                        //console.log("in respuesta", par);
-                    }
-                });
-                
+                cerrarWidgetResultados("widgets_MyWidgetResultados_Widget_41")                
+                let columnName = "MPIO_NOM",
+                columnValue = storeConsultaAvaluos.municipio.ENTIDAD_TE,
+                fileName = fileNameBaseAvaluos;
+                tw._getDataAlfanumerica(columnName, columnValue, fileName);
             });
 
             query("#idNumero").on("change", async function (evt) {
@@ -167,8 +164,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                 }
             });
 
-            query("#btnConsultaUnica").on("click", async function (evt) {
-                // var xxx = this.options[this.selectedIndex].text;
+            query("#btnConsultaUnica").on("click", async function (evt) {                
                 if (consts.debug) {
                     console.log({storeConsultaAvaluos});
                 }
@@ -227,7 +223,7 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
 
         onClose: function() {
             //console.log('onClose');
-            divConsultaMasiva.style.display = 'none'
+            // divConsultaMasiva.style.display = 'none'
             divConsultaUnica.style.display = 'none';
             document.getElementById('selectConsulta').value = 0
         },
@@ -323,25 +319,39 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
             appGlobal.openWidgetById(widgetId);
         },
 
-        _getDataAlfanumerica: async function () {
+        _getDataAlfanumerica: async function (columnName = storeConsultaAvaluos.consultaUnica, columnValue = storeConsultaAvaluos.numero, fileName = fileNameBaseAvaluos) {
             loader2(true, "loadingAval")
-            const dataAlfanumerica = await getDataNotariadoRegistro(storeConsultaAvaluos.consultaUnica, storeConsultaAvaluos.numero, fileNameBaseAvaluos);
-            if (consts.debug) {
+            let dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
+            if (consts.debug) {                                  
+                console.log({dataAlfanumerica});
+                if(dataAlfanumerica==''){
+                    dataAlfanumerica = response_BASE_AVALUOS;
+                    dataAlfanumerica.FMI = "303-47692";
+                }else if(storeConsultaAvaluos.consuSelected === consts.consulAvaluoMasivo){
+                    dataAlfanumerica = response_BASE_AVALUOS_1.filter(e => e["TIPO DE BIEN"] === storeConsultaAvaluos.tiposBienInmnuebleSelected.toUpperCase());
+                }
                 console.log({dataAlfanumerica});
             }
-            loader2(false, "loadingAval")
             
             if (dataAlfanumerica.status === 400){
-                createDialogInformacionGeneral("Info","No se encontró información para esta consulta")
+                createDialogInformacionGeneral("Info","No se encontró información para esta consulta"); loader2(false, "loadingAval")            
                 return
             }else if(dataAlfanumerica.message === "Failed to fetch" || dataAlfanumerica.message === "Unexpected end of input"){
-                createDialogInformacionGeneral("Info","Inconvenientes de conexión con los servidores, intentalo mas tarde o comunícate con el administrador")
+                createDialogInformacionGeneral("Info","Inconvenientes de conexión con los servidores, intentalo mas tarde o comunícate con el administrador"); loader2(false, "loadingAval")            
                 return
             }
             storeConsultaAvaluos.dataAlfanumerica = dataAlfanumerica;
-            const miMunicipio = dataAlfanumerica.MPIO_NOM
-            const urlGeografica = await getDataGeograficaNotariadoRegistro(miMunicipio);
-            if (consts.debug) {                
+
+            let miMunicipio = "", objConsultaA = {};
+            if(storeConsultaAvaluos.consuSelected === consts.consulAvaluoMasivo){                
+                miMunicipio = dataAlfanumerica[0].MPIO_NOM
+            }else{
+                miMunicipio = dataAlfanumerica.MPIO_NOM
+            }
+            let urlGeografica = await getDataGeograficaNotariadoRegistro(`?municipio=${miMunicipio}`);
+            if(consts.debug && urlGeografica.message === 'Unexpected end of input' ){
+                urlGeografica = response_API_gestor;
+            }else if (consts.debug) { 
                 console.log({urlGeografica});
             }
             if (urlGeografica.status === 400){
@@ -350,29 +360,56 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                 return
             }
             storeConsultaAvaluos.urlGeografica = urlGeografica.URL;
-            const objConsultaA = {
-                urlCapa:urlGeografica.URL,
-                where: `FMI='${dataAlfanumerica.FMI}'`
+
+            if(storeConsultaAvaluos.consuSelected === consts.consulAvaluoMasivo){                
+                dataAlfanumerica.forEach(e => {
+                    setTimeout(() => {
+                        objConsultaA = {
+                            urlCapa:urlGeografica.URL,
+                            where: `FMI='${e.FMI}'`
+                        }
+                        ejecutarQueryAndQueryTask(objConsultaA, tw._succeededRequest, tw._errorRequest); //ArcGis
+                    }, 1000);
+                });
+            }else{
+                objConsultaA = {
+                    urlCapa:urlGeografica.URL,
+                    where: `FMI='${dataAlfanumerica.FMI}'`
+                }
+                ejecutarQueryAndQueryTask(objConsultaA, tw._succeededRequest, tw._errorRequest); //ArcGis
             }
-            ejecutarQueryAndQueryTask(objConsultaA, tw._succeededRequest, tw._errorRequest); //ArcGis
 
         },
         _succeededRequest: function (resp) { // ArcGis
             if (consts.debug) {                
                 console.log({resp});  
+                console.log(storeConsultaAvaluos.dataAlfanumerica);
             }
-            let fields = [/* {name: 'OBJECTID', type: 'esriFieldTypeOID', alias: 'OBJECTID'} */];
+            const { features, geometryType, fields, spatialReference } = resp;
+            
+            /* Object.keys(storeConsultaAvaluos.dataAlfanumerica).forEach(e => fields.push(
+                { name: e, type: 'esriFieldTypeString', alias: e, length: 250 })
+            );
+
+            resp.features[0].attributes = storeConsultaAvaluos.dataAlfanumerica */
+            if(storeConsultaAvaluos.consuSelected === consts.consulAvaluoMasivo){
+                if (storeConsultaAvaluos.dataAlfanumerica.length != storeConsultaAvaluos.respoGeometriaConsultaMultiple.features.length) {
+                    storeConsultaAvaluos.respoGeometriaConsultaMultiple.features.push(resp.features[0]);
+                    if (storeConsultaAvaluos.dataAlfanumerica.length != storeConsultaAvaluos.respoGeometriaConsultaMultiple.features.length) return                    
+                }
+            }else{
+                storeConsultaAvaluos.respoGeometriaConsultaMultiple.features = resp.features
+            }
+            resp.features = storeConsultaAvaluos.respoGeometriaConsultaMultiple.features;
             if (resp.features.length == 0) {
                 createDialogInformacionGeneral("Info","No se encontró información geográfica para esta consulta")
                 loader2(false, "loadingAval")
+                // if (storeConsultaAvaluos.consuSelected != consts.consulAvaluoMasivo) return
                 return
-            }
-            Object.keys(storeConsultaAvaluos.dataAlfanumerica).forEach(e => fields.push(
-                { name: e, type: 'esriFieldTypeString', alias: e, length: 250 })
-            );
-            resp.features[0].attributes = storeConsultaAvaluos.dataAlfanumerica
+            }            
+            // loader2(true, "loadingAval")
             tw._SendResultados({
-                tipoResultado: consts.consultaAvaluos,
+                tipoResultado: storeConsultaAvaluos.consuSelected,
                 data:{
                     panel:{
                         width:600,
@@ -380,19 +417,15 @@ function (declare, BaseWidget, WidgetManager, PanelManager, query) {
                     }
                 },
                 featureCollection: {
-                    featureSet: crearfeatureSet(resp.features),
-                    layerDefinition: {
-                      geometryType: resp.geometryType,
-                      fields
-                    },
+                    featureSet: crearfeatureSet(storeConsultaAvaluos.respoGeometriaConsultaMultiple.features),
+                    layerDefinition: { geometryType, fields },
                 },
-
                 urlGeografica: storeConsultaAvaluos.urlGeografica,
                 responseQueryGeografica: resp,
                 dataAlfanumerica: storeConsultaAvaluos.dataAlfanumerica,
                 loading: "loadingAval"
             })
-            loader2(false, "loadingAval")
+            // loader2(false, "loadingAval")
         },
         _errorRequest: function (error) {
             console.error({error});

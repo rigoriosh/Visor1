@@ -628,19 +628,19 @@
         "label": "Antioquia"
       },
       {
-        "value": 11,
+        "value": 13,
         "label": "Bolivar"
       },
       {
-        "value": 13,
+        "value": 15,
         "label": "Boyac\u00e2"
       },
       {
-        "value": 15,
+        "value": 17,
         "label": "Caldas"
       },
       {
-        "value": 18,
+        "value": 85,
         "label": "Casanare"
       },
       {
@@ -669,6 +669,7 @@
 
       ]
     },
+
     "rtajson": [
       {
         "IdActivo": 459538,

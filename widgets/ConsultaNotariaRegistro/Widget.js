@@ -59,8 +59,13 @@ function (declare, BaseWidget, query) {
         _consultaAlfanumerica: async function(columnName, columnValue, fileName){            
             loader2(true, "loadingNR")
             let {widgetConsNotariadoRegistro} = thisNotariadoRegistro;
-            const dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
-            if (consts.debug) {                    
+            let dataAlfanumerica = await getDataNotariadoRegistro(columnName, columnValue, fileName);
+            if (consts.debug) {                                  
+                console.log({dataAlfanumerica});
+                if(dataAlfanumerica==''){
+                    dataAlfanumerica = response_BASE_REGISTRO_SNR;
+                    dataAlfanumerica.FMI = "303-47692";
+                }
                 console.log({dataAlfanumerica});
             }
             loader2(false, "loadingNR")
@@ -75,8 +80,10 @@ function (declare, BaseWidget, query) {
             loader2(true, "loadingNR")
             widgetConsNotariadoRegistro.dataAlfanumerica = dataAlfanumerica;
             const miMunicipio = dataAlfanumerica.CIUDAD
-            const urlGeografica = await getDataGeograficaNotariadoRegistro(miMunicipio);
-            if (consts.debug) {                    
+            let urlGeografica = await getDataGeograficaNotariadoRegistro(`?municipio=${miMunicipio}`);
+            if(consts.debug && urlGeografica.message === 'Unexpected end of input' ){
+                urlGeografica = response_API_gestor;
+            }else if (consts.debug) {
                 console.log({urlGeografica});
             }
             loader2(false, "loadingNR")
@@ -88,7 +95,7 @@ function (declare, BaseWidget, query) {
             widgetConsNotariadoRegistro.urlGeografica = urlGeografica.URL;
             const objConsultaNR = {
                 urlCapa:urlGeografica.URL,
-                where: `FMI='${columnValue}'`
+                where: `FMI='${dataAlfanumerica.FMI}'`
             }
             ejecutarQueryAndQueryTask(objConsultaNR, thisNotariadoRegistro._succeededRequest, thisNotariadoRegistro._errorRequest);
 
@@ -103,8 +110,8 @@ function (declare, BaseWidget, query) {
             Object.keys(widgetConsNotariadoRegistro.dataAlfanumerica).forEach(e => fields.push(
                 { name: e, type: 'esriFieldTypeString', alias: e, length: 250 })
             );
-            resp.features[0].attributes = widgetConsNotariadoRegistro.dataAlfanumerica
-            _SendResultados({
+            resp.features[0].attributes = widgetConsNotariadoRegistro.dataAlfanumerica;
+            thisNotariadoRegistro._SendResultados({
                 tipoResultado: consts.consulNotariadoRegistro,
                 data:{
                     panel:{

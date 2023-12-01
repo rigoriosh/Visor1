@@ -72,53 +72,57 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         case consts.consulAvaluoMasivo:
                             //console.log(consts.consulAvaluoMasivo);
                             cargarTablaResultados(widgetResultados);
-                            divResulConsultaUnica.style.display = "none";
+                            // divResulConsultaUnica.style.display = "none";
                             divResulConsultaCatastro.style.display = "none";
-                            divResulConsultaMultiple.style.display = "display";
+                            divResulConsultaMultiple.style.display = "block";
                             break;
                         case (consts.consulNotariadoRegistro):
                             //console.log(consts.consulAvaluoMasivo);
                             cargarTablaResultados(widgetResultados);
-                            divResulConsultaUnica.style.display = "none";
+                            // divResulConsultaUnica.style.display = "none";
                             divResulConsultaCatastro.style.display = "none";
-                            divResulConsultaMultiple.style.display = "display";
+                            divResulConsultaMultiple.style.display = "block";
                             // dom.byId("divExportar").style.display = "none";
                             break;
                         case consts.consulSAE:
                             //console.log(consts.consulAvaluoMasivo);
                             cargarTablaResultados(widgetResultados);
-                            divResulConsultaUnica.style.display = "none";
+                            // divResulConsultaUnica.style.display = "none";
                             divResulConsultaCatastro.style.display = "none";
-                            divResulConsultaMultiple.style.display = "display";
+                            divResulConsultaMultiple.style.display = "block";
                             // dom.byId("divExportar").style.display = "none";
                             break;
                         case consts.consulAvaluoUnica:
-                            //console.log(consts.consulAvaluoUnica);
+                            if (consts.debug) {                
+                                console.log(consts.consulAvaluoUnica);
+                            }
+                            // document.querySelector("#divResulConsultaUnica").style.display = 'block'
+                            divResulConsultaMultiple.style.display = "block";
+                            // divResulConsultaUnica.style.display = "none";
                             divResulConsultaCatastro.style.display = "none";
-                            divResulConsultaMultiple.style.display = "none";
-                            divResulConsultaUnica.style.display = "display";
-                            this.ejecutarConsultaUnica();
+                            cargarTablaResultados(widgetResultados);
+                            // this.ejecutarConsultaUnica();
                             break;
                         case consts.consulCatastro:
                             //console.log(consts.consulCatastro);
-                            divResulConsultaUnica.style.display = "none";
+                            // divResulConsultaUnica.style.display = "none";
                             divResulConsultaMultiple.style.display = "none";
-                            divResulConsultaCatastro.style.display = "display";
+                            divResulConsultaCatastro.style.display = "block";
                             // this.ejecutarConsultaUnica();
                             break;
                         case consts.consultas.consultaSimple:
                             //console.log(consts.consultas.consultaSimple);
                             cargarTablaResultados(widgetResultados);
-                            divResulConsultaUnica.style.display = "none";
+                            // divResulConsultaUnica.style.display = "none";
                             divResulConsultaCatastro.style.display = "none";
-                            divResulConsultaMultiple.style.display = "display";
+                            divResulConsultaMultiple.style.display = "block";
                             break;
                         case consts.consultas.consultaAvanzada:
                             //console.log(consts.consultas.consultaAvanzada);
                             cargarTablaResultados(widgetResultados);
-                            divResulConsultaUnica.style.display = "none";
+                            // divResulConsultaUnica.style.display = "none";
                             divResulConsultaCatastro.style.display = "none";
-                            divResulConsultaMultiple.style.display = "display";
+                            divResulConsultaMultiple.style.display = "block";
                             break;
                         default:
                             break;
@@ -271,14 +275,21 @@ function cargarTablaResultados(widget) {
 		function (FeatureLayer, FeatureTable, GeometryService, SpatialReference, 
             Extent, SimpleFillSymbol, SimpleLineSymbol, Color, Graphic, graphicsUtils, Query) {
 		    
-            var myFeatureLayer, fieldInfos;
-            const {featureCollection, tipoResultado, loading} = widget.data
+            let myFeatureLayer, fieldInfos = [], outFields = [], tablaToRender = "myTableNode";
+            const {featureCollection, tipoResultado, loading, urlGeografica} = widget.data
+            if (consts.debug) {                
+                console.log(widget.data);                    
+            }
             if (tipoResultado === consts.consultas.consultaSimple || tipoResultado === consts.consultas.consultaAvanzada
-                || tipoResultado === consts.consulNotariadoRegistro || tipoResultado === consts.consulSAE) {
+                || tipoResultado === consts.consulNotariadoRegistro || tipoResultado === consts.consulSAE || tipoResultado === consts.consulAvaluoUnica
+                || tipoResultado === consts.consulAvaluoMasivo) {
                 myFeatureLayer = new FeatureLayer(featureCollection, {
                     showLabels: true
                 });
-                //console.log(featureCollection);
+                if (consts.debug) {                
+                    console.log(consts.consulAvaluoUnica);
+                    console.log(featureCollection);
+                }
 
                 fieldInfos = featureCollection.layerDefinition.fields
                 /* fieldInfos = [
@@ -383,8 +394,7 @@ function cargarTablaResultados(widget) {
                     showColumnHeaderTooltips:true,
                     fieldInfos
                 },
-                    "myTableNode"
-                );
+                tablaToRender);
     
                 
                 myTable.startup();
@@ -502,10 +512,12 @@ function cargarTablaResultados(widget) {
                             selectedRegisterFromTable.features = finalFeature;
                             if(features.features.length > 0) EsriMap.setExtent(objConsultaSimple.featuresSelected.filter(e => e.attributes.OBJECTID == features.features[0].attributes.OBJECTID)[0].geometry.getExtent())
                         */
-                        } else if(tipoResultado === consts.consulNotariadoRegistro || tipoResultado === consts.consulSAE){
+                        } else if(tipoResultado === consts.consulNotariadoRegistro || tipoResultado === consts.consulSAE || tipoResultado === consts.consulAvaluoUnica
+                            || tipoResultado === consts.consulAvaluoMasivo){
 
                             // const rs = widget.data.responseQueryGeografica.features[0].geometry.spatialReference;
                             const f = widget.data.responseQueryGeografica.features;
+                            let response = {}
                             /* let myPolygon = {
                                 "geometry":{
                                     "rings":widget.data.responseQueryGeografica.features[0].geometry.rings,
@@ -526,7 +538,16 @@ function cargarTablaResultados(widget) {
                             }; */
                             // const it = buildInfoTemplate("Información Punto", f[0].attributes)
                             // pintarGeometry(EsriMap, myPolygon, symbol, f[0].attributes, it)
-                            pintarPolygons(EsriMap, widget.data.responseQueryGeografica)
+                            if (tipoResultado === consts.consulAvaluoMasivo) {
+                                response = {
+                                    geometryType: "esriGeometryPolygon",
+                                    features: f.filter(e => e.attributes.FMI ===  features.features[0].attributes.FMI)
+                                }
+                                
+                            } else {
+                                response = widget.data.responseQueryGeografica;
+                            }
+                            pintarPolygons(EsriMap, response);
                             // let graphic = new Graphic(myPolygon, symbol);
                             // objetoMapa.graphics.add(graphic);
 
@@ -619,7 +640,7 @@ function cargarTablaResultados(widget) {
                         let graphicsOn = objetoMapa.graphics.graphics;
 
                         if(widget.data.tipoResultado === consts.consultas.consultaSimple 
-                            || widget.data.tipoResultado === consts.consultas.consultaAvanzada){
+                            || widget.data.tipoResultado === consts.consultas.consultaAvanzada || widget.data.tipoResultado === consts.consulAvaluoMasivo){
 
                         }else{
                             if (graphicsOn.length === 1) {

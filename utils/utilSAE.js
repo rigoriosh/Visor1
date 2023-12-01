@@ -345,8 +345,8 @@ const pintarPolygons = (EsriMap, response, symbol={}) => {
     require(["esri/graphic", "esri/geometry/Polygon"], 
     function (Graphic, Polygon) {
 
+        const simbolo = generarSymbol(response.geometryType);
         response.features.forEach(feature => {
-            const simbolo = generarSymbol(response.geometryType);
             let polygonJson = {
                 "rings":feature.geometry.rings,
                 "spatialReference": feature.geometry.spatialReference

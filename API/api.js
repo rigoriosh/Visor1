@@ -73,7 +73,7 @@ const getDataGeograficaNotariadoRegistro = async(miMunicipio)  => {
     const url = `${servicioSNRgeometrias}${miMunicipio}`
     const response = await fetch(url, {
       method:'GET',
-      // mode: "no-cors",
+      mode: "no-cors",
       // body: dataToSend
     } );
   console.log(response);
@@ -221,7 +221,7 @@ const getDataNotariadoRegistro = async(columnName, columnValue, fileName)  => {
     console.log(response);
     if (response.status == 400) return response
     // const resp = await response.json(); // parses JSON response into native JavaScript objects 
-    const resp = await response.text(); // parses JSON response into native JavaScript objects 
+    const resp = await response.json(); // parses JSON response into native JavaScript objects 
     console.log({resp});
     // return response
     return resp
@@ -296,51 +296,29 @@ const getDataNotariadoRegistro = async(columnName, columnValue, fileName)  => {
   } */
 }
 
-const getDataByFmi = async(Fmi)  => {
-  try {
-    const url = `${UrlGetByFmi}${Fmi}`
-    const response = await fetch(url, {
-      method:'GET',
-      // mode: "no-cors",
-      // body: dataToSend
-    } );
-    console.log(response);
-    if (response.status == 404) return response
-    const resp = await response.json(); // parses JSON response into native JavaScript objects 
-    console.log({resp});
-    return resp
-    /* var myHeaders = new Headers();
-    myHeaders.append("Usuario", "mcortes");
-    myHeaders.append("Clave", "Saesas2023@");
-    myHeaders.append("Cookie", "cookiesession1=678A3E42A866C0A6B9FE4B7AF09F0439");
+  const getDataByFmi = async (Fmi) => {
+    try {
+      var myHeaders = new Headers();
+      myHeaders.append("Usuario", "mcortes");
+      myHeaders.append("Clave", "Junio2023*+");
+      myHeaders.append(
+        "Cookie",
+        "cookiesession1=678A3E429FBC05482128809D6AE8ED6C"
+      );
 
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      // redirect: 'follow',
-      mode: "no-cors", // no-cors, *cors, same-origin
-    };
+      var requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
+      };
 
-    const response = await fetch(url, requestOptions);
-    console.log(response);
-
-    const resp = await response.json(); // parses JSON response into native JavaScript objects 
-    console.log({resp});
-    return resp */
-
-    /* fetch(url, requestOptions)
-      .then(response => {
-        console.log(response);
-        response.text()
-      })
-      .then(result => {
-        console.log(result)
-        return result
-      })
-      .catch(error => console.log('error', error)); */
-      
-  } catch (error) {
-    console.error({error});
-    return error
-  }
-}
+      const url = `${UrlGetByFmi}${Fmi}`;
+      const response = await fetch(url, requestOptions);
+      if (response.status === 404) return response;
+      const resp = await response.json(); // parses JSON response into native JavaScript objects
+      return resp;
+    } catch (error) {
+      console.error({error});
+      return error;
+    }
+  };
