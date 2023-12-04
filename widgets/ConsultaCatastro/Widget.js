@@ -75,7 +75,7 @@ function (declare, BaseWidget, query) {
         onOpen: function () {
             var panel = this.getPanel();
             //console.log(panel);
-            ajustarTamanioWidget(panel, panel.position.width, 300)
+            ajustarTamanioWidget(panel, panel.position.width, 350)
 
          },
          onClose: function () {
