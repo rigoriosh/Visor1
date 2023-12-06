@@ -4,7 +4,7 @@
 //const { isUndefined } = require("../../libs/underscore/underscore-min");
 
 //>>built
-var tw;
+var tw, EsriMap;
 var configWidget;
 var idIndicadorActivo = "-1";
 var idxIndicadorActivo = "-1";
@@ -13,15 +13,32 @@ var fullUrlActiva = "";
 var idCapaActiva = "";
 var nomInd = "";
 var totPrediosMpio = -1;
+
 var dptoActivo = "";
 var mpioActivo = "";
+var regionalActiva;
+
 var aplicaPorDpto = false;
 var gContinua = false;
 var entidadEspacialActiva;
+var nombreEntidad = "";
+var dataStorageWidIndicadores = { // por rigo
+    indicador: '',
+    entidadEspacialSelected: '',
+    tipoRecaudo:'',
+    departamento:'',
+    idCapaActiva:''
+};
+
+
+// var projectionPromise;
 
 const DEPARTAMENTOS = "1";
 const MUNICIPIOS = "2";
 const REGIONALES = "3";
+
+var clickHandler;
+
 
 var alertaTitulo = "<B> Informaci&oacute;n </B>";
 var alertaContenido = "Diligencie todos las parámetros de la consulta";
@@ -139,18 +156,6 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 fieldsForm: ["seleccioneIndicador", "seleccioneTematica", "entidadEspacial", "departamento", "tematica", "anio", "selectTipoRecaudo"]
             },
 
-            _codTest: function () {
-                console.log("_codTest");
-                const FL = pintarFeatureLayer("https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/3", "limiteDepartamental", this.map);
-                setTimeout(() => {
-                    console.log({ FL });
-                    pintarPolygons(tw.map, {
-                        features: FL.graphics,
-                        geometryType: FL.geometryType
-                    })
-                }, 2000);
-            },
-
             postCreate: function () {
                 console.log(">>> postCreate...");
                 this.inherited(arguments);
@@ -159,6 +164,13 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
             startup: function () {
                 this.inherited(arguments);
                 tw = this;
+                EsriMap = this.map
+                tw.store = { // por rigo
+                    seleccioneTematica:'',
+                    tipoRecaudo: '',
+                    indicador: '',
+                    entidadEspacial:''
+                }
                 appGlobal = this;
                 configWidget = this.config;
 
@@ -172,8 +184,17 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                     console.log(">>> seleccioneIndicador " + datoSelected);
 
                     if (datoSelected == 0) {
+                        tw.store = {
+                            ...tw.store,
+                            indicador: ''
+                        }
                         tw.limpiar();
                         tw.hideing();
+                    } else {                                                
+                        tw.store = {
+                            ...tw.store,
+                            indicador: datoSelected
+                        }
                     }
                     tw.seleccionarIndicador();
                 });
@@ -191,12 +212,10 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                             seleccioneTematica: ''
                         }
                     }
-                    //console.log(">>>>>>>> store"+tw.store);
                 });
 
                 query("#entidadEspacial").on("change", async function (evt) {
                     var datoSelected = this.options[this.selectedIndex].value;
-                    //console.log(datoSelected);
                     if (datoSelected !== 0) {
                         tw.store = {
                             ...tw.store,
@@ -211,6 +230,10 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                     console.log(">>> entidadEspacial (onChange) " + tw.store.entidadEspacial);
                     entidadEspacialActiva = tw.store.entidadEspacial;
                     tw.validarEntidadEspacial();
+                    const {indicador} = tw.store;
+                    if (indicador == '8' && datoSelected == '1') { // por rigo
+                        document.querySelector("#labelTematica").innerHTML = "Típo Recaudo";
+                    }
                 });
                 query("#departamento").on("change", async function (evt) {
                     var datoSelected = this.options[this.selectedIndex].value;
@@ -235,25 +258,44 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                     var datoSelected = this.options[this.selectedIndex].value;
                     var textSelected = this.options[this.selectedIndex].text;
                     //  console.log(">>> tematica datoSelected " + datoSelected);
-                    if (datoSelected !== 0) {
-                        tw.store = {
-                            ...tw.store,
-                            tematica: datoSelected
+                    const {indicador, entidadEspacial} = tw.store;
+                    if (indicador == '8' && entidadEspacial == '1'){ // rigo
+                        if (datoSelected !== 0) {
+                            tw.store = {
+                                ...tw.store,
+                                tipoRecaudo: datoSelected
+                            }
+                        } else {
+                            tw.store = {
+                                ...tw.store,
+                                tipoRecaudo: ''
+                            }
                         }
-                    } else {
-                        tw.store = {
-                            ...tw.store,
-                            tematica: ''
+                    }else{
+                        if (datoSelected !== 0) {
+                            tw.store = {
+                                ...tw.store,
+                                tematica: datoSelected
+                            }
+                        } else {
+                            tw.store = {
+                                ...tw.store,
+                                tematica: ''
+                            }
                         }
-                    }
-                    $('#divInformacion').show();
-                    $('#divEstadoOcupacion').hide();
-                    $('#divClasifActivo').hide();
-                    if (datoSelected !== 0 && datoSelected === "4") { // Estado de ocupacion
-                        $('#divEstadoOcupacion').show();
-                    }
-                    if (datoSelected !== 0 && (textSelected.includes === "comerciales" || textSelected.includes === "catastrales" )) { // Catastral o comercial
-                        $('#divClasifActivo').show();
+                        $('#divInformacion').show();
+                        $('#divEstadoOcupacion').hide();
+                        $('#divClasifActivo').hide();
+                        if (datoSelected !== 0 && datoSelected === "4") { // Estado de ocupacion
+                            $('#divEstadoOcupacion').show();
+                        }
+                        // var includeClasiActivo = false;
+                        // includeClasiActivo = 
+                            /* monic dps solución dudas
+                            if (datoSelected !== 0 && textSelected.includes("Clasificación de activo")) { // Catastral o comercial
+                                $('#divClasifActivo').show();
+                            }
+                            */
                     }
                 });
                 query("#anio").on("change", async function (evt) {
@@ -278,19 +320,33 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                     //idxIndicadorActivo = this.options[this.selectedIndex];
                     // idxIndicadorActivo = this.options.selectedIndex - 1;
                     console.log(">>> tipoRecaudo " + datoSelected);
-                    tipoRecaudoSelected="";
+                    tipoRecaudoSelected = "";
                     if (datoSelected != 0) {
                         tipoRecaudoSelected = datoSelected;
                         // consulta alfanumerica
                         // consulta geometrías
                         // pintar Coropletico nacional o departamental
                         // genero grafico de barras
-                        
+                        tw.store = {
+                            ...tw.store,
+                            tipoRecaudo: datoSelected
+                        }
+
+                    } else {
+                        tw.store = {
+                            ...tw.store,
+                            tipoRecaudo: ''
+                        }
                     }
-                    // tw.seleccionarIndicador();
                 });
                 query("#ejecutar").on("click", async function (evt) {
-                    tw.ejecutar();
+                    const {indicador, entidadEspacial, tipoRecaudo} = tw.store;                    
+                    loader2(true, "loadingIndicadores");
+                    if (indicador == '8' && entidadEspacial == '1' && tipoRecaudo != '') { // logica rigo
+                        tw._getGeometriesDepartamentos();
+                    }else{
+                        tw.ejecutar();
+                    }
                 });
                 query("#btnRetornar").on("click", async function (evt) {
                     console.log(">>> on click retornar ");
@@ -300,7 +356,6 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
             onOpen: function () {
                 console.log(">>> onOpen...");
                 this.limpiar();
-//                this._codTest(); // ok
                 //var meta = document.createElement("meta");
                 //meta.textContent = 'charset="UTF-8"'>
                 //document.head.appendChild(meta);
@@ -337,9 +392,9 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                     tw.displayMsgAlerta(alertaTitulo, alertaContenido);
                     return;
                 }
-                if (selectTipoRecaudo.options.selectedIndex < 1 &&  entidadEspacial.options.selectedIndex < 1) {
+                if (selectTipoRecaudo.options.selectedIndex < 1 && entidadEspacial.options.selectedIndex < 1) {
                     tw.displayMsgAlerta(alertaTitulo, alertaContenido);
-                    return                    
+                    return
                 }
                 if (tw.esVisible("#departamento")) {
                     aplicaPorDpto = true;
@@ -357,7 +412,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                             tw.displayMsgAlerta(alertaTitulo, alertaContenido);
                         }
                     }
-                    loader2(true, "loadingIndicadores");
+//                    loader2(true, "loadingIndicadores");
                 }
                 else {
                     tw.displayMsgAlerta(alertaTitulo, alertaContenido);
@@ -370,11 +425,13 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 tw.limpiar();
                 tw.hideing();
                 tw.removerCapa();
+
+                tw.map.centerAndZoom(new Point(-74.0048100, 5.0220800), 5); 
+
                 cerrarWidgetById("widgets_TablaResultadoSae_Widget_63_panel");
                 $('#idForm').show();
                 $('#tabResultado').hide();
                 $('#divInformacion').hide();
-
             },
             seleccionarIndicador: function () {
                 nomInd = configWidget.Data.Indicadores[idxIndicadorActivo]._nombre;
@@ -395,11 +452,11 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                     console.log(">>> seleccionarIndicador.. (idx) " + idxIndicadorActivo);
                     // document.getElementById("lblNombreIndiciador").innerHTML = nomInd;
                     var secData, idSelect = "", divToShow = "";
-                    if (idIndicadorActivo ==  8) {
+                    if (idIndicadorActivo == 8) {
                         secData = configWidget.Data.Indicadores[idxIndicadorActivo].Sectorizacion;
-                        idSelect = "selectTipoRecaudo"       
+                        idSelect = "selectTipoRecaudo"
                         divToShow = "divTipoRecaudo";
-                    }else{
+                    } else {
                         secData = configWidget.Data.Indicadores[idxIndicadorActivo].Sectorizacion;
                         idSelect = "tematica"
                         divToShow = "divTematica";
@@ -411,12 +468,51 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
 
                     $('#divTematica').show();
                     if (idIndicadorActivo === "1") { // cef
-                        tematica.options.selectedIndex = 1; // simula seleccion de tematica
+                        tematica.options.selectedIndex = 1;
                         $('#divTematica').hide();
                     }
                 } else {
                     tw.displayMsgAlerta("", "Debe seleccionar un indicador");
                 }
+            },
+            _getGeometriesDepartamentos: function (params) { // RIGO
+                loader2(true, "loadingIndicadores")
+                const objConsulta = {
+                    urlCapa: srvSae.geometriaLmteDepartamental
+                }
+                ejecutarQueryAndQueryTask(objConsulta, tw.succeededRequest, tw.errorRequest)                
+            },
+            succeededRequest: async function (respuesta) { //RIGO
+                console.log({respuesta});
+                //Agregarle variable alfanumerica a cada departamento     
+                const dataByFMI = await tw._getDataByFMI("037-5884");
+                const resAjusteCampoResponse = tw._ajusteCampoResponse(respuesta);
+                const agregarDataNuevoCampo = tw._agregarDataNuevoCampo(dataByFMI, resAjusteCampoResponse);
+                pintarPolygons(tw.map, agregarDataNuevoCampo)
+                coropleticoNacional(agregarDataNuevoCampo);
+            
+            },
+            errorRequest: function (error) { //RIGO
+                console.error({error});
+                loader2(false, "loadingIndicadores")
+            },
+            _ajusteCampoResponse: function (resp) { // RIGO
+                const field = {
+                    name: "TOTAL",
+                    type: "esriFieldTypeInteger",
+                    alias: "TOTAL"
+                };
+                resp.fields.push(field);
+               return resp;
+            },
+            _agregarDataNuevoCampo: function (data, results) {
+                for (i = 0; i < results.features.length; i++) {
+                    var toPush = {};
+                    toPush["TOTAL"] = acumularPorPropiedadCondicion(data, "idMunicipio", results.features[i].attributes.MpCodigo, "idMunicipio"); // ("AT_M2") acumulo usondo idMunicipio como prueba
+                    // toPush["TOTAL"] = contarPorPropiedad(data, "idMunicipio", results.features[i].attributes.MpCodigo);                                        
+                    Object.assign(results.features[i].attributes, toPush);
+                }
+                return results;
             },
             validarEntidadEspacial() {
                 console.log(">>> validarEntidadEspacial.. " + tw.getPrmt("entidadEspacial"));
@@ -433,67 +529,67 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 // dataStorage.departamentos = depart.features;
                 // depart = dataStorage.departamentos;
                 console.log(depart);
-                agregarDataSelect(depart.features, "departamento","DEPARTAMEN","COD_DEPART");
+                agregarDataSelect(depart.features, "departamento", "DEPARTAMEN", "COD_DEPART");
                 // agregarDataSelectValueLabel(configWidget.Data.Departamentos, "departamento");
                 $('#divDepartamento').show();
             },
-
-
+            _getDataByFMI: async function (FMI) {
+                let resp = await getDataByFmi(FMI)                
+                if (resp.status === 404) {
+                    tw.displayMsgAlerta("Informacíón", `La consulta con FMI: ${FMI} no encontró información`);
+                    return
+                } else if(resp.name === 'TypeError'){
+                    // tw.displayMsgAlerta("Atención", `Se estan presentando problemas de red, favor intentarlo mas tarde o ponerse en contacto con tecnología`);
+                    resp = dataInputJson;   
+                    // return
+                }
+                return resp;
+            },
             cargarTematica: function () {
             },
 
             esVisible: function (elemento) {
-                //                console.log(">>> esVisible.. ");
+                //console.log(">>> esVisible.. ");
                 var visible = false;
                 if ($(elemento).is(':visible') && $(elemento).css("visibility") != "hidden"
                     && $(elemento).css("opacity") > 0) {
                     visible = true;
                 }
-                console.log(">>> esVisible.. " + visible);
+//                console.log(">>> esVisible.. " + visible);
                 return visible;
             },
 
-            procesarPorDpto: function () {
+            procesarPorDpto: async function () {
                 console.log(">>> procesarPorDpto.. ");
                 var capaLeyenda = "layerRenderMcpio";
-                idCapaActivaAnt = idCapaActiva; // tmp
-                idCapaActiva = capaLeyenda;  //tmp
-                tw.removerCapa(); //tmp
-                idCapaActiva = idCapaActivaAnt; //tmp
-//                tw.prenderCapa(fullUrlActiva, idCapaActiva);
-//                prenderLimiteDptal(); // ok
-
+                idCapaActivaAnt = idCapaActiva; 
+                idCapaActiva = capaLeyenda;  
+                tw.removerCapa(); 
+                idCapaActiva = idCapaActivaAnt; 
                 const resultJsonSae = dataInputJson; // 
                 tw.acumularSegunPrmts(resultJsonSae); // 
+
             },
 
             //procesarPorMunicipio: async function () {
-            procesarPorMunicipio: function () {
+            procesarPorMunicipio: async function () {
                 console.log(">>> procesarPorMunicipio.. ");
-                //tw.prenderCapa(fullUrlActiva, idCapaActiva);
-                //renderPorRangos();
-                //addFielToLayer();
-
                 //var urltmp = "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByidMunicipio/25815?Usuario=cflorez&Clave=Junio2023*+";
                 // 25815 TOCAIMA
                 //consumirSrvSae(urltmp);
                 //const resultJsonSae = await ejecutarConsulta(urltmp); // ok
                 //const resultJsonSae = await consumirSrvSae(urltmp); // Error de CORS
 
-//                const resultJsonSae = configWidget.Data.rtajson;
-                const resultJsonSae = dataInputJson; // nueva data
-
-                //console.log(">>> resultJsonSae.. " + resultJsonSae[0].Mpio); // ok
+                const resultJsonSae =  await tw._getDataByFMI("037-5884"); // nueva data
                 tw.acumularSegunPrmts(resultJsonSae);
 
             },
-            acumularSegunPrmts: function (datos) {
+            acumularSegunPrmts: async function (datos) {
                 console.log(">>> acumularSegunPrmts.. ");
-                console.log({datos});
+                console.log({ datos });
                 var idTematica = tw.getPrmtValue("tematica");
-                var datos = configWidget.Data.rtajson;
-//                var datos = dataInputJson; // nueva data
 
+                var datos = await tw._getDataByFMI("037-5884"); // nueva data
 
                 var propiedadAfiltrar = "";
                 var valorAfiltrar = "";
@@ -503,15 +599,13 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
 
                 switch (idIndicadorActivo) {
                     case "1":
-//                        propiedadAfiltrar = "SUBTIPOACTIVO"; // Rural - Urbano 
-//                        valorAfiltrar = "URBANO"; // 'Rurales y Urbanos' revisar
-                        generarPorZonasDeUbicacion();
+                        //generarPorZonasDeUbicacion(datos);
+                        coropleticoNacional(datos); // sin filtros solo contar rurales y ubanos
                         return;
                         break;
 
                     case "2":
-//                        propiedadAfiltrar = "ActivoSocial"; // anterior data
-                        propiedadAfiltrar = "ACTIVOSOCIAL"; // nueva data
+                        propiedadAfiltrar = "ACTIVOSOCIAL";
                         valorAfiltrar = 'ACTIVO SOCIAL';
 
                         if (tw.getPrmt("tematica").includes("ACTIVO NO SOCIAL")) {
@@ -519,13 +613,16 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         }
                         break;
                     case "3": // Inmuebles por estado legal
-                        propiedadAfiltrar = "EstadoLegalGral";
+                        propiedadAfiltrar = "ESTADOLEGAL";
                         switch (idTematica) {
                             case "1":
-                                valorAfiltrar = "EN PROC";
+                                valorAfiltrar = "EN PROCESO";
+                                //valorAfiltrar = "EN PROCESO 100.00";
+                                //valorAfiltrar = "EN PROCESO 50.00";
                                 break;
                             case "2":
                                 valorAfiltrar = "EXTINTO";
+                                //valorAfiltrar = "EXTINTO 100.00";
                                 break;
                             case "3":
                                 valorAfiltrar = "IMPROCEDENTE";
@@ -533,16 +630,23 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                             default:
                                 break;
                         }
-
+                        filtrado = filtarPorPropiedadValorIncludes(datos, propiedadAfiltrar, valorAfiltrar);
+                        coropleticoNacional(filtrado); // Inmuebles por estado legal
+                        return;
                         break;
                     case "4": //Inmuebles por rango de áreas, falta definir unidad de medida y rangos (Front)
-                        propiedadAfiltrar = "asdfasdfasdfasdfa";
+                        propiedadAfiltrar = "AT_M2"; // ó "AreaTerreno"
                         switch (idTematica) {
-                            case "1":
-                                valorAfiltrar = "ASDFASDFASDF";
+                            case "1": // rango de areas catastrales en m2
+                                //valorAfiltrar = "UNVALOR";
+                                coropleticoNacional(datos);
+                                return;
                                 break;
-                            case "2":
-                                valorAfiltrar = "ASDFASDFASDF";
+                            case "2": // cantidad de inmuebles por rango de areas
+//                                valorAfiltrar = "UNVALOR";
+//                                tw.displayMsgAlerta("Informacíón", "Por implementar");
+                                coropleticoNacional(datos);
+                                return;
                                 break;
                             default:
                                 break;
@@ -550,20 +654,22 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         break;
                     case "5": //Inmuebles por mecanismo de administración
                         // Consultar ESTADO DE OcUPACION - SUB FILTRO ???
-                        propiedadAfiltrar = "MecanismoAdministracion";
+                        // propiedadAfiltrar = "MecanismoAdministracion";
+                        propiedadAfiltrar = "MECANISMOADMINISTRACIÓN" //monica;
+
                         switch (idTematica) {
                             case "1":
-                                valorAfiltrar = "DEP�SITO PROVISIONAL";
+                                valorAfiltrar = "DEPÓSITO PROVISIONAL";
                                 break;
                             case "2":
-                                valorAfiltrar = "ADMINISTRACI�N DIRECTA";
-                                //valorAfiltrar = "ADMINISTRACIÓN DIRECTA"; // no encuentra
+                                //valorAfiltrar = "ADMINISTRACI�N DIRECTA";
+                                valorAfiltrar = "ADMINISTRACIÓN DIRECTA"; // no encuentra
                                 break;
                             case "3":
-                                valorAfiltrar = "DESTINACI�N PROVICIONAL";
+                                valorAfiltrar = "DESTINACIÓN PROVICIONAL";
                                 break;
                             case "4":
-                                propiedadAfiltrar = "EstadoOcupacion";
+                                propiedadAfiltrar = "ESTADODEOCUPACION" //monica;
                                 var estadoOcupacion = tw.getPrmtValue("estadoOcupacion");
                                 switch (estadoOcupacion) {
                                     case "1":// 
@@ -582,13 +688,13 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         }
                         break;
                     case "6": //Inmuebles en disposicion final
-                        propiedadAfiltrar = "EstadoInventario";
+                        propiedadAfiltrar = "ESTADOINVENTARIO";//monica
                         switch (idTematica) {
                             case "1":
                                 valorAfiltrar = "VENTA DIRECTA";
                                 break;
                             case "2":
-                                valorAfiltrar = "VENTA POR ENAJENACI�N TEMPRANA"; // si -  venta por operador comercial
+                                valorAfiltrar = "VENTA POR ENAJENACIÓN TEMPRANA"; // si -  venta por operador comercial
                                 break;
                             case "3":
                                 valorAfiltrar = "VENTA MASIVA";  // venta por operador comercial
@@ -603,16 +709,16 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                                 valorAfiltrar = "DONACION EN PAGO O CRUCE DE CUENTAS";
                                 break;
                             case "7":
-                                valorAfiltrar = "REMATE"; 
+                                valorAfiltrar = "REMATE";
                                 break;
                             case "8":
-                                valorAfiltrar = "DESTINACION DEFINITIVA";
+                                valorAfiltrar = "DESTINACIÓN DEFINITIVA";
                                 break;
                             case "9":
-                                valorAfiltrar = "EN DEVOLUCION";
+                                valorAfiltrar = "EN DEVOLUCIÓN";
                                 break;
                             case "10":
-                                valorAfiltrar = "EN DISPOSICI�N TEMPORAL"; //si
+                                valorAfiltrar = "EN DISPOSICIÓN TEMPORAL"; //si
                                 break;
                             default:
                                 break;
@@ -620,16 +726,45 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         break;
                     case "7": //Valor economico del portafolio de inmuebles de SAE
                         //  solo un variabla (Avcat), valuo comercial no hay. aclarar 
+                        //  var tematicaIndicador7 = tw.getPrmtValue("tematica");
                         propiedadAfiltrar = "ClasificacionActivo";
                         switch (idTematica) {
                             case "1":
+                                propiedadAfiltrar = "AVALUOCOMERCIAL";
                                 valorAfiltrar = "CASA";
+                                coropleticoNacional(datos);
+                                return;
                                 break;
                             case "2":
+                                propiedadAfiltrar = "AVALÚOCATASTRAL";
                                 valorAfiltrar = "FINCA";
+                                console.log("opc 2  este es el dats");
+                                console.log(datos);
+                                coropleticoNacional(datos);
+                                return;
                                 break;
-                            case "2":
-                                valorAfiltrar = "LOTE";
+                            case "3":
+                                var clasifActivo = tw.getPrmtValue("clasifActivo");
+                                switch (clasifActivo) {
+                                    case "1":// 
+                                        valorAfiltrar = "CASA";
+                                        break;
+                                    case "2":// 
+                                        valorAfiltrar = "FINCA";
+                                        break;
+                                    case "3":// 
+                                        valorAfiltrar = "LOTE";
+                                        break;
+                                    case "4":// 
+                                        valorAfiltrar = "CASA LOTE";
+                                        break;
+                                }
+                                propiedadAfiltrar = "CLASIFICACIÓNACTIVO";
+                                filtrado = filtarPorPropiedadValorIncludes(datos, propiedadAfiltrar, valorAfiltrar);
+                                console.log("opc 3  este es el filtado");
+                                console.log(filtrado);
+                                coropleticoNacional(filtrado); // 
+                                return;
                                 break;
                             case "2":
                                 valorAfiltrar = "CASA LOTE";
@@ -638,46 +773,127 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                                 break;
                         }
                         break;
+                    case "12":
+                        switch (idTematica) {
+                            case "1": // Proyectos e Iniciativas
+/*
+                                propiedadAfiltrar = "UNAPROPIEDAD";
+                                valorAfiltrar = 'UNVALOR';
+                                filtrado = filtarPorPropiedadValor(datos, propiedadAfiltrar, valorAfiltrar);
+                                coropleticoNacional(datos);
+*/
+                                tw.displayMsgAlerta("Informacíón", "Por definir variable");
+
+                                return;
+                                break;
+                            case "2": // Inmuebles por proyecto especial
+                                propiedadAfiltrar = "PROYECTOS_ESPECIALES";
+                                valorAfiltrar = '1';
+                                filtrado = filtarPorPropiedadValor(datos, propiedadAfiltrar, valorAfiltrar);
+                                coropleticoNacional(filtrado);
+                                return;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        break;
+                    case "13":
+                        switch (idTematica) {
+                            case "1": // Beneficiarios de arrendamientos sociales
+                                /*
+                                   propiedadAfiltrar = "UNAPROPIEDAD";
+                                   valorAfiltrar = 'UNVALOR';
+                                   filtrado = filtarPorPropiedadValor(datos, propiedadAfiltrar, valorAfiltrar);
+                                   coropleticoNacional(datos);
+                                */
+                                tw.displayMsgAlerta("Informacíón", "Por definir variable");
+
+                                return;
+                                break;
+                            case "2": // Beneficiarios indirectos de destinaciones provisionales
+/*
+                                propiedadAfiltrar = "ADSFASDFASDF";
+                                valorAfiltrar = 'XYZ';
+                                filtrado = filtarPorPropiedadValor(datos, propiedadAfiltrar, valorAfiltrar);
+                                coropleticoNacional(filtrado);
+*/
+                                tw.displayMsgAlerta("Informacíón", "Por definir variable");
+
+                                return;
+                                break;
+                            case "3": //Beneficiarios de destinaciones definitivas
+                                /*
+                                  propiedadAfiltrar = "ADSFASDFASDF";
+                                  valorAfiltrar = 'XYZ';
+                                  filtrado = filtarPorPropiedadValor(datos, propiedadAfiltrar, valorAfiltrar);
+                                  coropleticoNacional(filtrado);
+                                */
+                                tw.displayMsgAlerta("Informacíón", "Por definir variable");
+
+                                return;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        break;
+                    case "14": // Areas democratizadas
+                        switch (idTematica) {
+                            case "1": // Proyectos e iniciativas con fines sociales
+                                /*
+                                   propiedadAfiltrar = "ADSFASDFASDF";
+                                   valorAfiltrar = 'XYZ';
+                                   filtrado = filtarPorPropiedadValor(datos, propiedadAfiltrar, valorAfiltrar);
+                                   coropleticoNacional(datos);
+                                */
+                                tw.displayMsgAlerta("Informacíón", "Por definir variable");
+
+                                return;
+                                break;
+                            case "2": // Otras, por definir
+                                tw.displayMsgAlerta("Informacíón", "Por definir variable - Desagregacion");
+                                return;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        break;
                     default:
                         break;
                 } // final switch
 
                 if (parseInt(idIndicadorActivo) > 7) {
                     tw.displayMsgAlerta("Informacíón", "Por aclarar !!!");
-                }else {
+                } else if (parseInt(idIndicadorActivo) == 7) {
+                    totales = contarPorTematica(datos, propiedadAfiltrar);
+                    if (idIndicadorActivo === "7") { //Valor economico del portafolio
+                        totales = acumularValor(datos, propiedadAfiltrar, "Avcat");
+                        // acumularValorIndicador7
+                        var resultadoMunicipio = acumularValorIndicador7(datos, propiedadAfiltrar, 'idMunicipio');
+                        console.log(resultadoMunicipio);
+                        tw.displayMsgAlerta("Informacíón", "Por aclarar !!! *"); 
+                    }
+                }
+                else {
 
                     filtrado = filtarPorPropiedadValor(datos, propiedadAfiltrar, valorAfiltrar);
+                    //filtrado = datos // prueba
+
                     if (Object.keys(filtrado).length == 0) {
                         tw.displayMsgAlerta("Informacíón", "Sin regitros para criterios seleccionados");
                     } else {
                         totales = contarPorTematica(filtrado, "Subtipo");
                         if (idIndicadorActivo === "7") { //Valor economico del portafolio
-                            totales = acumularValor(filtrado, "Subtipo", "Avcat");
-                        }                        
-                        console.log({filtrado});
+                            totales = acumularValor(filtrado, "SUBTIPOACTIVO", "AT_M2"); //  "idDepartamento"
+                        }
+                        console.log({ filtrado });
                         coropleticoNacional(filtrado);
-//                        coropleticoFromCollectionNal(filtrado)
-//                        coropleticoDepartamental(filtrado);
-//                        tw.mostrarGraficaYTabla(totales, filtrado);
                     }
-                  
                 }
             },
-            mostrarGraficaYTabla: function (totales, filtrado) {
-                tw.mostrarGraficoBarras(totales);
 
-                  abrirTablaResultadosSae({
-                    prmts: {
-                        panel: {
-                            width: 700,
-                            height: 500
-                        },
-                        json: JSON.stringify(filtrado),
-                        //json: filtrado,
-                        fuente: "IndicadoresSae"
-                    }
-                }); // widget tabla resultados sae
-            },
 
             getExpresionWhere: function () {
                 var idTematica = tw.getPrmtValue("tematica");
@@ -771,38 +987,6 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 return where;
             },
 
-            ejecutarConsultaYGraficar: function (fullUrl) {
-                console.log(">>> ejecutarConsultaYGraficar.. " + fullUrl);
-
-                var where = tw.getExpresionWhere();
-                where += " AND MPIO = '" + mpioActivo + "'"
-
-                var query = new esri.tasks.Query();
-                var queryTask = new esri.tasks.QueryTask(fullUrlActiva);
-                var statisticDef = new esri.tasks.StatisticDefinition();
-
-                statisticDef.onStatisticField = "SUBTIPO",
-                    statisticDef.outStatisticFieldName = "TotalSubtipo",
-                    statisticDef.statisticType = "count"
-
-                if (idIndicadorActivo == "9") { // prueba
-                    statisticDef.onStatisticField = "CAST(AV_CAT AS FLOAT)",
-                        statisticDef.outStatisticFieldName = "TotalSubtipo",
-                        statisticDef.statisticType = "sum"
-                }
-
-                //query.where = "1=1";
-                query.where = where;
-                query.outFields = ["*"];
-                query.returnGeometry = false;
-
-                //query.orderByFields = ["SUBTIPO"];
-                query.groupByFieldsForStatistics = ["SUBTIPO"];
-                query.outStatistics = [statisticDef];
-
-                queryTask.execute(query, tw.mostrarGraficoBarras, tw.queryTask_Failed);
-            },
-
             queryTask_Failed: function (error) {
                 var titulo = "<B> Informaci&oacute;n </B>";
                 var contenido = "Error consultando información. ";
@@ -810,13 +994,23 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
             },
 
             mostrarGraficoBarras: function (featuresResultados) {
-                console.log(">>> mostrarGraficoBarras  " + featuresResultados);
+                //console.log(">>> mostrarGraficoBarras  ", featuresResultados);
+                var totRural = featuresResultados.features[0].attributes.TotalSubtipo;
+                var totUrbano = featuresResultados.features[1].attributes.TotalSubtipo;
+
+                if (totRural === undefined && totUrbano === undefined) {
+                    tw.displayMsgAlerta("Información", "Sin datos para graficar");
+                    return;
+                }
                 document.getElementById("reportTotalsChartDiv").innerHTML = "";
                 document.getElementById("lblNombreIndiciador").innerHTML = "";
                 var titInd = document.getElementById("lblNombreIndiciador").innerHTML = nomInd;
                 var nomTematica = "<br>" + tw.getPrmt("tematica");
                 var nomEntidadEspacial = "<br>" + tw.getPrmt("entidadEspacial");
-                document.getElementById("lblNombreIndiciador").innerHTML = titInd.toUpperCase() + nomTematica + nomEntidadEspacial;
+                var nombreEntEspacio = "<br>" + nombreEntidad;
+
+                document.getElementById("lblNombreIndiciador").innerHTML = titInd.toUpperCase() + nomTematica + nomEntidadEspacial + nombreEntEspacio;
+                //document.getElementById("lblNombreIndiciador").innerHTML = titInd.toUpperCase() + nomTematica + nomEntidadEspacial;
 
                 $('#idForm').hide();
                 $('#tabResultado').show();
@@ -868,7 +1062,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         c.addSeries("PREDIOS" + tmpindice, [{
                             y: registro.attributes.TotalSubtipo,
                             x: tmpindice,
-                           tooltip: registro.attributes.SUBTIPO+':' + registro.attributes.TotalSubtipo,
+                            tooltip: registro.attributes.SUBTIPO + ':' + registro.attributes.TotalSubtipo,
                         }], {
                             stroke: {
                                 color: registro.attributes.SUBTIPO == "RURAL" ? "gold" : "salmon",
@@ -885,36 +1079,6 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 }
             },
 
-            prenderCapa: function (urlCapa, idCapaServicio) {
-                console.log(">>> prenderCapa\n" + urlCapa);
-
-                resaltarEnCapa(urlCapa, idCapaServicio);
-
-                tw.map.centerAndZoom(new Point(-74.0048100, 5.0220800), 12);
-            },
-
-            mostrarTablaResultados: function () {
-                console.log(">>> mostrarTablaResultados..");
-
-                //cerrarWidgetById("widgets_TablaResultadoSae_Widget_63");
-
-                var miWhere = tw.getExpresionWhere();
-                miWhere += " AND MPIO = '" + mpioActivo + "'"
-
-                console.log(">>> mostrarTablaResultados.. where= " + miWhere);
-
-                abrirTablaResultadosSae({
-                    prmts: {
-                        panel: {
-                            width: 700,
-                            height: 500
-                        },
-                        url: fullUrlActiva,
-                        where: miWhere
-                    }
-                });
-            },
-
             getPrmt: function (idSel) {
                 combo = document.getElementById(idSel);
                 selected = combo.options[combo.selectedIndex].text;
@@ -929,6 +1093,11 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
 
             removerCapa: function () {
                 console.log(">>> removerCapa.. ", idCapaActiva);
+
+                if (clickHandler) {
+                    clickHandler.remove();
+                }
+
                 if (tw.map.getLayer(idCapaActiva) != undefined) {
                     tw.map.removeLayer(tw.map.getLayer(idCapaActiva));
                 }
@@ -980,6 +1149,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
 
             displayMsgAlerta: function (titulo, msg) {
                 createDialogInformacionGeneral(titulo, msg);
+                loader2(false, "loadingIndicadores");
             },
         })
 
@@ -1035,545 +1205,16 @@ function consumirSrvSae(url) {
         console.log(">>> SrvFailed: " + xhr)
     }
 }
-function resaltarEnCapa(urlCapa, idCapaServicio) {
-    require([
-        "esri/layers/FeatureLayer",
-        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
-        "esri/renderers/SimpleRenderer", "esri/graphic",
-        "esri/Color",
-        "dijit/popup"
 
-    ], function (
-        FeatureLayer,
-        SimpleFillSymbol, SimpleLineSymbol,
-        SimpleRenderer, Graphic,
-        Color,
-        dijitPopup,
 
-    ) {
-        console.log(">>> resaltarEnCapa.. " + urlCapa);
 
-        var where = "";
-        dptoActivo = "";
-
-        where = tw.getExpresionWhere();
-
-        if (tw.getPrmt('entidadEspacial').includes("Municipio")) {
-            dptoActivo = tw.getPrmt('departamento').toUpperCase()
-            var where = tw.getExpresionWhere() + " AND DPTO = '" + dptoActivo + "'";
-        }
-
-        var idLayer = idCapaServicio.toString();
-
-        if (urlCapa.indexOf("/featureserver") > 0 || urlCapa.indexOf("/MapServer") > 0) {
-            var layerNuevo = new FeatureLayer(urlCapa, {
-                id: idLayer,
-                mode: FeatureLayer.MODE_SNAPSHOT, //
-                outFields: ["FMI", "ID_ACTIVO", "DPTO", "MPIO", "SUBTIPO", "ACTIVO_SO", "ESTADO_OC", "Shape_Leng"]
-                //outFields: ["*"],
-            });
-            //layerNuevo.setDefinitionExpression("MPIO = 'ZIPAQUIRÁ'"); // ¡¡¡
-            //console.log(">>> resaltarEnCapa.. where " + where);
-
-            layerNuevo.setDefinitionExpression(where);
-
-            var symbol = new SimpleFillSymbol(
-                SimpleFillSymbol.STYLE_SOLID,
-                new SimpleLineSymbol(
-                    SimpleLineSymbol.STYLE_SOLID,
-                    new Color([255, 255, 255, 0.35]),
-                    1
-                ),
-                new Color([125, 125, 125, 0.35])
-            );
-            layerNuevo.setRenderer(new SimpleRenderer(symbol));
-            tw.map.addLayer(layerNuevo);
-
-            var highlightSymbol = new SimpleFillSymbol(
-                SimpleFillSymbol.STYLE_SOLID,
-                new SimpleLineSymbol(
-                    SimpleLineSymbol.STYLE_SOLID,
-                    new Color([255, 0, 0]), 3
-                ),
-                new Color([125, 125, 125, 0.35])
-            );
-
-            //layerNuevo.on("click", function (evt) {
-            //    console.log(">>> click");
-            //    tw.map.graphics.enableMouseEvents();
-            //    tw.map.graphics.on("click", clickCapa(urlCapa));
-            //});
-
-            layerNuevo.on("mouse-out", function (evt) {
-                totPrediosMpio = 0;
-                tw.map.graphics.enableMouseEvents();
-                //tw.map.graphics.on("mouse-out", closeDialog);
-            });
-
-            layerNuevo.on("mouse-over", function (evt) {
-                //console.log(">>> mouse-over");
-                dptoActivo = evt.graphic.attributes.MPIO;
-                mpioActivo = evt.graphic.attributes.MPIO;
-
-                displayTotalPredios(evt.graphic.attributes.MPIO, evt.pageX, evt.pageY);
-
-                tw.map.graphics.enableMouseEvents();
-                tw.map.graphics.on("click", clickCapa);
-
-                var highlightGraphic = new Graphic(evt.graphic.geometry, highlightSymbol);
-                tw.map.graphics.add(highlightGraphic);
-
-            });
-
-            layerNuevo.on("onKeyDown", escClosesPopup);
-
-            function closeDialog() {
-                console.log(">>> closeDialog.. ");
-                tw.map.graphics.enableMouseEvents();
-                tw.map.graphics.clear();
-                dijitPopup.close(dialog);
-            }
-        }
-    })
-}
-
-function clickCapa(data) {
-    console.log(">>> clickCapa >>> " + data);
-    tw.mostrarTablaResultados()
-    tw.ejecutarConsultaYGraficar();
-
-//    addFielToLayer(); 
-}
-
-function graficarIndicador() {
-    console.log("graficarIndicador >>> ");
-}
-
-//function  continuarPintarPredio(propiedad, valor, mncpio) {
-//    console.log("continuarPintarPredio >>> " + propiedad + " ; " + valor);
-//    //var where = propiedad.toString().toUpperCase() + " = '" + valor + "'";
-//    var where = "FMI = '307-64815'"; // prueba, en unico en arcgis Tocaima
-
-//    //const url = await getUrlGestorCatastral(mncpio);
-//    var url = "https://sae.igac.gov.co/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/12"; // Cundinamarca
-
-//    if (url != null || url.length > 0) {
-//        pintarPredioSeleccionado(url,where);
-//    }
-//}
-
-async function continuarPintarPredioSae(propiedad, valor, nomMcpio) {
-    console.log("continuarPintarPredioSae >>> " + propiedad + " ; " + valor);
-    //var where = propiedad.toString().toUpperCase() + " = '" + valor + "'";
-    var where = "FMI = '307-64815'"; // prueba, en unico en arcgis Tocaima
-
-    //var url = "https://sae.igac.gov.co/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/12"; // Cundinamarca
-
-    var urlGestor = srvSae.urlSrvGestorCatastral.replace("nomMunicipio", nomMcpio);
-
-    const dataResult = await getResultFromFecth(urlGestor);
-
-    let isEmpty = JSON.stringify(dataResult) === '{}'
-
-    if (dataResult.status === 400 || dataResult.status === 404 || isEmpty) {
-        createDialogInformacionGeneral("Info", "No se encontró información para esta consulta")
-        return
-    }
-
-    if (dataResult.URL != null || dataResult.URL.length > 0) {
-        pintarPredioSeleccionado(dataResult.URL, where);
-    }
-
-}
-function getUrlGestorCatastral(nomMcpio) {
-
-    var url = srvSae.urlSrvGestorCatastral;
-    url = url.replace("nomMunicipio", nomMcpio);
-    var myJson;
-
-    $.ajax({
-        cache: true,
-        type: "GET",
-        url: url,
-        timeout: 10000,
-        contentType: "application/javascript",
-        dataType: "json",
-        async: false,
-        success: function (result) {
-            myJson = result;
-            return myJson.URL;
-        },
-        error: function (xhr, status, error) {
-            return;
-        }
-    });
-}
-
-function pintarPredioSeleccionado(url, where) {
-    require([
-        "esri/layers/FeatureLayer",
-        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
-        "esri/renderers/SimpleRenderer", "esri/graphic", "esri/InfoTemplate",
-        "esri/Color",
-        "dijit/popup",
-        "esri/geometry/Point",
-        "esri/tasks/query"
-
-    ], function (
-        FeatureLayer,
-        SimpleFillSymbol, SimpleLineSymbol,
-        SimpleRenderer, Graphic, InfoTemplate,
-        Color,
-        dijitPopup,
-        Point,
-        Query
-
-    ) {
-        console.log(">>> pintarPredioSeleccionado.. " + url +" where "+  where);
-
-        idCapa = "layerPredio";
-        idCapaActiva = idCapa;
-        dptoActivo = "";
-
-        tw.removerCapa();
-
-        var idLayer = idCapa.toString();
-        var infoTemplate = new InfoTemplate("${FMI}", "${*}");
-
-        if (url.indexOf("/featureserver") > 0 || url.indexOf("/MapServer") > 0) {
-            var layerPredio = new FeatureLayer(url, {
-                id: idLayer,
-                mode: FeatureLayer.MODE_SNAPSHOT, //
-                outFields: ["FMI", "ID_ACTIVO", "DPTO", "MPIO", "SUBTIPO", "ACTIVO_SO", "ESTADO_OC", "Shape_Leng"],
-                //outFields: ["*"],
-                infoTemplate: infoTemplate
-            });
-            //console.log(">>> setDefinitionExpression.. where " + where);
-
-            layerPredio.setDefinitionExpression(where);
-
-//            let graphicsIsEmpty = JSON.stringify(layerPredio.graphics) === '[]'
-
-            var symbol = new SimpleFillSymbol(
-                SimpleFillSymbol.STYLE_SOLID,
-                new SimpleLineSymbol(
-                    SimpleLineSymbol.STYLE_SOLID,
-                    new Color([255, 255, 255, 0.35]),
-                ),
-                new Color([255, 0, 0, 0.35])
-            );
-
-            layerPredio.setRenderer(new SimpleRenderer(symbol));
-            appGlobal.map.addLayer(layerPredio);
-
-            var query = new Query();
-            query.geometry = appGlobal.map.extent;
-            query.returnGeometry = true;
-            query.outFields = ["*"];
-
-
-            layerPredio.queryFeatures(query, function (featureSet) {
-                //console.log(">>>>>>>>>>>>>>>>> featureSet ");
-                //console.log(featureSet);
-                //let isEmpty = JSON.stringify(featureSet.features) === '[]' ;
-                //let isEmpty = false;
-                console.log(featureSet.graphics);
-                //if (!isEmpty) {
-                if (featureSet.features.length > 0) {
-                    //console.log(">>>>>>>>>>>>>>>>> featureSet length " + featureSet.features.length);
-
-                    var polygon = featureSet.features[0].geometry;
-                    var polygonExtent = polygon.getExtent();
-
-                    var x = polygonExtent.xmin;
-                    var y = polygonExtent.ymin;
-                    var spRef = polygonExtent.spatialReference;
-
-                    //console.log("polygonExtent", polygonExtent);
-                    appGlobal.map.setExtent(polygonExtent)
-                    //setSpatialReference(spRef, x, y); // ok
-                    //appGlobal.map.setZoom(18);  // ok
-                } else {
-                    createDialogInformacionGeneral("Info", "No se encontró geometria para predio seleccionado")
-                    return
-                }
-            });
-        }
-    })
-}
-
-
-function displayTotalPredios(mcpio, x, y) {
-    require([
-        "esri/tasks/query",
-        "esri/tasks/QueryTask",
-        "esri/tasks/StatisticDefinition",
-        "dojo/dom-style",
-        "dijit/TooltipDialog", "dijit/popup", "dojo/domReady!",
-    ], function (
-        Query, QueryTask, StatisticDefinition,
-        domStyle,
-        TooltipDialog, dijitPopup,
-    ) {
-        console.log(">>> displayTotalPredios ");
-
-        var where = tw.getExpresionWhere();
-        where += " AND MPIO = '" + mcpio + "'"
-
-        var query = new Query();
-        var queryTask = new QueryTask(fullUrlActiva);
-
-
-        //query.where = "MPIO = '" + mcpio + "'";
-        query.where = where;
-        query.returnGeometry = false;
-
-        queryTask.executeForCount(query).then(function (count) {
-            totPrediosMpio = count;
-
-            tw.map.graphics.enableMouseEvents();
-            tw.map.graphics.on("mouse-out", closeDialogInQuery);
-
-            var idDialog = "tooltipDialog";
-            if (dijit.byId(idDialog)) { dijit.byId(idDialog).destroyRecursive(); }
-
-            var contenido = "<strong>Total Predios: </strong>" + "<strong>" + totPrediosMpio + "</strong>";
-            contenido += "<br><br> Click para detalle.";
-            var dialog = new TooltipDialog({
-                id: idDialog,
-                style: "position: absolute; width: 200px; font: normal normal normal 10pt Helvetica;z-index:100",
-                content: "",
-                onBlur: function () {
-                    popup.close(this);
-                    this.destroyRecursive();
-                }
-            });
-            dialog.startup();
-
-            if (totPrediosMpio > 0) {
-                dialog.setContent(contenido);
-
-                domStyle.set(dialog.domNode, "opacity", 0.85);
-                dijitPopup.open({
-                    popup: dialog,
-                    x: x,
-                    y: y
-                });
-            }
-
-            function closeDialogInQuery() {
-                //console.log(">>> closeDialogInQuery.. ");
-                tw.map.graphics.enableMouseEvents();
-                tw.map.graphics.clear();
-                dijitPopup.close(dialog);
-            }
-        });
-    });
-    return;
-}
 
 function escClosesPopup(key) {
     if (key.keyCode == 27) {
         tw.map.infoWindow.hide();
     }
 }
-function addFielToLayer() {
-    console.log("addFielToLayer >>> ");
-    fullUrlActiva = 'https://sae.igac.gov.co/arcgis/rest/services/SAE/OTROS/MapServer/3';
-    var where = "1=1";
-    //var where = tw.getExpresionWhere();
-    //where += " AND MPIO = '" + mpioActivo + "'"
-
-    var query = new esri.tasks.Query();
-    var queryTask = new esri.tasks.QueryTask(fullUrlActiva);
-
-    query.where = where;
-    query.outFields = ["*"];
-    query.returnGeometry = true;
-    queryTask.execute(query, calcularYcolorear, tw.queryTask_Failed);
-}
-function calcularYcolorear(featuresResult) {
-    require([
-
-        "esri/geometry/Point",
-
-        "esri/renderers/UniqueValueRenderer",
-
-        "esri/map", "esri/layers/FeatureLayer",
-        "esri/InfoTemplate", "esri/symbols/SimpleFillSymbol",
-        "esri/renderers/ClassBreaksRenderer",
-        "esri/Color",
-        "esri/dijit/Legend",
-        "esri/symbols/SimpleLineSymbol",
-        "esri/renderers/SimpleRenderer",
-
-        "dojo/parser",
-        "dojo/dom-style",
-        "dojo/dom",
-        "dojo/dom-construct",
-
-        "dojo/domReady!"
-    ], function (
-        Point,
-        UniqueValueRenderer,
-        Map, FeatureLayer,
-        InfoTemplate, SimpleFillSymbol,
-        ClassBreaksRenderer,
-        Color, Legend,
-        SimpleLineSymbol,
-        SimpleRenderer,
-        parser,
-        domStyle,
-        dom, domConstruct
-    ) {
-
-        console.log("calcularYcolorear >>> " + featuresResult);
-        parser.parse(); //
-
-        var legend;
-
-        var field = {
-            name: "TOTAL",
-            type: "esriFieldTypeInteger",
-            alias: "TOTAL"
-        };
-
-
-        var newFeatures = featuresResult.fields.push(field);
-        console.log(featuresResult)
-
-        for (i = 0; i < featuresResult.features.length; i++) {
-            var toPush = {};
-            toPush["TOTAL"] = getRandomInt();
-            Object.assign(featuresResult.features[i].attributes, toPush);
-        }
-
-        console.log(">>> featuresResult: " + featuresResult)
-
-        var symbolSimple = new SimpleFillSymbol(
-            SimpleFillSymbol.STYLE_SOLID,
-            new SimpleLineSymbol(
-                SimpleLineSymbol.STYLE_SOLID,
-                new Color([255, 255, 255, 0.35]),
-                1
-            ),
-            new Color([125, 125, 125, 0.35])
-        );
-
-        var symbol = new SimpleFillSymbol();
-        symbol.setColor(new Color([150, 150, 150, 0.5]));
-
-        var renderer = new ClassBreaksRenderer(symbol, "TOTAL");
-        renderer.addBreak(0, 15, new SimpleFillSymbol().setColor(new Color([56, 168, 0, 0.5])));
-        renderer.addBreak(15, 30, new SimpleFillSymbol().setColor(new Color([139, 209, 0, 0.5])));
-        renderer.addBreak(30, 45, new SimpleFillSymbol().setColor(new Color([255, 255, 0, 0.5])));
-        renderer.addBreak(45, 65, new SimpleFillSymbol().setColor(new Color([255, 128, 0, 0.5])));
-        renderer.addBreak(65, Infinity, new SimpleFillSymbol().setColor(new Color([255, 0, 0, 0.5])));
-
-        let layerDefinition = {
-            geometryType: featuresResult.geometryType,
-            objectIdField: "OBJECTID",
-            spatialReference: tw.map.spatialReference,
-            fields: featuresResult.fields,
-            name: 'layerResultadoNew',
-            mode: FeatureLayer.MODE_SNAPSHOT //
-        };
-        console.log(">>>>>>>>>>>> " + layerDefinition);
-
-        let featureCollection = {
-            layerDefinition: layerDefinition,
-            featureSet: {
-                features: featuresResult.features,
-                //geometryType: "esriGeometryPolygon",
-                geometryType: featuresResult.geometryType,
-                spatialReference: tw.map.spatialReference
-            }
-        };
-
-        var layerResultados = new FeatureLayer(featureCollection, {
-            id: 'layerResultadoNew',
-            visible: true
-        });
-        //layerResultados.setSelectionSymbol(infoSymbol);
-        //resultadoApiArgis = featuresResultados;
-        //layerResultados.setRenderer(renderer);
-        layerResultados.setRenderer(new SimpleRenderer(symbolSimple));
-
-//        tw.map.setBasemap("osm");
-        tw.map.addLayer(layerResultados);
-        //layerResultados.redraw(); //nada
-        //this.layerResultados.on("click", lang.hitch(this, this.clickCapa));
-
-        tw.map.centerAndZoom(new Point(-74.0048100, 5.0220800), 12);
-
-        //layerResultados.on("load", function () {
-        //    //            createRenderer(field);
-        //    //featureLayer.setRenderer(renderer);
-        //    layerResultados.setRenderer(renderer);
-        //    createLegend(map, layerResultados, "TOTAL");
-        //});
-
-        function createLegend(map, layer, field) {
-            // se destruye si existe
-            if (legend) {
-                legend.destroy();
-                domConstruct.destroy(dom.byId("legendDiv"));
-            }
-
-            // crear nuevo div para la leyenda
-            var legendDiv = domConstruct.create("div", {
-                id: "legendDiv"
-            }, dom.byId("legendWrapper"));
-
-            legend = new Legend({
-                map: tw.map,
-                layerInfos: [{
-                    layer: layer,
-                    title: "Grupo total predios: " + field
-                }]
-            }, legendDiv);
-            legend.startup();
-        }
-
-    });
-}
-function prenderLimiteDptal() {
-    require([
-        "esri/layers/FeatureLayer",
-
-    ], function (
-        FeatureLayer,
-    ) {
-        console.log(">>> prenderLimiteDptal.. " );
-
-        var idLayer = "lmteDptos";
-        var urlCapa = srvSae.geometriaLmteDepartamental; // SAE
-
-        if (urlCapa.indexOf("/featureserver") > 0 || urlCapa.indexOf("/MapServer") > 0) {
-            var layerDptos = new FeatureLayer(urlCapa, {
-                id: idLayer,
-                mode: FeatureLayer.MODE_SNAPSHOT,
-//                mode: MODE_AUTO,
-                outFields: ["*"],
-            });
-
-            tw.map.addLayer(layerDptos);
-
-/*
-            var dataLayerJson = layerDptos.toJson();
-            console.log('>>>>>>> dataLayerJson', dataLayerJson); // undefined
-
-            var dataLayerGraphics = layerDptos.graphics;
-            console.log('>>>>>>> dataLayerGraphics', dataLayerGraphics); // [] length:0
-*/
-            var miCapaDpto = tw.map.getLayer(idLayer)
-            console.log('>>>>>>>>>> miCapaDpto');
-            console.log(miCapaDpto);
-
-        }
-    })
-}
-function coropleticoNacional(filtrado, url, where) {
+function coropleticoNacional(filtrado) {
     require([
         "esri/layers/FeatureLayer",
         "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
@@ -1587,7 +1228,8 @@ function coropleticoNacional(filtrado, url, where) {
         "esri/renderers/ClassBreaksRenderer",
         "esri/SpatialReference",
         "esri/graphicsUtils",
-        "dojo/data/ItemFileReadStore"
+        "dojo/data/ItemFileReadStore",
+        "esri/renderers/smartMapping",
 
     ], function (
         FeatureLayer,
@@ -1602,26 +1244,85 @@ function coropleticoNacional(filtrado, url, where) {
         ClassBreaksRenderer,
         SpatialReference,
         graphicsUtils,
-        ItemFileReadStore
+        ItemFileReadStore,
+        smartMapping
 
     ) {
         parser.parse(); //
 
-        console.log(">>> coropleticoNacional.. " + url + " where " + where);
-        var url = srvSae.geometriaLmteDepartamental; // SAE
+        console.log(">>> coropleticoNacional.. ", filtrado );
 
-        var url = srvSae.geometriaLmteDepartamental; 
-        if (entidadEspacialActiva === MUNICIPIOS) { 
-            url = srvSae.geometriaLmteMunicipal; 
+        var where = "1 = 1";
+        var url = srvSae.geometriaLmteDepartamental;
+        if (entidadEspacialActiva === MUNICIPIOS) {
+            url = srvSae.geometriaLmteMunicipal;
             var dptoSelected = tw.getPrmtValue("departamento");
             where = "DeCodigo = '" + dptoSelected + "'";
+        } else if (entidadEspacialActiva === REGIONALES){
+            url = srvSae.geometriaRegional;
         }
 
         var idCapa = "layerNacional";
         idCapaActiva = idCapa;
         dptoActivo = "";
-        
+
         tw.removerCapa();
+
+        clickHandler = tw.map.graphics.on('click', changeHandler);
+
+        function changeHandler(evt) {
+            var graphic = evt.graphic;
+            console.log("Clicked graphic:", graphic);
+
+            var filtradoPorEntidad;
+            if (entidadEspacialActiva === DEPARTAMENTOS) {
+                filtradoPorEntidad = filtarPorPropiedadValor(filtrado, "idDepartamento", dptoActivo);
+                if (filtradoPorEntidad.length > 0) {
+                    nombreEntidad = filtradoPorEntidad[0].DEPARTAMENTO;
+                } else {
+                    nombreEntidad = " ";
+                }
+            }
+            if (entidadEspacialActiva === MUNICIPIOS) {
+                filtradoPorEntidad = filtarPorPropiedadValor(filtrado, "idMunicipio", mpioActivo);
+                if (filtradoPorEntidad.length > 0) {
+                    nombreEntidad = filtradoPorEntidad[0].MUNICIPIO;
+                } else {
+                    nombreEntidad = " ";
+                }
+            }
+            if (entidadEspacialActiva === REGIONALES) {
+                filtradoPorEntidad = filtarPorPropiedadValor(filtrado, "idRegional", regionalActiva);
+                if (filtradoPorEntidad.length > 0) {
+                    nombreEntidad = filtradoPorEntidad[0].REGIONAL;
+                } else {
+                    nombreEntidad = " ";
+                }
+            }
+			//mfc
+			var totales = null;
+			if (idIndicadorActivo === "7") {
+
+				var idTematicaInd7 = tw.getPrmtValue("tematica");
+				console.log("idTematicaInd7: " + idTematicaInd7);
+				var propAcumular = "";
+				if (idTematicaInd7 == "1") {
+					propAcumular = "AVALUOCOMERCIAL";
+				} else if (idTematicaInd7 == "2") {
+
+					propAcumular = "AVALÚOCATASTRAL";
+				}
+
+				totales = sumarPorTematicaValor(filtradoPorEntidad, "SUBTIPOACTIVO", propAcumular);
+			} else {
+
+				totales = contarPorTematica(filtradoPorEntidad, "SUBTIPOACTIVO");
+			}
+			
+			//cef
+            //var totales = contarPorTematica(filtradoPorEntidad, "SUBTIPOACTIVO");
+            tw.mostrarGraficoBarras(totales);
+        };
 
         var outSpatialReference = new SpatialReference({ wkid: 102100, "latestWkid": 4326 })
 
@@ -1632,21 +1333,27 @@ function coropleticoNacional(filtrado, url, where) {
         query.outFields = ["*"];
         query.OutSpatialReference = outSpatialReference; //.
         query.returnGeometry = true;
-        //        queryTask.execute(query, setearTotales, tw.queryTask_Failed);
+
+        //queryTask.execute(query, setearTotales, tw.queryTask_Failed);
         queryTask.execute(query).then(function (results) {
 
-            var features = results.features;
-
             projection.load().then(function () {
+                var features = results.features;
                 for (var i = 0; i < features.length; i++) {
                     var projectedGeometry = projection.project(features[i].geometry, outSpatialReference);
                     features[i].geometry = projectedGeometry;
-                    var projectedExtend = projection.project(features[i]._extent, outSpatialReference);
-                    features[i]._extent = projectedExtend;
+
+                    if (features[i]._extent != undefined) {
+                        var projectedExtend = projection.project(features[i]._extent, outSpatialReference);
+                        features[i]._extent = projectedExtend;
+                    }
                 };
+            }).otherwise(function (error) {
+                console.log("Se produjo un error al proyectar.", error);
             });
 
-            console.log('>>>> features ',results.features);
+            console.log('>>>> features ', results.features);
+
 
             var field = {
                 name: "TOTAL",
@@ -1659,14 +1366,60 @@ function coropleticoNacional(filtrado, url, where) {
             for (i = 0; i < results.features.length; i++) {
                 var toPush = {};
                 if (entidadEspacialActiva === MUNICIPIOS) {
-                    toPush["TOTAL"] = contarPorPropiedad(filtrado, "idMunicipio", results.features[i].attributes.MpCodigo);
-//                  toPush["TOTAL"] = getRandomInt();
+                    if (idIndicadorActivo === "4") {
+
+                        toPush["TOTAL"] = acumularPorPropiedadCondicion(filtrado, "idMunicipio", results.features[i].attributes.MpCodigo, "idMunicipio"); // ("AT_M2") acumulo usondo idMunicipio como prueba
+                    }else if (idIndicadorActivo === "7") {
+
+                        var idTematicaInd7 = tw.getPrmtValue("tematica");
+                        console.log("idTematicaInd7: " + idTematicaInd7);
+                        var propAcumular = "";
+                        if (idTematicaInd7 == "1") {
+                            propAcumular = "AVALUOCOMERCIAL";
+                        } else if (idTematicaInd7 == "2") {
+
+                            propAcumular = "AVALÚOCATASTRAL";
+                        }
+
+                        toPush["TOTAL"] = acumularPorPropiedadCondicion(filtrado, "idMunicipio", results.features[i].attributes.MpCodigo, propAcumular);
+                    } else {
+
+                        toPush["TOTAL"] = contarPorPropiedad(filtrado, "idMunicipio", results.features[i].attributes.MpCodigo);
+//                      toPush["TOTAL"] = getRandomInt();
+                    }
+
+
                 }
                 if (entidadEspacialActiva === DEPARTAMENTOS) {
-                    toPush["TOTAL"] = contarPorPropiedad(filtrado, "idDepartamento", results.features[i].attributes.DeCodigo);
+                    if (idIndicadorActivo === "4") {
+                        toPush["TOTAL"] = acumularPorPropiedadCondicion(filtrado, "idDepartamento", results.features[i].attributes.DeCodigo, "idMunicipio"); // ("AT_M2") acumulo usando idMunicipio como prueba
+                    } else if (idIndicadorActivo === "7") {
+
+                        var idTematicaInd7 = tw.getPrmtValue("tematica");
+                        console.log("idTematicaInd7: " + idTematicaInd7);
+                        var propAcumular = "";
+                        if (idTematicaInd7 == "1") {
+                            propAcumular = "AVALUOCOMERCIAL";
+                        } else if (idTematicaInd7 == "2") {
+
+                            propAcumular = "AVALÚOCATASTRAL";
+                        }
+
+                        toPush["TOTAL"] = acumularPorPropiedadCondicion(filtrado, "idDepartamento", results.features[i].attributes.DeCodigo, propAcumular);
+                    } else {
+                        toPush["TOTAL"] = contarPorPropiedad(filtrado, "idDepartamento", results.features[i].attributes.DeCodigo);
+                    }
+                }
+                if (entidadEspacialActiva === REGIONALES) {
+                    if (idIndicadorActivo === "4") {
+                        toPush["TOTAL"] = acumularPorPropiedadCondicion(filtrado, "idRegional", results.features[i].attributes.OBJECTID, "AT_M2"); 
+                    } else {
+                        toPush["TOTAL"] = contarPorPropiedad(filtrado, "idRegional", results.features[i].attributes.OBJECTID);
+                    }
                 }
                 Object.assign(results.features[i].attributes, toPush);
             }
+
 
             let layerDefinition = {
                 objectIdField: "OBJECTID",
@@ -1676,6 +1429,7 @@ function coropleticoNacional(filtrado, url, where) {
                 name: 'layerNacional',
                 mode: FeatureLayer.MODE_SNAPSHOT
             };
+
             if (consts.debug) {
                 console.log(">>>>>>>>>>>> layerDefinition");
                 console.log(layerDefinition);
@@ -1685,57 +1439,67 @@ function coropleticoNacional(filtrado, url, where) {
                 layerDefinition: layerDefinition,
                 featureSet: {
                     features: results.features,
-//                    features: features.features,
-//                    features: features,
+                    //                    features: features.features,
+                    //                    features: features,
                     geometryType: results.geometryType,
                     "spatialReference": outSpatialReference
                 }
             };
-            if (consts.debug) {
-                console.log(">>>>>>>>>>>> results.features");
-                console.log(results.features);
-            }
 
             var symbol = new SimpleFillSymbol();
             symbol.setColor(new Color([150, 150, 150, 0.5]));
 
             var renderer = new ClassBreaksRenderer(symbol, "TOTAL");
-            renderer.addBreak(1, 10,  new SimpleFillSymbol().setColor(new Color([56, 168, 0, 0.5])));
+            renderer.addBreak(1, 10, new SimpleFillSymbol().setColor(new Color([56, 168, 0, 0.5])));
             renderer.addBreak(10, 20, new SimpleFillSymbol().setColor(new Color([139, 209, 0, 0.5])));
             renderer.addBreak(20, 30, new SimpleFillSymbol().setColor(new Color([255, 255, 0, 0.5])));
             renderer.addBreak(30, 40, new SimpleFillSymbol().setColor(new Color([255, 128, 0, 0.5])));
             renderer.addBreak(40, Infinity, new SimpleFillSymbol().setColor(new Color([255, 0, 0, 0.5])));
 
-//            var infoTemplate = new InfoTemplate("${DEPARTAMEN}", "${TOTAL}");
+            //var infoTemplate = new InfoTemplate("${DEPARTAMEN}", "${TOTAL}");
 
             var layerDptos = new FeatureLayer(featureCollection, {
                 id: idCapa,
                 visible: true,
-//|                infoTemplate: infoTemplate
+                //infoTemplate: infoTemplate
             });
 
             tw.map.addLayer(layerDptos);
             layerDptos.on("load", function () {
-                layerDptos.setRenderer(renderer);
+                if (idIndicadorActivo === "4" || idIndicadorActivo === "7" ) {
+                    var fieldName = "TOTAL";
+                    crearRenderRangoAreas_Cef(fieldName);
+                } else {
+                    layerDptos.setRenderer(renderer);
+                }
             });
-            tw.map.setScale(5000000);
-            setTimeout(() => {
-                tw.map.setScale(18489297)
-                loader2(false, "loadingIndicadores")
-            }, 500);
 
+            function crearRenderRangoAreas_Cef(field) {
+                console.log(">>> crearRenderRangoAreas_Cef");
+                smartMapping.createClassedColorRenderer({
+                    layer: layerDptos,
+                    field: field,
+                    //basemap: "osm", // ok
+                    basemap: "streets", // ok
+                    classificationMethod: "equal-interval"
+                }).then(function (response) {
+                    layerDptos.setRenderer(response.renderer);
+                    layerDptos.redraw();
+                    //createLegend(map, layer, field);
+                });
+            }
             projection.load().then(function () {
                 let extent = graphicsUtils.graphicsExtent(layerDptos.graphics);
                 let extendNew = projection.project(extent, outSpatialReference);
                 tw.map.setExtent(extendNew, true);
+                loader2(false, "loadingIndicadores");
             });
 
             layerDptos.on("mouse-over", function (evt) {
-                console.log(">>> mouse-over");
-                dptoActivo = evt.graphic.attributes.DeCodigo ;
-                mpioActivo = evt.graphic.attributes.MpCodigo ;
-
-                console.log(">>> mouse-over: dptoActivo ", dptoActivo);
+                //console.log(">>> mouse-over");
+                dptoActivo = evt.graphic.attributes.DeCodigo;
+                mpioActivo = evt.graphic.attributes.MpCodigo;
+                regionalActiva = evt.graphic.attributes.OBJECTID;
 
                 var highlightSymbol = new SimpleFillSymbol(
                     SimpleFillSymbol.STYLE_SOLID,
@@ -1746,29 +1510,75 @@ function coropleticoNacional(filtrado, url, where) {
                     new Color([125, 125, 125, 0.35])
                 );
 
-                var vlrAfiltrarMpio = evt.graphic.attributes.MpCodigo;
-                var vlrAfiltrarDpto = evt.graphic.attributes.DeCodigo;
-
                 mostrarTotalPredios(evt.graphic.attributes.TOTAL, evt.pageX, evt.pageY);
 
                 var highlightGraphic = new Graphic(evt.graphic.geometry, highlightSymbol);
                 tw.map.graphics.add(highlightGraphic);
 
                 tw.map.graphics.enableMouseEvents();
-//                tw.map.graphics.on("click", procesarClickCapa(filtrado));
+
+                //tw.map.graphics.on("click", procesarClickCapa(filtrado));
+/*
                 tw.map.graphics.on("click", function (evt) {
                     var filtradoPorEntidad;
                     if (entidadEspacialActiva === DEPARTAMENTOS) {
-                        filtradoPorEntidad = filtarPorPropiedadValor(filtrado, "idDepartamento", vlrAfiltrarDpto);
+                        filtradoPorEntidad = filtarPorPropiedadValor(filtrado, "idDepartamento", dptoActivo);
+                        if (filtradoPorEntidad.length > 0) {
+                            nombreEntidad = filtradoPorEntidad[0].DEPARTAMENTO;
+                        } else {
+                            nombreEntidad = " ";
+                        }
                     }
                     if (entidadEspacialActiva === MUNICIPIOS) {
-                        filtradoPorEntidad = filtarPorPropiedadValor(filtrado, "idMunicipio", vlrAfiltrarMpio);
+                        filtradoPorEntidad = filtarPorPropiedadValor(filtrado, "idMunicipio", mpioActivo);
+                        if (filtradoPorEntidad.length > 0) {
+                            nombreEntidad = filtradoPorEntidad[0].MUNICIPIO;
+                        } else {
+                            nombreEntidad = " ";
+                        }
                     }
-                    var totales = contarPorTematica(filtradoPorEntidad, "SUBTIPOACTIVO"); // Subtipo: anterior, SUBTIPOACTIVO: nuevo
-//                    console.log(">>> click: filtrado", filtrado);
-//                    console.log(">>> click: totales", totales);
+
+                    var totales = null;
+                    if (idIndicadorActivo === "7") {
+
+                        var idTematicaInd7 = tw.getPrmtValue("tematica");
+                        console.log("idTematicaInd7: " + idTematicaInd7);
+                        var propAcumular = "";
+                        if (idTematicaInd7 == "1") {
+                            propAcumular = "AVALUOCOMERCIAL";
+                        } else if (idTematicaInd7 == "2") {
+
+                            propAcumular = "AVALÚOCATASTRAL";
+                        }
+
+                        totales = sumarPorTematicaValor(filtradoPorEntidad, "SUBTIPOACTIVO", propAcumular);
+                    } else {
+
+                        totales = contarPorTematica(filtradoPorEntidad, "SUBTIPOACTIVO");
+                    }
+                  //  var totales = contarPorTematica(filtradoPorEntidad, "SUBTIPOACTIVO"); // Subtipo: anterior, SUBTIPOACTIVO: nuevo
+                   // sumarPorTematicaValor
+                    //                    console.log(">>> click: filtrado", filtrado);
+                    //                    console.log(">>> click: totales", totales);
+
+                    if (entidadEspacialActiva === REGIONALES) {
+                        filtradoPorEntidad = filtarPorPropiedadValor(filtrado, "idRegional", regionalActiva);
+                        if (filtradoPorEntidad.length > 0) {
+                            nombreEntidad = filtradoPorEntidad[0].REGIONAL;
+                        } else {
+                            nombreEntidad = " ";
+                        }
+                    }
+                    var totales = contarPorTematica(filtradoPorEntidad, "SUBTIPOACTIVO"); 
+                    //console.log(">>> click: filtrado", filtrado);
+                    //console.log(">>> click: totales", totales);
+
                     tw.mostrarGraficoBarras(totales);
+
+
                 });
+*/
+
             });
         });
     })
@@ -1781,843 +1591,65 @@ function mostrarTotalPredios(total, x, y) {
         domStyle,
         TooltipDialog, dijitPopup,
     ) {
-        console.log(">>> mostrarTotalPredios ");
-            totPrediosMpio = total;
+        //        console.log(">>> mostrarTotalPredios ");
+        totPrediosMpio = total;
 
-            tw.map.graphics.enableMouseEvents();
-            tw.map.graphics.on("mouse-out", closeDialogInQuery);
+        tw.map.graphics.enableMouseEvents();
+        tw.map.graphics.on("mouse-out", closeDialogInQuery);
 
-            var idDialog = "tooltipDialog";
-            if (dijit.byId(idDialog)) { dijit.byId(idDialog).destroyRecursive(); }
+        var idDialog = "tooltipDialog";
+        if (dijit.byId(idDialog)) { dijit.byId(idDialog).destroyRecursive(); }
 
-            var contenido = "<strong>Total Predios: </strong>" + "<strong>" + totPrediosMpio + "</strong>";
-            contenido += "<br><br> Click para detalle.";
-            var dialog = new TooltipDialog({
-                id: idDialog,
-                style: "position: absolute; width: 200px; font: normal normal normal 10pt Helvetica;z-index:100",
-                content: "",
-                onBlur: function () {
-                    popup.close(this);
-                    this.destroyRecursive();
-                }
+        var contenido = "<strong>Total Predios: </strong>" + "<strong>" + totPrediosMpio + "</strong>";
+
+
+        contenido += "<br><br> Click para detalle.";
+        var dialog = new TooltipDialog({
+            id: idDialog,
+            style: "position: absolute; width: 200px; font: normal normal normal 10pt Helvetica;z-index:100",
+            content: "",
+            onBlur: function () {
+                popup.close(this);
+                this.destroyRecursive();
+            }
+        });
+        dialog.startup();
+
+        if (totPrediosMpio > 0) {
+            dialog.setContent(contenido);
+
+            domStyle.set(dialog.domNode, "opacity", 0.85);
+            dijitPopup.open({
+                popup: dialog,
+                x: x,
+                y: y
             });
-            dialog.startup();
+        }
 
-            if (totPrediosMpio > 0) {
-                dialog.setContent(contenido);
-
-                domStyle.set(dialog.domNode, "opacity", 0.85);
-                dijitPopup.open({
-                    popup: dialog,
-                    x: x,
-                    y: y
-                });
-            }
-
-            function closeDialogInQuery() {
-                //console.log(">>> closeDialogInQuery.. ");
-                tw.map.graphics.enableMouseEvents();
-                tw.map.graphics.clear();
-                dijitPopup.close(dialog);
-            }
+        function closeDialogInQuery() {
+            //console.log(">>> closeDialogInQuery.. ");
+            tw.map.graphics.enableMouseEvents();
+            tw.map.graphics.clear();
+            dijitPopup.close(dialog);
+        }
     });
     return;
 }
-function generarPorZonasDeUbicacion(){
+
+function generarPorZonasDeUbicacion(data) {
     console.log('>>> generarPorZonasDeUbicacion');
-}
 
-function coropleticoFromCollectionNal(filtrado, url, where) {
-    require([
-        "esri/layers/FeatureLayer",
-        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
-        "esri/renderers/SimpleRenderer", "esri/graphic","esri/InfoTemplate",
-        "esri/Color",
-        "dijit/popup",
-        "esri/geometry/Point",
-        "esri/tasks/query",
-        "dojo/parser",
-        "esri/graphicsUtils",
-        
-        "esri/SpatialReference"
+    var totales;
+    var propiedadAfiltrar = "SUBTIPOACTIVO"; // Rural - Urbano
+    var valorAfiltrar = "URBANO";
+    var filtradoUrbano = filtarPorPropiedadValor(data, propiedadAfiltrar, valorAfiltrar);
 
-    ], function (
-        FeatureLayer,
-        SimpleFillSymbol, SimpleLineSymbol,
-        SimpleRenderer, Graphic, InfoTemplate,
-        Color,
-        dijitPopup,
-        Point,
-        Query,
-        parser,
-        graphicsUtils,
-        SpatialReference
+    var valorAfiltrar = "RURAL";
+    var filtradorRural = filtarPorPropiedadValor(data, propiedadAfiltrar, valorAfiltrar);
+    var filtradoUnion = filtradoUrbano.concat(filtradorRural);
 
-    ) {
-//        parser.parse(); //
-
-        console.log(">>> coropleticoFromCollectionNal");
-        console.log(tw.map.spatialReference);
-
-        var url = srvSae.geometriaLmteDepartamental; // SAE
-
-        idCapaDtos = "lmteDptos";
-        idCapaActiva = idCapaDtos;
-        tw.removerCapa();
-
-        idCapa = "layerDptal";
-        idCapaActiva = idCapa;
-        dptoActivo = "";
-
-        tw.removerCapa();
-
-        var where = "1 = 1";
-        var query = new esri.tasks.Query();
-        var queryTask = new esri.tasks.QueryTask(url);
-        var mySpatialReference = new SpatialReference({ wkid: 102100 }); 
-
-
-        query.where = where;
-        query.outFields = ["*"];
-        query.returnGeometry = true;
-//        query.OutSpatialReference = { wkid: tw.map.spatialReference }; //.
-//        query.OutSpatialReference = mySpatialReference; //.
-        query.OutSpatialReference = { wkid: 102100 }; //.
-//        query.OutSpatialReference = { wkid: 9377 }; //.
-        queryTask.execute(query).then(function (results) {
-
-            let layerDefinition = {
-                geometryType: results.geometryType,
-                objectIdField: "OBJECTID",
-//                spatialReference: tw.map.spatialReference,
-//                spatialReference: mySpatialReference,
-                spatialReference: { wkid: 102100 },
-//                spatialReference: { wkid: 9377 },
-//                spatialReference: { wkid: 4326 },
-                fields: results.fields,
-                name: 'layerDptal',
-                mode: FeatureLayer.MODE_SNAPSHOT
-            };
-            console.log(">>>>>>>>>>>> " );
-            console.log(layerDefinition);
-
-            let featureCollection = {
-                layerDefinition: layerDefinition,
-                featureSet: {
-                    features: results.features,
-                    //geometryType: "esriGeometryPolygon",
-                    geometryType: results.geometryType,
-//                    spatialReference: tw.map.spatialReference
-//                    spatialReference: mySpatialReference
-                    spatialReference: { wkid: 102100 },
-                }
-            };
-            console.log(results.features);
-
-            var layerResultados = new FeatureLayer(featureCollection, {
-                id: idCapa,
-                visible: true
-            });
-            tw.map.addLayer(layerResultados);
-            let extent = graphicsUtils.graphicsExtent(layerResultados.graphics);
-            tw.map.setExtent(extent, true);
-
-            var miCapa = tw.map.getLayer(idCapa)
-            console.log('>>>>>>>>>> miCapa');
-            console.log(miCapa);
-            tw.map.getLayer(idCapa).show();
-            tw.map.getLayer(idCapa).refresh();
-/*
-    Map: Geometry (wkid: 9377) cannot be converted to spatial reference of the map (wkid: 102100)
- */
-
-
-        });
-    })
-}
-
-
-function coropleticoDepartamental(filtrado ,url, where) {
-    require([
-        "esri/layers/FeatureLayer",
-        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
-        "esri/renderers/SimpleRenderer", "esri/graphic", "esri/InfoTemplate",
-        "esri/Color",
-        "dijit/popup",
-        "esri/geometry/Point",
-        "esri/tasks/query",
-        "dojo/parser",
-
-    ], function (
-        FeatureLayer,
-        SimpleFillSymbol, SimpleLineSymbol,
-        SimpleRenderer, Graphic, InfoTemplate,
-        Color,
-        dijitPopup,
-        Point,
-        Query,
-        parser
-
-    ) {
-        parser.parse(); //
-
-        console.log(">>> coropleticoDepartamental.. " + url + " where " + where);
-
-        var url = 'https://mapassig.icbf.gov.co:6443/arcgis/rest/services/ICBF/Administrativo/MapServer/3';
-
-        idCapa = "layerDptal";
-        idCapaActiva = idCapa;
-        dptoActivo = "";
-
-        tw.removerCapa();
-
-        var where = "DPTO_CCDGO = '25'";
-        var query = new esri.tasks.Query();
-        var queryTask = new esri.tasks.QueryTask(url);
-
-        query.where = where;
-        query.outFields = ["*"];
-        query.returnGeometry = true;
-//        queryTask.execute(query, setearTotales, tw.queryTask_Failed);
-        queryTask.execute(query).then(function (results) {
-
-            var field = {
-                name: "TOTAL",
-                type: "esriFieldTypeInteger",
-                alias: "TOTAL"
-            };
-            var newFeatures = results.fields.push(field);
-
-            for (i = 0; i < results.features.length; i++) {
-                var toPush = {};
-                toPush["TOTAL"] = contarPorPropiedad(filtrado, "Mpio", results.features[i].attributes.DPTO_CNMBR);
-                Object.assign(results.features[i].attributes, toPush);
-            }
-            let layerDefinition = {
-                geometryType: results.geometryType,
-                objectIdField: "OBJECTID",
-                spatialReference: tw.map.spatialReference,
-                fields: results.fields,
-                name: 'layerDpto',
-                mode: FeatureLayer.MODE_SNAPSHOT 
-            };
-            console.log(">>>>>>>>>>>> " + layerDefinition);
-
-            let featureCollection = {
-                layerDefinition: layerDefinition,
-                featureSet: {
-                    features: results.features,
-                    //geometryType: "esriGeometryPolygon",
-                    geometryType: results.geometryType,
-                    spatialReference: tw.map.spatialReference
-                }
-            };
-            console.log(results.features);
-
-            var layerResultados = new FeatureLayer(featureCollection, {
-                id: 'layerDptoNew',
-                visible: true
-            });
-            tw.map.addLayer(layerResultados);
-        });
-
-
-
-/*
-        var idLayer = idCapa.toString();
-        var infoTemplate = new InfoTemplate("${MPIO_CNMBR}", "${*}");
-
-        if (url.indexOf("/featureserver") > 0 || url.indexOf("/MapServer") > 0) {
-            var layerDpto = new FeatureLayer(url, {
-                id: idLayer,
-                mode: FeatureLayer.MODE_SNAPSHOT, //
-                outFields: ["*"],
-                infoTemplate: infoTemplate
-            });
-            //console.log(">>> setDefinitionExpression.. where " + where);
-
-            layerDpto.setDefinitionExpression(where);
-
-            var symbol = new SimpleFillSymbol(
-                SimpleFillSymbol.STYLE_SOLID,
-                new SimpleLineSymbol(
-                    SimpleLineSymbol.STYLE_SOLID,
-                    new Color([255, 255, 255, 0.35]),
-                ),
-                new Color([255, 0, 0, 0.35])
-            );
-
-            layerDpto.setRenderer(new SimpleRenderer(symbol));
-
-            var field = {
-                name: "TOTAL",
-                type: "esriFieldTypeInteger",
-                alias: "TOTAL"
-            };
-
-
-            var newFeatures = layerDpto.fields.push(field);
-            console.log(layerDpto.features)
-
-            for (i = 0; i < layerDpto.features.length; i++) {
-                var toPush = {};
-//                toPush["TOTAL"] = i + 2;
-                toPush["TOTAL"] = contarPorPropiedad(filtrado, "Dpto", layerDpto.features[i].attributes.DPTO_CNMBR);
-                Object.assign(layerDpto.features[i].attributes, toPush);
-            }
-
-            console.log(">>> featuresResult: " + featuresResult)
-
-            appGlobal.map.addLayer(layerDpto);
-
-
-
-            var query = new Query();
-            query.geometry = appGlobal.map.extent;
-            query.returnGeometry = true;
-            query.outFields = ["*"];
-
-
-            layerDpto.queryFeatures(query, function (featureSet) {
-                console.log(featureSet.graphics);
-                if (featureSet.features.length > 0) {
-                    var polygon = featureSet.features[0].geometry;
-                    var polygonExtent = polygon.getExtent();
-
-                    var x = polygonExtent.xmin;
-                    var y = polygonExtent.ymin;
-                    var spRef = polygonExtent.spatialReference;
-
-                    appGlobal.map.setExtent(polygonExtent)
-                    //setSpatialReference(spRef, x, y); // ok
-                } else {
-                    createDialogInformacionGeneral("Info", "No se encontró geometria para predio seleccionado")
-                    return
-                }
-            });
-        }
-*/
-    })
-}
-
-function renderPorColorAnt() {
-
-    var layer, legend;
-
-    require([
-
-        "esri/map",
-        "esri/dijit/PopupTemplate",
-        "esri/layers/FeatureLayer",
-        "esri/dijit/Legend",
-        "esri/renderers/smartMapping",
-
-        "dojo/_base/array",
-        "dojo/dom",
-        "dojo/dom-construct",
-        "dojo/data/ItemFileReadStore",
-        "dijit/form/FilteringSelect",
-        "dojo/parser",
-
-        "dijit/layout/BorderContainer",
-        "dijit/layout/ContentPane",
-
-        "dojo/domReady!"
-
-    ], function (
-        Map,
-        PopupTemplate,
-        FeatureLayer,
-        Legend,
-        smartMapping,
-
-        array,
-        dom,
-        domConstruct,
-        ItemFileReadStore,
-        FilteringSelect,
-        parser
-
-    ) {
-        console.log("renderPorColor >>> .................");
-
-        parser.parse(); //
-
-        //var baseMap = tw.map.getBasemap()
-        //var mapOptions = {
-        //    //basemap: "terrain",
-        //    basemap: baseMap,
-        //    center: [-74.0048100, 5.0220800],
-        //    zoom: 14,
-        //    slider: false
-        //};
-
-        //var map = new Map("map", mapOptions);
-
-        //tw.map = map;
-
-        //var fieldName = "POP2007";
-        var fieldName = "Shape_Leng";
-
-        var fields = {
-            "Shape_Leng": "Shape_Leng",
-            "DPTO": "Departamento",
-            "MPIO": "Municipio",
-            "SUBTIPO": "Urb/Rral",
-            "ESTADO_OC": "Estado Ocup",
-            "ACTIVO_SO": "Activo Social"
-        };
-        var outFields = ["Shape_Leng", "DPTO", "MPIO", "SUBTIPO", "ESTADO_OC", "ACTIVO_SO"];
-
-        //create popup
-        var popupTemplate = new PopupTemplate({
-            title: "{MPIO} Municipio",
-            fieldInfos: [{
-                "fieldName": fieldName,
-                "label": fields[fieldName],
-                "visible": true,
-                "format": {
-                    places: 0,
-                    digitSeparator: true
-                }
-            }],
-            showAttachments: true
-        });
-
-        //layer = new FeatureLayer("//sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2", {
-        layer = new FeatureLayer("https://sae.igac.gov.co/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/38", {
-            "id": "ZipaquiraSae",
-            "infoTemplate": popupTemplate,
-            "mode": FeatureLayer.MODE_SNAPSHOT,
-            "outFields": outFields,
-            "opacity": 0.8
-        });
-
-        //only working with Washington state
-        //layer.setDefinitionExpression("STATE_NAME='Washington'");
-        tw.map.addLayer(layer);
-
-        layer.on("load", function () {
-            createRenderer(fieldName);
-        });
-
-        function createRenderer(field) {
-            //smart mapping functionality begins
-            smartMapping.createClassedColorRenderer({
-                layer: layer,
-                field: field,
-                //basemap: tw.map.getBasemap(),
-                basemap: "osm",
-                classificationMethod: "quantile"
-            }).then(function (response) {
-                layer.setRenderer(response.renderer);
-                layer.redraw();
-                createLegend(tw.map, layer, field);
-            });
-        }
-
-        //this function gets called when fields are selected to render
-        function updateAttribute(ch) {
-            tw.map.infoWindow.hide();
-
-            var popupTemplateUpdated = new PopupTemplate({
-                title: "{MPIO} Municipio",
-                fieldInfos: [{
-                    "fieldName": ch,
-                    "label": fields[ch],
-                    "visible": true,
-                    "format": { places: 0, digitSeparator: true }
-                }],
-                showAttachments: true
-            });
-            layer.setInfoTemplate(popupTemplateUpdated);
-            createRenderer(ch);
-            layer.redraw();
-            createLegend(tw.map, layer, ch);
-        }
-
-        //Create a legend
-        function createLegend(map, layer, field) {
-            //If applicable, destroy previous legend
-            if (legend) {
-                legend.destroy();
-                domConstruct.destroy(dom.byId("legendDiv"));
-            }
-
-            // create a new div for the legend
-            var legendDiv = domConstruct.create("div", {
-                id: "legendDiv"
-            }, dom.byId("legendWrapper"));
-
-            legend = new Legend({
-                map: tw.map,
-                layerInfos: [{
-                    layer: layer,
-                    title: "Municipio: " + field
-                }]
-            }, legendDiv);
-            legend.startup();
-        }
-
-        // create a store and a filtering select for the county layer's fields
-        var fieldNames, fieldStore, fieldSelect;
-        fieldNames = {
-            "identifier": "value",
-            "label": "name",
-            "items": []
-        };
-        array.forEach(outFields, function (f) {
-            if (array.indexOf(f.split("_"), "NAME") == -1) { // exclude attrs that contain "NAME"
-                fieldNames.items.push({
-                    "name": fields[f],
-                    "value": f
-                });
-            }
-        });
-
-        fieldStore = new ItemFileReadStore({
-            data: fieldNames
-        });
-        fieldSelect = new FilteringSelect({
-            displayedValue: fieldNames.items[0].name,
-            value: fieldNames.items[0].value,
-            name: "fieldsFS",
-            required: false,
-            store: fieldStore,
-            searchAttr: "name",
-            style: {
-                "width": "290px",
-                "fontSize": "12pt",
-                "color": "#444"
-            }
-        }, domConstruct.create("div", null, dom.byId("fieldWrapper")));
-        fieldSelect.on("change", updateAttribute);
-
-    });
-
-}
-function cerrarWidgetLeyenda() {
-    require(["jimu/PanelManager", "jimu/WidgetManager"],
-        function (PanelManager, WidgetManager) {
-            console.log(">>> cerrarWidgetLeyenda.. ");
-            panelManager = PanelManager.getInstance();
-            widgetCerrar = PanelManager.getInstance().getPanelById("widgets_Legend_Widget_18_panel");
-            for (var e in PanelManager.getInstance().panels) {
-                if (PanelManager.getInstance().panels[e].id == "widgets_Legend_Widget_18_panel") {
-                    widgetCerrar = PanelManager.getInstance().panels[e].id;
-                }
-            }
-            if (widgetCerrar != undefined) {
-                panelManager.closePanel("widgets_Legend_Widget_18_panel");
-                panelManager.destroyPanel("widgets_Legend_Widget_18_panel");
-                WidgetManager.getInstance().closeWidget("widgets_Legend_Widget_18")
-            }
-        }
-    )
-}
-
-function renderPorColor() { // aplica solo para variables numericas
-
-    var layer, legend;
-
-    require([
-
-        "esri/map",
-        "esri/dijit/PopupTemplate",
-        "esri/layers/FeatureLayer",
-        "esri/dijit/Legend",
-        "esri/renderers/smartMapping",
-
-        "dojo/_base/array",
-        "dojo/dom",
-        "dojo/dom-construct",
-        "dojo/data/ItemFileReadStore",
-        "dijit/form/FilteringSelect",
-        "dojo/parser",
-
-        "dijit/layout/BorderContainer",
-        "dijit/layout/ContentPane",
-
-        "dojo/domReady!"
-
-    ], function (
-        Map,
-        PopupTemplate,
-        FeatureLayer,
-        Legend,
-        smartMapping,
-
-        array,
-        dom,
-        domConstruct,
-        ItemFileReadStore,
-        FilteringSelect,
-        parser
-
-    ) {
-        console.log("renderPorColor >>> .................");
-
-        parser.parse(); //
-
-        var fieldName = "Shape_Leng";
-        //var fieldName = "MPIO"; // no es numerica
-
-        var fields = {
-            "Shape_Leng": "Shape_Leng",
-            "DPTO": "Departamento",
-            "MPIO": "Municipio",
-            "SUBTIPO": "Urb/Rral",
-            "ESTADO_OC": "Estado Ocup",
-            "ACTIVO_SO": "Activo Social"
-        };
-        var outFields = ["Shape_Leng", "DPTO", "MPIO", "SUBTIPO", "ESTADO_OC", "ACTIVO_SO"];
-
-        //create popup
-        var popupTemplate = new PopupTemplate({
-            title: "{MPIO} Municipio",
-            fieldInfos: [{
-                "fieldName": fieldName,
-                "label": fields[fieldName],
-                "visible": true,
-                "format": {
-                    places: 0,
-                    digitSeparator: true
-                }
-            }],
-            showAttachments: true
-        });
-
-        layer = new FeatureLayer("https://sae.igac.gov.co/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/38", {
-            "id": "ZipaquiraSae",
-            "infoTemplate": popupTemplate,
-            "mode": FeatureLayer.MODE_SNAPSHOT,
-            "outFields": outFields,
-            "opacity": 0.8
-        });
-
-        //only working with Washington state
-        //layer.setDefinitionExpression("STATE_NAME='Washington'");
-        tw.map.addLayer(layer);
-
-        layer.on("load", function () {
-            createRenderer(fieldName);
-        });
-
-        function createRenderer(field) {
-            //smart mapping functionality begins
-            smartMapping.createClassedColorRenderer({
-                layer: layer,
-                field: field,
-                //basemap: tw.map.getBasemap(),
-                basemap: "osm",
-                classificationMethod: "quantile"
-            }).then(function (response) {
-                layer.setRenderer(response.renderer);
-                layer.redraw();
-                createLegend(tw.map, layer, field);
-            });
-        }
-
-        //esta función se llama cuando los campos se seleccionan para representar
-        function updateAttribute(ch) {
-            tw.map.infoWindow.hide();
-
-            var popupTemplateUpdated = new PopupTemplate({
-                title: "{MPIO} Municipio",
-                fieldInfos: [{
-                    "fieldName": ch,
-                    "label": fields[ch],
-                    "visible": true,
-                    "format": { places: 0, digitSeparator: true }
-                }],
-                showAttachments: true
-            });
-            layer.setInfoTemplate(popupTemplateUpdated);
-            createRenderer(ch);
-            layer.redraw();
-            createLegend(tw.map, layer, ch);
-        }
-
-        //Create a legend
-        function createLegend(map, layer, field) {
-            //If existe, destruye la anterior
-            if (legend) {
-                legend.destroy();
-                domConstruct.destroy(dom.byId("legendDiv"));
-            }
-
-            // crear un nuevo div para la leyenda
-            var legendDiv = domConstruct.create("div", {
-                id: "legendDiv"
-            }, dom.byId("legendWrapper"));
-
-            legend = new Legend({
-                map: tw.map,
-                layerInfos: [{
-                    layer: layer,
-                    title: "Municipio: " + field
-                }]
-            }, legendDiv);
-            legend.startup();
-        }
-
-        // cree un store y una selección de filtrado para los campos de la capa del dpto. o mcpio
-        var fieldNames, fieldStore, fieldSelect;
-        fieldNames = {
-            "identifier": "value",
-            "label": "name",
-            "items": []
-        };
-        array.forEach(outFields, function (f) {
-            if (array.indexOf(f.split("_"), "NAME") == -1) { // excluye atributos que contienen "NAME", ej.
-                fieldNames.items.push({
-                    "name": fields[f],
-                    "value": f
-                });
-            }
-        });
-
-        fieldStore = new ItemFileReadStore({
-            data: fieldNames
-        });
-        fieldSelect = new FilteringSelect({
-            displayedValue: fieldNames.items[0].name,
-            value: fieldNames.items[0].value,
-            name: "fieldsFS",
-            required: false,
-            store: fieldStore,
-            searchAttr: "name",
-            style: {
-                "width": "290px",
-                "fontSize": "12pt",
-                "color": "#444"
-            }
-        }, domConstruct.create("div", null, dom.byId("fieldWrapper")));
-        fieldSelect.on("change", updateAttribute);
-
-    });
-
-}
-
-function renderPorRangos() {
-
-    require([
-        "dojo/query",
-
-        "esri/renderers/UniqueValueRenderer",
-
-        "esri/map", "esri/layers/FeatureLayer",
-        "esri/InfoTemplate", "esri/symbols/SimpleFillSymbol",
-        "esri/renderers/ClassBreaksRenderer",
-        "esri/Color",
-        "esri/dijit/Legend",
-        "jimu/PanelManager",
-        "jimu/WidgetManager",
-
-        "dojo/parser",
-        "dojo/dom-style",
-        "dojo/dom",
-        "dojo/dom-construct",
-
-        "dojo/domReady!"
-    ], function (
-        query,
-        UniqueValueRenderer,
-        Map, FeatureLayer,
-        InfoTemplate, SimpleFillSymbol,
-        ClassBreaksRenderer,
-        Color, Legend,
-        PanelManager,
-        WidgetManager,
-        parser,
-        domStyle,
-        dom, domConstruct
-    ) {
-
-        console.log("renderPorRangos >>> .................");
-
-        parser.parse(); //
-
-        var legendSae;
-        var field = "MPIO";
-        var idCapa = "layerRenderMcpio";
-        var widgetLegend;
-
-        idCapaActiva = idCapa;
-
-        tw.removerCapa();
-
-        var defaultSymbol = new SimpleFillSymbol();
-        var rendererUniqValue = new UniqueValueRenderer(defaultSymbol, "MPIO");
-        rendererUniqValue.addValue("CAJICÁ", new SimpleFillSymbol().setColor(new Color([255, 255, 0, 0.5])));
-        rendererUniqValue.addValue("ZIPAQUIRÁ", new SimpleFillSymbol().setColor(new Color([128, 0, 128, 0.5])));
-        rendererUniqValue.addValue("SOPÓ", new SimpleFillSymbol().setColor(new Color([255, 0, 0, 0.5])));
-
-        var symbol = new SimpleFillSymbol();
-        symbol.setColor(new Color([150, 150, 150, 0.5]));
-
-        // Add five breaks to the renderer.
-        //var renderer = new ClassBreaksRenderer(symbol, "SUBTIPO");
-        var renderer = new ClassBreaksRenderer(symbol, field);
-
-        renderer.addBreak(0, 18, new SimpleFillSymbol().setColor(new Color([56, 168, 0, 0.5]))); // sopo 18
-        renderer.addBreak(18, 100, new SimpleFillSymbol().setColor(new Color([255, 128, 0, 0.5]))); // zipa 87
-        renderer.addBreak(100, Infinity, new SimpleFillSymbol().setColor(new Color([255, 255, 0, 0.5]))); //kjik 284
-
-
-        //var infoTemplate = new InfoTemplate("${SUBTIPO}", "${*}");
-        var infoTemplate = new InfoTemplate("${MPIO}", "${*}");
-        var featureLayer = new FeatureLayer("https://sae.igac.gov.co/arcgis/rest/services/SAE/PREDIOS_SAE/MapServer/38", {
-            id: idCapa,
-            mode: FeatureLayer.MODE_SNAPSHOT,
-            outFields: ["*"],
-            infoTemplate: infoTemplate
-        });
-
-        //featureLayer.setDefinitionExpression("SUBTIPO = 'URBANO'");
-        //featureLayer.setRenderer(renderer);
-
-        tw.map.addLayer(featureLayer);
-
-        featureLayer.on("load", function () {
-            //            createRenderer(field);
-            //featureLayer.setRenderer(renderer);
-            featureLayer.setRenderer(rendererUniqValue);
-            //createLegend(map, featureLayer, field);
-            abrirLeyenda();
-        });
-
-        function createLegend(map, layer, field) {
-            // se destruye si existe
-            if (legendSae) {
-                legendSae.destroy();
-                domConstruct.destroy(dom.byId("legendDivSae"));
-            }
-
-            // crear nuevo div para la leyenda
-            var legendDivSae = domConstruct.create("div", {
-                id: "legendDivSae"
-            }, dom.byId("legendWrapper"));
-
-            legendSae = new Legend({
-                map: tw.map,
-                layerInfos: [{
-                    layer: layer,
-                    title: "Grupo total predios: " + field
-                }]
-            }, legendDivSae);
-            legendSae.startup();
-        }
-        function abrirLeyenda() {
-
-            var widget = appGlobal.appConfig.getConfigElementById("widgets_Legend_Widget_18");
-            var widgetId = widget.id;
-
-            cerrarWidgetById(widgetId)
-            appGlobal.openWidgetById(widgetId);
-
-        }
-    });
+    //totales = contarPorTematica(filtradoUnion, propiedadAfiltrar);
+    coropleticoNacional(data);
 }
 function forzarSoloPuertosHttps() {
     if (window.location.protocol.indexOf('https') == 0) { // solo par https
