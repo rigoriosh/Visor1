@@ -92,3 +92,6 @@ const servicioSNRgeometrias = "https://sae.igac.gov.co/alfanumericosae/Sae.SIG.R
 // const servicioSNRgeometrias = "http://localhost:53906/api/Gestor/?municipio=";
 
 const UrlGetByFmi = "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByFmi/";
+const servicio_GetByidDepartamento = "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByidDepartamento/11?Usuario=mcortes&Clave=Junio2023*+";
+const servicio_GetByidRegional = "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/GetByidRegional/1";
+const servicio_GetByidMunicipio = "http://utilidades.apipreprod.saesas.gov.co:4444/ServGeoPortal/api/FuenteGeoPortal/GetByidMunicipio/";

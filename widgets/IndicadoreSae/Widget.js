@@ -485,7 +485,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
             succeededRequest: async function (respuesta) { //RIGO
                 console.log({respuesta});
                 //Agregarle variable alfanumerica a cada departamento     
-                const dataByFMI = await tw._getDataByFMI("037-5884");
+                const dataByFMI = await tw._getDataAlfanumerica();
                 const resAjusteCampoResponse = tw._ajusteCampoResponse(respuesta);
                 const agregarDataNuevoCampo = tw._agregarDataNuevoCampo(dataByFMI, resAjusteCampoResponse);
                 pintarPolygons(tw.map, agregarDataNuevoCampo)
@@ -533,14 +533,21 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 // agregarDataSelectValueLabel(configWidget.Data.Departamentos, "departamento");
                 $('#divDepartamento').show();
             },
-            _getDataByFMI: async function (FMI) {
-                let resp = await getDataByFmi(FMI)                
+            _getDataAlfanumerica: async function () {
+                let resp = '';
+                if (tw.store.entidadEspacial == '1') {                    
+                    resp = await GetByidDepartamento(servicio_GetByidDepartamento)
+                }else if(tw.store.entidadEspacial == '2'){
+                    resp = await GetByidMunicipio(servicio_GetByidMunicipio + tw.store.departamento)
+                }else if(tw.store.entidadEspacial == '3'){
+                    resp = await GetByidRegional(servicio_GetByidRegional)
+                }
                 if (resp.status === 404) {
-                    tw.displayMsgAlerta("Informacíón", `La consulta con FMI: ${FMI} no encontró información`);
+                    tw.displayMsgAlerta("Informacíón", `La consulta no encontró información`);
                     return
                 } else if(resp.name === 'TypeError'){
                     // tw.displayMsgAlerta("Atención", `Se estan presentando problemas de red, favor intentarlo mas tarde o ponerse en contacto con tecnología`);
-                    resp = dataInputJson;   
+                    resp = dataInputJson;   // data de prueba
                     // return
                 }
                 return resp;
@@ -580,7 +587,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 //const resultJsonSae = await ejecutarConsulta(urltmp); // ok
                 //const resultJsonSae = await consumirSrvSae(urltmp); // Error de CORS
 
-                const resultJsonSae =  await tw._getDataByFMI("037-5884"); // nueva data
+                const resultJsonSae =  await tw._getDataAlfanumerica(); // nueva data
                 tw.acumularSegunPrmts(resultJsonSae);
 
             },
@@ -588,8 +595,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 console.log(">>> acumularSegunPrmts.. ");
                 console.log({ datos });
                 var idTematica = tw.getPrmtValue("tematica");
-
-                var datos = await tw._getDataByFMI("037-5884"); // nueva data
+                var datos = await tw._getDataAlfanumerica(); // nueva data
 
                 var propiedadAfiltrar = "";
                 var valorAfiltrar = "";

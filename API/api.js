@@ -1,71 +1,69 @@
 const insertProjecGeometry = async(dataToSend, url) => {
-    // let formData = new FormData();
-    // formData.append('data', dataToSend);
-    try {
-        const response = await fetch(url, {
-            method:'POST',
-            mode: "no-cors",
-            body: dataToSend} );
-        console.log(response);
-        return response
-    } catch (error) {
-        return error        
-    }
+  try {
+      const response = await fetch(url, {
+          method:'POST',
+          mode: "no-cors",
+          body: dataToSend} );
+          console.log(response);
+      return response
+  } catch (error) {
+      return error        
+  }
 }
 const postData = async (url = "", data = {}) => {
-    try {
-        let formData = new FormData();
-        formData.append('features', JSON.stringify(data.features));
-        formData.append('gdbVersion', '');
-        formData.append('rollbackOnFailure', true);
-        formData.append('timeReferenceUnknownClient', false);
-        const response = await fetch(url, {
-          method: "POST", // *GET, POST, PUT, DELETE, etc.
-          mode: "no-cors", // no-cors, *cors, same-origin
-        //   cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: "omit", // include, *same-origin, omit
-          headers: {
-            "Content-Type": "application/octet-stream",
-            // "Content-Type": "application/json",
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        //   redirect: "follow", // manual, *follow, error
-          referrerPolicy: "strict-origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-          body: formData, // body data type must match "Content-Type" header
-        //   body: JSON.stringify(data), // body data type must match "Content-Type" header
-        });
-        // const resp = await response.json(); // parses JSON response into native JavaScript objects        
-        return response; // parses JSON response into native JavaScript objects        
-    } catch (error) {
-        console.error(error);
-        return error;
-    }
+  try {
+      let formData = new FormData();
+      formData.append('features', JSON.stringify(data.features));
+      formData.append('gdbVersion', '');
+      formData.append('rollbackOnFailure', true);
+      formData.append('timeReferenceUnknownClient', false);
+      const response = await fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "no-cors", // no-cors, *cors, same-origin
+      //   cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "omit", // include, *same-origin, omit
+        headers: {
+          "Content-Type": "application/octet-stream",
+          // "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      //   redirect: "follow", // manual, *follow, error
+        referrerPolicy: "strict-origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: formData, // body data type must match "Content-Type" header
+      //   body: JSON.stringify(data), // body data type must match "Content-Type" header
+      });
+      // const resp = await response.json(); // parses JSON response into native JavaScript objects        
+      return response; // parses JSON response into native JavaScript objects        
+  } catch (error) {
+      console.error(error);
+      return error;
   }
+}
 
 const postDeleteGeomtry = async (url = "", data = {}) => {
-    try {
-        let formData = new FormData();
-        formData.append('objectIds', data.objectIds);
-        formData.append('where', data.where);
-        formData.append('gdbVersion', '');
-        formData.append('rollbackOnFailure', true);
-        formData.append('returnDeleteResults', true);
-        const response = await fetch(url, {
-          method: "POST", // *GET, POST, PUT, DELETE, etc.
-          mode: "no-cors", // no-cors, *cors, same-origin
-          credentials: "omit", // include, *same-origin, omit
-          headers: {
-            "Content-Type": "application/json",
-          },
-          referrerPolicy: "strict-origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-          body: formData, // body data type must match "Content-Type" header
-        });
-        return response; // parses JSON response into native JavaScript objects        
-    } catch (error) {
-        console.error(error);
-        return error;
-    }
+  try {
+      let formData = new FormData();
+      formData.append('objectIds', data.objectIds);
+      formData.append('where', data.where);
+      formData.append('gdbVersion', '');
+      formData.append('rollbackOnFailure', true);
+      formData.append('returnDeleteResults', true);
+      const response = await fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "no-cors", // no-cors, *cors, same-origin
+        credentials: "omit", // include, *same-origin, omit
+        headers: {
+          "Content-Type": "application/json",
+        },
+        referrerPolicy: "strict-origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: formData, // body data type must match "Content-Type" header
+      });
+      return response; // parses JSON response into native JavaScript objects        
+  } catch (error) {
+      console.error(error);
+      return error;
   }
+}
 
 
 const getDataGeograficaNotariadoRegistro = async(miMunicipio)  => {
@@ -76,11 +74,11 @@ const getDataGeograficaNotariadoRegistro = async(miMunicipio)  => {
       mode: "no-cors",
       // body: dataToSend
     } );
-  console.log(response);
-  if (response.status == 400) return response
-  const resp = await response.json(); // parses JSON response into native JavaScript objects 
-  console.log({resp});
-  return resp
+    console.log(response);
+    if (response.status == 400) return response
+    const resp = await response.json(); // parses JSON response into native JavaScript objects 
+    console.log({resp});
+    return resp
   } catch (error) {
     console.error({error});
     return error;
@@ -296,29 +294,100 @@ const getDataNotariadoRegistro = async(columnName, columnValue, fileName)  => {
   } */
 }
 
-  const getDataByFmi = async (Fmi) => {
-    try {
-      var myHeaders = new Headers();
-      myHeaders.append("Usuario", "mcortes");
-      myHeaders.append("Clave", "Junio2023*+");
-      myHeaders.append(
-        "Cookie",
-        "cookiesession1=678A3E429FBC05482128809D6AE8ED6C"
-      );
+const getDataByFmi = async (Fmi) => {
+try {
+  var myHeaders = new Headers();
+  myHeaders.append("Usuario", "mcortes");
+  myHeaders.append("Clave", "Junio2023*+");
+  myHeaders.append(
+    "Cookie",
+    "cookiesession1=678A3E429FBC05482128809D6AE8ED6C"
+  );
 
-      var requestOptions = {
-        method: "GET",
-        headers: myHeaders,
-        redirect: "follow",
-      };
-
-      const url = `${UrlGetByFmi}${Fmi}`;
-      const response = await fetch(url, requestOptions);
-      if (response.status === 404) return response;
-      const resp = await response.json(); // parses JSON response into native JavaScript objects
-      return resp;
-    } catch (error) {
-      console.error({error});
-      return error;
-    }
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
   };
+
+  const url = `${UrlGetByFmi}${Fmi}`;
+  const response = await fetch(url, requestOptions);
+  if (response.status === 404) return response;
+  const resp = await response.json(); // parses JSON response into native JavaScript objects
+  return resp;
+} catch (error) {
+  console.error({error});
+  return error;
+}
+};
+
+const GetByidDepartamento = async (url) => {
+try {
+  
+  var myHeaders = new Headers();
+  myHeaders.append("Cookie", "cookiesession1=678A3E429FBC05482128809D6AE8ED6C");
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  const response = await fetch(url, requestOptions);
+  if (response.status === 404) return response;
+  const resp = await response.text(); // parses JSON response into native JavaScript objects
+  return resp;
+
+} catch (error) {
+  console.error({error});
+  return error;
+}
+}
+
+const GetByidMunicipio = async (url) => {
+try {
+  
+  var myHeaders = new Headers();
+  myHeaders.append("Usuario", "mcortes");
+  myHeaders.append("Clave", "Junio2023*+");
+  myHeaders.append("Cookie", "cookiesession1=678A3E429FBC05482128809D6AE8ED6C");
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  const response = await fetch(url, requestOptions);
+  if (response.status === 404) return response;
+  const resp = await response.text(); // parses JSON response into native JavaScript objects
+  return resp;
+
+} catch (error) {
+  console.error({error});
+  return error;
+}
+}
+
+const GetByidRegional = async (url) => {
+try {
+  var myHeaders = new Headers();
+  myHeaders.append("Usuario", "mcortes");
+  myHeaders.append("Clave", "Junio2023*+");
+  myHeaders.append("Cookie", "cookiesession1=678A3E429FBC05482128809D6AE8ED6C");
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+  const response = await fetch(url, requestOptions);
+  if (response.status === 404) return response;
+  const resp = await response.text(); // parses JSON response into native JavaScript objects
+  return resp;
+
+} catch (error) {
+  console.error({error});
+  return error;
+}
+}
