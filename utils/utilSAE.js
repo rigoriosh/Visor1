@@ -26,7 +26,7 @@ function ejecutarConsulta(url) { //metodo que genera consulta y retorna info en 
     return a;
 }
 
-function createDialogInformacionGeneral(titulo="", contenido="") {
+function createDialogInformacionGeneral(titulo="", contenido="", loader) {
     require(["dijit/Dialog", "dojo/domReady!"], function (Dialog) {
         myDialogOT = new Dialog({
             title: titulo,
@@ -39,6 +39,7 @@ function createDialogInformacionGeneral(titulo="", contenido="") {
         setTimeout(() => {
             myDialogOT.hide()
           }, 5000);
+        loader2(false, loader);
     });
 }
 
@@ -875,3 +876,13 @@ const fechaActual = ()=> new Date().toLocaleDateString().split('/').join('-');
 
 
 
+function generarNumerosAleatorios(cantidad, minimo, maximo) {
+    let numerosAleatorios = [];
+
+    for (let i = 0; i < cantidad; i++) {
+        let numeroAleatorio = Math.floor(Math.random() * (maximo - minimo + 1)) + minimo;
+        numerosAleatorios.push(numeroAleatorio);
+    }
+
+    return numerosAleatorios;
+}

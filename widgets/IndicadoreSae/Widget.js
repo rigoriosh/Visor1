@@ -257,7 +257,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 query("#tematica").on("change", async function (evt) {
                     var datoSelected = this.options[this.selectedIndex].value;
                     var textSelected = this.options[this.selectedIndex].text;
-                    //  console.log(">>> tematica datoSelected " + datoSelected);
+                     console.log(">>> tematica datoSelected " + datoSelected);
                     const {indicador, entidadEspacial} = tw.store;
                     if (indicador == '8' && entidadEspacial == '1'){ // rigo
                         if (datoSelected !== 0) {
@@ -342,16 +342,24 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 query("#ejecutar").on("click", async function (evt) {
                     const {indicador, entidadEspacial, tipoRecaudo} = tw.store;                    
                     loader2(true, "loadingIndicadores");
-                    if (indicador == '8' && entidadEspacial == '1' && tipoRecaudo != '') { // logica rigo
-                        tw._getGeometriesDepartamentos();
-                    }else{
-                        tw.ejecutar();
-                    }
+                    tw.ejecutar();
                 });
                 query("#btnRetornar").on("click", async function (evt) {
                     console.log(">>> on click retornar ");
                     tw.onClickRetornar();
                 });
+
+                if (consts.debug) {
+                    let numerosGenerados = generarNumerosAleatorios(234, 500000, 600000);
+                    dataInputJson.map((e,i) => e.arrendamiento = numerosGenerados[i]);
+                    numerosGenerados = generarNumerosAleatorios(234, 500000, 6000000);
+                    dataInputJson.map((e,i) => e.transaccion = numerosGenerados[i]);
+                    numerosGenerados = generarNumerosAleatorios(234, 500000, 6000000);
+                    dataInputJson.map((e,i) => e.legalizacion = numerosGenerados[i]);
+                    numerosGenerados = generarNumerosAleatorios(234, 500000, 6000000);
+                    dataInputJson.map((e,i) => e.saneamiento = numerosGenerados[i]);
+                    console.log({dataInputJson});                    
+                }
             },
             onOpen: function () {
                 console.log(">>> onOpen...");
@@ -573,7 +581,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 idCapaActiva = capaLeyenda;  
                 tw.removerCapa(); 
                 idCapaActiva = idCapaActivaAnt; 
-                const resultJsonSae = dataInputJson; // 
+                const resultJsonSae = await tw._getDataAlfanumerica(); // 
                 tw.acumularSegunPrmts(resultJsonSae); // 
 
             },
@@ -595,7 +603,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                 console.log(">>> acumularSegunPrmts.. ");
                 console.log({ datos });
                 var idTematica = tw.getPrmtValue("tematica");
-                var datos = await tw._getDataAlfanumerica(); // nueva data
+                // var datos = await tw._getDataAlfanumerica(); // nueva data
 
                 var propiedadAfiltrar = "";
                 var valorAfiltrar = "";
@@ -779,6 +787,24 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                                 break;
                         }
                         break;
+                    case "8": // Recaudo por contrato de arrendamientos
+                        switch (tw.store.tipoRecaudo) {
+                            case "1":
+                                propiedadAfiltrar = "arrendamiento";
+                                break;
+                            case "2":
+                                propiedadAfiltrar = "transaccion";
+                                break;
+                            case "3":
+                                propiedadAfiltrar = "legalizacion";
+                                break;
+                            case "4":
+                                propiedadAfiltrar = "saneamiento";
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
                     case "12":
                         switch (idTematica) {
                             case "1": // Proyectos e Iniciativas
@@ -870,7 +896,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         break;
                 } // final switch
 
-                if (parseInt(idIndicadorActivo) > 7) {
+                if (parseInt(idIndicadorActivo) > 8) {
                     tw.displayMsgAlerta("Informacíón", "Por aclarar !!!");
                 } else if (parseInt(idIndicadorActivo) == 7) {
                     totales = contarPorTematica(datos, propiedadAfiltrar);
@@ -881,8 +907,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
                         console.log(resultadoMunicipio);
                         tw.displayMsgAlerta("Informacíón", "Por aclarar !!! *"); 
                     }
-                }
-                else {
+                }else {
 
                     filtrado = filtarPorPropiedadValor(datos, propiedadAfiltrar, valorAfiltrar);
                     //filtrado = datos // prueba
@@ -1154,8 +1179,7 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
             },
 
             displayMsgAlerta: function (titulo, msg) {
-                createDialogInformacionGeneral(titulo, msg);
-                loader2(false, "loadingIndicadores");
+                createDialogInformacionGeneral(titulo, msg, "loadingIndicadores");
             },
         })
 
@@ -1586,6 +1610,10 @@ function coropleticoNacional(filtrado) {
 */
 
             });
+        })
+        .catch(function (error) {
+            console.error(error);
+            createDialogInformacionGeneral(consts.notas.consultaSimple[0].titulo, consts.notas.consultaSimple[0].body, "loadingIndicadores");
         });
     })
 }

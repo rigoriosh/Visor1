@@ -251,7 +251,7 @@ function loadModuleProjection() {
 }
 
 // COD_DEPART en capa, idDepartamento aqui
-const dataInputJson =
+var dataInputJson =
     [
         {
             "IdActivo": "493506",
